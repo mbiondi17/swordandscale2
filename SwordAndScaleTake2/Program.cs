@@ -14,8 +14,8 @@ namespace SwordAndScaleTake2
         [STAThread]
         static void Main()
         {
-            using (var game = new Game1())
-                game.Run();
+            using (var shell = new GameShell())
+                shell.Run();
         }
     }
 #endif
