@@ -16,6 +16,7 @@ namespace SwordAndScaleTake2
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            //Test Commit
         }
 
         /// <summary>
