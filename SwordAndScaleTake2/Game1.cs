@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework; //Tried to avoid using this but I need the Rectangle struct. TODO: find a work around
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace SwordAndScaleTake2
 {
@@ -8,21 +10,21 @@ namespace SwordAndScaleTake2
     /// </summary>
     public class Game1
     {
+        Texture2D mapImage;
 
-        //GameShell shell;
-        public Game1()//GameShell shell)
+        public Game1()
         {
-            //this.shell = shell;
+
         }
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
-        public void LoadContent()
+        public void LoadContent(ContentManager content)
         {
-
-            // TODO: use this.Content to load your game content here
+            mapImage = content.Load<Texture2D>("alphamap");
+            // TODO: use content to load your game content here
         }
 
         /// <summary>
@@ -51,9 +53,8 @@ namespace SwordAndScaleTake2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public void Draw(SpriteBatch spriteBatch)
         {
-
+            spriteBatch.Draw(mapImage, new Rectangle(0, 0, 1536, 896), Color.White);
             // TODO: Add your drawing code here
-
         }
     }
 }

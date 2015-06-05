@@ -22,8 +22,7 @@ namespace SwordAndScaleTake2
         List<GUIElement> gameGUI = new List<GUIElement>();
 
         Game1 game;
-
-        public String chosenGeneral = null;
+        GamePreferences gamePrefs = new GamePreferences();
 
         public GameShell()
         {
@@ -104,8 +103,8 @@ namespace SwordAndScaleTake2
             switch (gameState)
             {
                 case GameState.mainMenu:
-                    if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                        Exit();
+                    //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    //    Exit(); //TODO: Replace IsKeyDown with a rising edge trigger (prevent multipressing)
                     foreach (GUIElement element in mainMenu)
                     {
                         element.Update();
@@ -120,12 +119,14 @@ namespace SwordAndScaleTake2
                     }
                     break;
                 case GameState.inGame:
-                    //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                    //    gameState = GameState.pauseMenu;
+                    if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                        gameState = GameState.mainMenu; //TODO: Make pauseMenu and link it here
                     foreach (GUIElement element in gameGUI)
                     {
                         element.Update();
                     }
+
+                    game.Update();
                     break;
                 default:
                     break;
@@ -163,6 +164,9 @@ namespace SwordAndScaleTake2
                     break;
             }
 
+            if (gameState == GameState.inGame)
+                game.Draw(spriteBatch);
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -182,30 +186,16 @@ namespace SwordAndScaleTake2
             {
                 gameState = GameState.generalChoice;
             }
-            if (button == "blueArcherGen")
+            if (button == "blueArcherGen" || 
+                button == "blueMageGen" || 
+                button == "bluePikeGen" || 
+                button == "blueSwordGen" || 
+                button == "blueWarriorGen")
             {
-                chosenGeneral = button;
+                gamePrefs.chosenGeneral = button;
                 gameState = GameState.inGame;
-            }
-            if (button == "blueMageGen")
-            {
-                chosenGeneral = button;
-                gameState = GameState.inGame;
-            }
-            if (button == "bluePikeGen")
-            {
-                chosenGeneral = button;
-                gameState = GameState.inGame;
-            }
-            if (button == "blueSwordGen")
-            {
-                chosenGeneral = button;
-                gameState = GameState.inGame;
-            }
-            if (button == "blueWarriorGen")
-            {
-                chosenGeneral = button;
-                gameState = GameState.inGame;
+                game = new Game1();
+                game.LoadContent(Content);
             }
             if (button == "exit")
             {

@@ -39,6 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Game1.cs" />
+    <Compile Include="GamePreferences.cs" />
     <Compile Include="GameShell.cs" />
     <Compile Include="GUIElement.cs" />
     <Compile Include="Program.cs" />
