@@ -390,7 +390,23 @@ namespace SwordAndScaleTake2
                     }
                     if (move)
                     {
+                        if(currentUnit.getTeam()) 
+                        {
+                        map[(int)currentUnit.getPosition().X/64, (int)currentUnit.getPosition().Y/64].setBlueOcc(false);
+                        }
+                        if (!currentUnit.getTeam())
+                        {
+                            map[(int)currentUnit.getPosition().X / 64, (int)currentUnit.getPosition().Y / 64].setRedOcc(false);
+                        }
                         currentUnit.setPosition(cursorPosition);
+                        if (currentUnit.getTeam())
+                        {
+                            map[(int)currentUnit.getPosition().X / 64, (int)currentUnit.getPosition().Y / 64].setBlueOcc(true);
+                        }
+                        if (!currentUnit.getTeam())
+                        {
+                            map[(int)currentUnit.getPosition().X / 64, (int)currentUnit.getPosition().Y / 64].setRedOcc(true);
+                        }
                         currentUnit.setUsable(false);
                         path.Clear();
                         moveable.Clear();
