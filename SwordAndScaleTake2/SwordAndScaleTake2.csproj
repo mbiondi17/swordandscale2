@@ -38,6 +38,8 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="PathSprite.cs" />
+    <Compile Include="Unit.cs" />
     <Compile Include="Terrain.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
