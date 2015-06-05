@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using System.Collections.Generic;
+
+using Microsoft.Xna.Framework; //Tried to avoid using this but I need the Rectangle struct. TODO: find a work around
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace SwordAndScaleTake2
 {
@@ -15,8 +16,6 @@ namespace SwordAndScaleTake2
     }
     public class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
         Terrain[,] map;
         List<Unit> blueUnits;
         List<Unit> redUnits;
@@ -72,24 +71,17 @@ namespace SwordAndScaleTake2
         List<Vector2> moveable = new List<Vector2>();
         List<PathSprite> path = new List<PathSprite>();
         GameState gameState;
+        SpriteBatch spriteBatch;
         bool highlight = false;
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferHeight = 960;  // set this value to the desired Height of your window
-            graphics.PreferredBackBufferWidth = 1536;  // set this value to the desired width of your window
-            graphics.ApplyChanges();
+            //exampleUnit = new Unit("blueArcher", "archer", 6, 9, 2, 4, 6, true);
+            //exampleUnitList.Add(exampleUnit);
+            //unitInfo = new UnitInfoPane();
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
-        protected override void Initialize()
+        protected override void Initialize() 
         {
             loadMap();
             cursorPosition = new Vector2(0, 0);
@@ -110,16 +102,16 @@ namespace SwordAndScaleTake2
             pikeRPosition = new Vector2(64 * 6, 64 * 7);
             generalBPosition = new Vector2(64 * 22, 64 * 11);
             generalRPosition = new Vector2(64 * 1, 64 * 2);
-            blueMage = new Unit("mage", 10, 8, 7, 1, 4, 5, true, mageBPosition);
-            blueSword = new Unit("swordmaster", 10, 7, 9, 2, 3, 5, true, swordBPosition);
-            blueWarrior = new Unit("warrior", 10, 9, 6, 3, 2, 4, true, warriorBPosition);
-            blueArcher = new Unit("archer", 10, 6, 9, 2, 4, 6, true, archerBPosition);
-            bluePike = new Unit("pike", 10, 7, 7, 4, 1, 4, true, pikeBPosition);
-            redMage = new Unit("mage", 10, 8, 7, 1, 4, 5, false, mageRPosition);
-            redSword = new Unit("swordmaster", 10, 7, 9, 2, 3, 5, false, swordRPosition);
-            redWarrior = new Unit("warrior", 10, 9, 6, 3, 2, 4, false, warriorRPosition);
-            redArcher = new Unit("archer", 10, 6, 9, 2, 4, 6, false, archerRPosition);
-            redPike = new Unit("pike", 10, 7, 7, 4, 1, 4, false, pikeRPosition);
+            blueMage = new Unit("blueMage","mage", 10, 8, 7, 1, 4, 5, true, mageBPosition);
+            blueSword = new Unit("blueSword","swordmaster", 10, 7, 9, 2, 3, 5, true, swordBPosition);
+            blueWarrior = new Unit("blueWarrior","warrior", 10, 9, 6, 3, 2, 4, true, warriorBPosition);
+            blueArcher = new Unit("blueArcher","archer", 10, 6, 9, 2, 4, 6, true, archerBPosition);
+            bluePike = new Unit("bluePike","pike", 10, 7, 7, 4, 1, 4, true, pikeBPosition);
+            redMage = new Unit("redMage","mage", 10, 8, 7, 1, 4, 5, false, mageRPosition);
+            redSword = new Unit("redSword","swordmaster", 10, 7, 9, 2, 3, 5, false, swordRPosition);
+            redWarrior = new Unit("redWarrior","warrior", 10, 9, 6, 3, 2, 4, false, warriorRPosition);
+            redArcher = new Unit("redArcher","archer", 10, 6, 9, 2, 4, 6, false, archerRPosition);
+            redPike = new Unit("redPike","pike", 10, 7, 7, 4, 1, 4, false, pikeRPosition);
             blueUnits.Add(blueMage);
             blueUnits.Add(blueSword);
             blueUnits.Add(blueWarrior);
@@ -133,14 +125,8 @@ namespace SwordAndScaleTake2
             gameState = GameState.BlueTurn;
             base.Initialize();
         }
-
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
-        protected override void LoadContent()
+        public void LoadContent(ContentManager content)
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             mapImage = Content.Load<Texture2D>("alphamap");
             swordImageB = Content.Load<Texture2D>("blueSword");
@@ -156,27 +142,29 @@ namespace SwordAndScaleTake2
             blank = Content.Load<Texture2D>("blanks");
             yellow = Content.Load<Texture2D>("yellow");
 
-            // TODO: use this.Content to load your game content here
+        //    foreach(Unit unit in exampleUnitList)
+        //    {
+        //        unit.LoadContent(content);
+        //        unit.clickEvent += UnitClicked;            
+        //}
+        //    exampleUnit.setPosition(4, 4);
+
+        //    unitInfo.LoadContent(content);
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
-        /// </summary>
-        protected override void UnloadContent()
+        public void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Update(GameTime gameTime)
+        public void Update()
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            exampleUnit.Update();
+            UnitInfoPane.Update();
+            if (Keyboard.GetState().IsKeyDown(Keys.B))
+                if (unitInfo.IsVisible())
+                    unitInfo.Hide();
+
             pressedKey = Keyboard.GetState();
 
             if (oldState.IsKeyUp(Keys.Left) && pressedKey.IsKeyDown(Keys.Left) && cursorPosition.X > 0)
@@ -483,16 +471,8 @@ namespace SwordAndScaleTake2
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            spriteBatch.Begin();
-
             spriteBatch.Draw(mapImage, new Rectangle(0, 0, 1536, 896), Color.White);
             if (path.Count > 0)
             {
@@ -513,14 +493,15 @@ namespace SwordAndScaleTake2
             spriteBatch.Draw(mageImageR, redMage.getPosition(), Color.White);
             spriteBatch.Draw(archerImageR, redArcher.getPosition(), Color.White);
             spriteBatch.Draw(pikeImageR, redPike.getPosition(), Color.White);
+            exampleUnit.Draw(spriteBatch);
+            unitInfo.Draw(spriteBatch);
 
-            spriteBatch.End();
-            base.Draw(gameTime);
-            //24*14
-            //64x64 tiles
-            //1536x896
         }
-
+        public void UnitClicked(string unitType, int x, int y)
+        {
+            unitInfo.setPixelPosition(exampleUnit, x + 64, y);
+            unitInfo.Show();
+        }
         public void loadMap()
         {
             Terrain square = null;
@@ -631,6 +612,6 @@ namespace SwordAndScaleTake2
 
 	return contiguous;
 
-}
+        }
     }
 }
