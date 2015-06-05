@@ -10,13 +10,13 @@ using Microsoft.Xna.Framework.Input;
 namespace SwordAndScaleTake2
 
 {
-    class GUIElement
+    class GameElement
     {
         //going to need a texture
-        private Texture2D GUITexture;
+        private Texture2D texture;
 
         //for the area
-        private Rectangle GUIRect;
+        private Rectangle rect;
 
         //for the folder that holds the content
         private string assetName;
@@ -27,12 +27,12 @@ namespace SwordAndScaleTake2
             set { assetName = value; }
         }
 
-        public delegate void ElementClicked(string element);
+        public delegate void ElementClicked(string element, int x, int y);
 
         public event ElementClicked clickEvent;
 
         //the menu itself
-        public GUIElement(string assetName)
+        public GameElement(string assetName)
         {
             this.assetName = assetName;
         }
@@ -40,34 +40,46 @@ namespace SwordAndScaleTake2
         public void LoadContent(ContentManager content)
         {
             //load a texture
-            GUITexture = content.Load<Texture2D>(assetName);
+            texture = content.Load<Texture2D>(assetName);
             //make a rectangle the size of the texture
-            GUIRect = new Rectangle(0, 0, GUITexture.Width, GUITexture.Height);
+            rect = new Rectangle(0, 0, texture.Width, texture.Height);
 
         }
 
         public void Update()
         {
-            if (GUIRect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Pressed
+            if (rect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Pressed
                 )
             {
-                clickEvent(assetName);
+                clickEvent(assetName, rect.X, rect.Y);
             }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(GUITexture, GUIRect, Color.White);
+            spriteBatch.Draw(texture, rect, Color.White);
         }
 
-        public void CenterElement(int height, int width)
+        public void DrawAtPixel(SpriteBatch spriteBatch, int x, int y)
+        {
+            Rectangle temp = rect;
+            temp.Offset(x - temp.X, y - temp.Y);
+            spriteBatch.Draw(texture, temp, Color.White);
+        }
+
+        /*public void CenterElement(int height, int width)
         {
             GUIRect = new Rectangle((width / 2) - (this.GUITexture.Width / 2), (height / 2) - (this.GUITexture.Height / 2), this.GUITexture.Width, this.GUITexture.Height);
+        }*/
+
+        public void setPixelPosition(int x, int y)
+        {
+            rect = new Rectangle(rect.X += x, rect.Y += y, rect.Width, rect.Height);
         }
 
-        public void MoveElement(int x, int y)
+        public Vector2 getPixelPosition()
         {
-            GUIRect = new Rectangle(GUIRect.X += x, GUIRect.Y += y, GUIRect.Width, GUIRect.Height);
+            return new Vector2(rect.X, rect.Y);
         }
     }
 }

@@ -17,9 +17,10 @@ namespace SwordAndScaleTake2
         enum GameState { mainMenu, generalChoice, inGame, pauseMenu, gameOver} GameState gameState; 
 
         //All the different GUIs that will be in the game
-        List<GUIElement> mainMenu = new List<GUIElement>();
-        List<GUIElement> generalChoice = new List<GUIElement>();
-        List<GUIElement> gameGUI = new List<GUIElement>();
+        List<GameElement> mainMenu = new List<GameElement>();
+        List<GameElement> generalChoice = new List<GameElement>();
+        List<GameElement> gameGUI = new List<GameElement>();
+        List<GameElement> unitInfo = new List<GameElement>();
 
         Game1 game;
         GamePreferences gamePrefs = new GamePreferences();
@@ -33,12 +34,6 @@ namespace SwordAndScaleTake2
             graphics.ApplyChanges();
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize()
         {
             this.IsMouseVisible = true;
@@ -46,17 +41,17 @@ namespace SwordAndScaleTake2
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            mainMenu.Add(new GUIElement("background"));
-            mainMenu.Add(new GUIElement("title"));
-            mainMenu.Add(new GUIElement("start"));
-            mainMenu.Add(new GUIElement("exit"));
+            mainMenu.Add(new GameElement("background"));
+            mainMenu.Add(new GameElement("title"));
+            mainMenu.Add(new GameElement("start"));
+            mainMenu.Add(new GameElement("exit"));
 
-            generalChoice.Add(new GUIElement("background-paper"));
-            generalChoice.Add(new GUIElement("blueArcherGen"));
-            generalChoice.Add(new GUIElement("blueMageGen"));
-            generalChoice.Add(new GUIElement("bluePikeGen"));
-            generalChoice.Add(new GUIElement("blueSwordGen"));
-            generalChoice.Add(new GUIElement("blueWarriorGen"));
+            generalChoice.Add(new GameElement("background-paper"));
+            generalChoice.Add(new GameElement("blueArcherGen"));
+            generalChoice.Add(new GameElement("blueMageGen"));
+            generalChoice.Add(new GameElement("bluePikeGen"));
+            generalChoice.Add(new GameElement("blueSwordGen"));
+            generalChoice.Add(new GameElement("blueWarriorGen"));
 
             //gameGUI.Add(new GUIElement("playerIcon"));
 
@@ -67,31 +62,31 @@ namespace SwordAndScaleTake2
         {
 
             // ------------Main Menu------------
-            foreach (GUIElement element in mainMenu)
+            foreach (GameElement element in mainMenu)
             {
                 element.LoadContent(Content);
                 element.clickEvent += OnClick;
             }
 
-            mainMenu.Find(x => x.AssetName == "title").MoveElement(1000, 730);
-            mainMenu.Find(x => x.AssetName == "start").MoveElement(1000, 800);
-            mainMenu.Find(x => x.AssetName == "exit") .MoveElement(1000, 840);
+            mainMenu.Find(x => x.AssetName == "title").setPixelPosition(1000, 730);
+            mainMenu.Find(x => x.AssetName == "start").setPixelPosition(1000, 800);
+            mainMenu.Find(x => x.AssetName == "exit") .setPixelPosition(1000, 840);
 
             // ------------Choosing a General------------
-            foreach (GUIElement element in generalChoice)
+            foreach (GameElement element in generalChoice)
             {
                 element.LoadContent(Content);
                 element.clickEvent += OnClick;
             }
 
-            generalChoice.Find(x => x.AssetName == "blueArcherGen") .MoveElement(500, 400);
-            generalChoice.Find(x => x.AssetName == "blueMageGen")   .MoveElement(600, 400);
-            generalChoice.Find(x => x.AssetName == "bluePikeGen")   .MoveElement(700, 400);
-            generalChoice.Find(x => x.AssetName == "blueSwordGen")  .MoveElement(800, 400);
-            generalChoice.Find(x => x.AssetName == "blueWarriorGen").MoveElement(900, 400);
+            generalChoice.Find(x => x.AssetName == "blueArcherGen") .setPixelPosition(500, 400);
+            generalChoice.Find(x => x.AssetName == "blueMageGen")   .setPixelPosition(600, 400);
+            generalChoice.Find(x => x.AssetName == "bluePikeGen")   .setPixelPosition(700, 400);
+            generalChoice.Find(x => x.AssetName == "blueSwordGen")  .setPixelPosition(800, 400);
+            generalChoice.Find(x => x.AssetName == "blueWarriorGen").setPixelPosition(900, 400);
 
             // ------------Game GUI------------
-            foreach (GUIElement element in gameGUI)
+            foreach (GameElement element in gameGUI)
             {
                 element.LoadContent(Content);
                 element.clickEvent += OnClick;
@@ -105,7 +100,7 @@ namespace SwordAndScaleTake2
                 case GameState.mainMenu:
                     //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                     //    Exit(); //TODO: Replace IsKeyDown with a rising edge trigger (prevent multipressing)
-                    foreach (GUIElement element in mainMenu)
+                    foreach (GameElement element in mainMenu)
                     {
                         element.Update();
                     }
@@ -113,7 +108,7 @@ namespace SwordAndScaleTake2
                 case GameState.generalChoice:
                     if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                         gameState = GameState.mainMenu;
-                    foreach (GUIElement element in generalChoice)
+                    foreach (GameElement element in generalChoice)
                     {
                         element.Update();
                     }
@@ -121,7 +116,7 @@ namespace SwordAndScaleTake2
                 case GameState.inGame:
                     if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                         gameState = GameState.mainMenu; //TODO: Make pauseMenu and link it here
-                    foreach (GUIElement element in gameGUI)
+                    foreach (GameElement element in gameGUI)
                     {
                         element.Update();
                     }
@@ -143,19 +138,19 @@ namespace SwordAndScaleTake2
             switch(gameState)
             {
                 case GameState.mainMenu:
-                    foreach (GUIElement elem in mainMenu)
+                    foreach (GameElement elem in mainMenu)
                     {
                         elem.Draw(spriteBatch);
                     }
                     break;
                 case GameState.generalChoice:
-                    foreach (GUIElement elem in generalChoice)
+                    foreach (GameElement elem in generalChoice)
                     {
                         elem.Draw(spriteBatch);
                     }
                     break;
                 case GameState.inGame:
-                    foreach (GUIElement elem in gameGUI)
+                    foreach (GameElement elem in gameGUI)
                     {
                         elem.Draw(spriteBatch);
                     }
@@ -171,16 +166,12 @@ namespace SwordAndScaleTake2
             base.Draw(gameTime);
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
-        /// </summary>
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
         }
 
-        public void OnClick(string button)
+        public void OnClick(string button, int x, int y)
         {
             if (button == "start")
             {
