@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
@@ -41,7 +42,7 @@ namespace SwordAndScaleTake2
         Texture2D pikeImageR;
         Texture2D blueteam;
         Texture2D redteam;
-        Song backgroundMusic;
+        SoundEffect backgroundMusic;
         Unit blueMage;
         Unit blueSword;
         Unit blueWarrior;
@@ -169,9 +170,10 @@ namespace SwordAndScaleTake2
             blank = Content.Load<Texture2D>("blanks");
             blueteam = Content.Load<Texture2D>("blueteam");
             redteam = Content.Load<Texture2D>("redteam");
-            //backgroundMusic = Content.Load<Song>("Sounds/BackTrack");
-            //MediaPlayer.Play(backgroundMusic);
-           // MediaPlayer.IsRepeating = true;
+            backgroundMusic = Content.Load<SoundEffect>("BackTrack");
+            backgroundMusic.Play();
+            SoundEffectInstance instance = backgroundMusic.CreateInstance();
+            instance.IsLooped = true;
 
             // TODO: use this.Content to load your game content here
         }
