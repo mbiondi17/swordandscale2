@@ -382,7 +382,7 @@ namespace SwordAndScaleTake2
                     {
                         if(currentUnit.getTeam()) 
                         {
-                        map[(int)currentUnit.getPosition().X/64, (int)currentUnit.getPosition().Y/64].setBlueOcc(false);
+                            map[(int)currentUnit.getPosition().X/64, (int)currentUnit.getPosition().Y/64].setBlueOcc(false);
                         }
                         if (!currentUnit.getTeam())
                         {

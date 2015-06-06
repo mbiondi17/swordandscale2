@@ -73,12 +73,12 @@ namespace SwordAndScaleTake2
 
         public void setPixelPosition(int x, int y)
         {
-            rect = new Rectangle(rect.X += x, rect.Y += y, rect.Width, rect.Height);
+            rect = new Rectangle(rect.X = x, rect.Y = y, rect.Width, rect.Height);
         }
 
         public void setPixelPosition(Vector2 position)
         {
-            rect = new Rectangle(rect.X += (int)position.X, rect.Y += (int)position.Y, rect.Width, rect.Height);
+            rect = new Rectangle(rect.X = (int)position.X, rect.Y = (int)position.Y, rect.Width, rect.Height);
         }
 
         public Vector2 getPixelPosition()
