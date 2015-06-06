@@ -83,6 +83,7 @@ namespace SwordAndScaleTake2
         GameState gameState;
         TurnState turnState;
         bool highlight = false;
+        bool methodCalled = false;
 
         public Game1()
         {
@@ -171,7 +172,7 @@ namespace SwordAndScaleTake2
             redteam = Content.Load<Texture2D>("redteam");
             //backgroundMusic = Content.Load<Song>("Sounds/BackTrack");
             //MediaPlayer.Play(backgroundMusic);
-           // MediaPlayer.IsRepeating = true;
+            //MediaPlayer.IsRepeating = true;
 
             // TODO: use this.Content to load your game content here
         }
@@ -298,6 +299,7 @@ namespace SwordAndScaleTake2
                                 currentMv--;
                             }
                              List<Vector2> moveNew = highlighter(moveable, currentUnit.getPosition());
+                             methodCalled = false;
                              moveable = moveNew;
                                 
                                 for (int i = path.Count - 1; i >= 0; i--)
@@ -685,44 +687,44 @@ namespace SwordAndScaleTake2
             }
         }
 	}
-
+    for (int i = 0; i < contiguous.Count; i++)
+    {
+        Vector2 moveItem = contiguous[i];
+        if(moveItem.X == 17*64 && moveItem.Y == 10*64 && !methodCalled)
+        {
+            methodCalled = true;
+            contiguous = reHighlight(origin, moveItem, 2 ,contiguous);
+        }
+    }
 
 	return contiguous;
 
 }
 
-       public Vector2 reHighlight(Vector2 playerOrigin, Vector2 origin, int Mvmt)
+       public List<Vector2> reHighlight(Vector2 playerOrigin, Vector2 origin, int Mvmt, List<Vector2> moveable)
       {
           highlight = true;
-          Vector2 bridge;
+          List<Vector2> bridge = new List<Vector2>();
           for (int i = 1; i < Mvmt + 1; i++)
           {
               if (cursorPosition.X + (64 * i) < 24 * 64)
               {
                   Vector2 pathCor1 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y);
-                  PathSprite path1 = new PathSprite(pathCor1, this);
-                  path.Add(path1);
                   moveable.Add(pathCor1);
               }
               if (cursorPosition.X - (64 * i) >= 0)
               {
                   Vector2 pathCor2 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y);
-                  PathSprite path2 = new PathSprite(pathCor2, this);
-                  path.Add(path2);
                   moveable.Add(pathCor2);
               }
               if (cursorPosition.Y + (64 * i) < 14 * 64)
               {
                   Vector2 pathCor3 = new Vector2(cursorPosition.X, cursorPosition.Y + (64 * i));
-                  PathSprite path3 = new PathSprite(pathCor3, this);
-                  path.Add(path3);
                   moveable.Add(pathCor3);
               }
               if (cursorPosition.Y - (64 * i) >= 0)
               {
                   Vector2 pathCor4 = new Vector2(cursorPosition.X, cursorPosition.Y - (64 * i));
-                  PathSprite path4 = new PathSprite(pathCor4, this);
-                  path.Add(path4);
                   moveable.Add(pathCor4);
               }
 
@@ -759,6 +761,7 @@ namespace SwordAndScaleTake2
               }
               Mvmt--;
           }
+          bridge = highlighter(moveable, origin);
           return bridge;
       }
     }
