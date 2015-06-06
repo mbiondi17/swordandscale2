@@ -13,9 +13,15 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin BackTrack.wav
+#begin Courier New.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Courier New.spritefont
+
+#begin Sounds/BackTrack.wav
 /importer:WavImporter
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:BackTrack.wav
+/build:Sounds/BackTrack.wav
 

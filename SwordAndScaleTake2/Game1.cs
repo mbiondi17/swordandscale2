@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
 
@@ -20,26 +21,14 @@ namespace SwordAndScaleTake2
         RedTurn,
         BlueTurn,
     }
-    public class Game1 : Game
+    public class Game1
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
         Terrain[,] map;
         List<Unit> blueUnits;
         List<Unit> redUnits;
         Texture2D blank;
         Texture2D yellow;
         Texture2D mapImage;
-        Texture2D swordImageB;
-        Texture2D mageImageB;
-        Texture2D warriorImageB;
-        Texture2D archerImageB;
-        Texture2D pikeImageB;
-        Texture2D swordImageR;
-        Texture2D mageImageR;
-        Texture2D warriorImageR;
-        Texture2D archerImageR;
-        Texture2D pikeImageR;
         Texture2D blueteam;
         Texture2D redteam;
         //Song backgroundMusic;
@@ -65,16 +54,6 @@ namespace SwordAndScaleTake2
         Vector2 pikeRPosition;
         Vector2 generalBPosition;
         Vector2 generalRPosition;
-        Unit generalMageB;
-        Unit generalSwordB;
-        Unit generalWarriorB;
-        Unit generalArcherB;
-        Unit generalPikeB;
-        Unit generalMageR;
-        Unit generalSwordR;
-        Unit generalWarriorR;
-        Unit generalArcherR;
-        Unit generalPikeR;
         Unit currentUnit;
         Vector2 cursorPosition;
         KeyboardState pressedKey;
@@ -84,25 +63,14 @@ namespace SwordAndScaleTake2
         GameState gameState;
         TurnState turnState;
         bool highlight = false;
+        UnitInfoPane unitInfo;
+        bool methodCalled = false;
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferHeight = 1024;  // set this value to the desired Height of your window
-            graphics.PreferredBackBufferWidth = 1536;  // set this value to the desired width of your window
-            graphics.IsFullScreen = true;
-            graphics.ApplyChanges();
-        }
-
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
-        protected override void Initialize()
-        {
+            //exampleUnit = new Unit("blueArcher", "archer", 6, 9, 2, 4, 6, true);
+            //exampleUnitList.Add(exampleUnit);
+            //unitInfo = new UnitInfoPane();
             loadMap();
             cursorPosition = new Vector2(0, 0);
             blueUnits = new List<Unit>();
@@ -122,16 +90,16 @@ namespace SwordAndScaleTake2
             pikeRPosition = new Vector2(64 * 6, 64 * 7);
             generalBPosition = new Vector2(64 * 22, 64 * 11);
             generalRPosition = new Vector2(64 * 1, 64 * 2);
-            blueMage = new Unit("mage", 10, 8, 7, 1, 4, 5, true, mageBPosition);
-            blueSword = new Unit("swordmaster", 10, 7, 9, 2, 3, 5, true, swordBPosition);
-            blueWarrior = new Unit("warrior", 10, 9, 6, 3, 2, 4, true, warriorBPosition);
-            blueArcher = new Unit("archer", 10, 6, 9, 2, 4, 6, true, archerBPosition);
-            bluePike = new Unit("pike", 10, 7, 7, 4, 1, 4, true, pikeBPosition);
-            redMage = new Unit("mage", 10, 8, 7, 1, 4, 5, false, mageRPosition);
-            redSword = new Unit("swordmaster", 10, 7, 9, 2, 3, 5, false, swordRPosition);
-            redWarrior = new Unit("warrior", 10, 9, 6, 3, 2, 4, false, warriorRPosition);
-            redArcher = new Unit("archer", 10, 6, 9, 2, 4, 6, false, archerRPosition);
-            redPike = new Unit("pike", 10, 7, 7, 4, 1, 4, false, pikeRPosition);
+            blueMage = new Unit("blueMage", "mage", 10, 8, 7, 1, 4, 5, true, mageBPosition);
+            blueSword = new Unit("blueSword", "swordmaster", 10, 7, 9, 2, 3, 5, true, swordBPosition);
+            blueWarrior = new Unit("blueWarrior", "warrior", 10, 9, 6, 3, 2, 4, true, warriorBPosition);
+            blueArcher = new Unit("blueArcher", "archer", 10, 6, 9, 2, 4, 6, true, archerBPosition);
+            bluePike = new Unit("bluePike", "pike", 10, 7, 7, 4, 1, 4, true, pikeBPosition);
+            redMage = new Unit("redMage", "mage", 10, 8, 7, 1, 4, 5, false, mageRPosition);
+            redSword = new Unit("redSword", "swordmaster", 10, 7, 9, 2, 3, 5, false, swordRPosition);
+            redWarrior = new Unit("redWarrior", "warrior", 10, 9, 6, 3, 2, 4, false, warriorRPosition);
+            redArcher = new Unit("redArcher", "archer", 10, 6, 9, 2, 4, 6, false, archerRPosition);
+            redPike = new Unit("redPike", "pike", 10, 7, 7, 4, 1, 4, false, pikeRPosition);
             blueUnits.Add(blueMage);
             blueUnits.Add(blueSword);
             blueUnits.Add(blueWarrior);
@@ -142,59 +110,62 @@ namespace SwordAndScaleTake2
             redUnits.Add(redWarrior);
             redUnits.Add(redArcher);
             redUnits.Add(redPike);
+            unitInfo = new UnitInfoPane();
             gameState = GameState.BlueTurn;
             turnState = TurnState.BlueTurn;
             cursorPosition = swordBPosition;
-            base.Initialize();
+            
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
-        protected override void LoadContent()
+        public void LoadContent(ContentManager content)
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            mapImage = Content.Load<Texture2D>("betamap");
-            swordImageB = Content.Load<Texture2D>("blueSword");
-            warriorImageB = Content.Load<Texture2D>("blueWarrior");
-            mageImageB = Content.Load<Texture2D>("blueMage");
-            archerImageB = Content.Load<Texture2D>("blueArcher");
-            pikeImageB = Content.Load<Texture2D>("bluePike");
-            swordImageR = Content.Load<Texture2D>("redSword");
-            warriorImageR = Content.Load<Texture2D>("redWarrior");
-            mageImageR = Content.Load<Texture2D>("redMage");
-            archerImageR = Content.Load<Texture2D>("redArcher");
-            pikeImageR = Content.Load<Texture2D>("redPike");
-            blank = Content.Load<Texture2D>("blanks");
-            blueteam = Content.Load<Texture2D>("blueteam");
-            redteam = Content.Load<Texture2D>("redteam");
-            //backgroundMusic = Content.Load<Song>("music/BackTrack");
+            mapImage = content.Load<Texture2D>("betamap");
+            blank    = content.Load<Texture2D>("blanks");
+            yellow   = content.Load<Texture2D>("yellow");
+
+            foreach (Unit unit in blueUnits)
+            {
+                unit.LoadContent(content);
+                unit.unitClickEvent += UnitClicked;
+            }
+
+            foreach (Unit unit in redUnits)
+            {
+                unit.LoadContent(content);
+                unit.unitClickEvent += UnitClicked;
+            }
+
+            blueteam = content.Load<Texture2D>("blueteam");
+            redteam = content.Load<Texture2D>("redteam");
+            //backgroundMusic = Content.Load<Song>("Sounds/BackTrack");
             //MediaPlayer.Play(backgroundMusic);
             //MediaPlayer.IsRepeating = true;
+            //space.LoadContent();
 
-            // TODO: use this.Content to load your game content here
+            unitInfo.LoadContent(content);
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
-        /// </summary>
-        protected override void UnloadContent()
+        public void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Update(GameTime gameTime)
+        public void Update()
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            //exampleUnit.Update();
+            foreach (Unit unit in blueUnits)
+            {
+                unit.Update();
+            }
+            foreach (Unit unit in redUnits)
+        {
+                unit.Update();
+            }
+            unitInfo.Update();
+            if (Keyboard.GetState().IsKeyDown(Keys.B))
+                if (unitInfo.IsVisible())
+                    unitInfo.Hide();
+
             pressedKey = Keyboard.GetState();
             if (oldState.IsKeyUp(Keys.Enter) && pressedKey.IsKeyDown(Keys.Enter))
             {
@@ -299,6 +270,7 @@ namespace SwordAndScaleTake2
                                 currentMv--;
                             }
                              List<Vector2> moveNew = highlighter(moveable, currentUnit.getPosition());
+                             methodCalled = false;
                              moveable = moveNew;
                                 
                                 for (int i = path.Count - 1; i >= 0; i--)
@@ -529,29 +501,29 @@ namespace SwordAndScaleTake2
             }
 
             oldState = pressedKey;  // set the new state as the old state for next time 
-           // Console.WriteLine(gameState);
-            base.Update(gameTime);
+            //Console.WriteLine(gameState);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            spriteBatch.Begin();
-
             spriteBatch.Draw(mapImage, new Rectangle(0, 0, 1536, 896), Color.White);
             if (path.Count > 0)
             {
                 foreach (PathSprite space in path)
                 {
-                    space.LoadContent();
-                    space.Draw(spriteBatch);
+                    space.Draw(spriteBatch, blank);
                 }
             }
+            spriteBatch.Draw(yellow, cursorPosition, Color.White);
+            foreach(Unit unit in blueUnits)
+            {
+                unit.Draw(spriteBatch);
+                }
+            foreach (Unit unit in redUnits)
+            {
+                unit.Draw(spriteBatch);
+            }
+            
             if (turnState == TurnState.RedTurn)
             {
                 spriteBatch.Draw(redteam, cursorPosition, Color.White);
@@ -560,6 +532,7 @@ namespace SwordAndScaleTake2
             {
                 spriteBatch.Draw(blueteam, cursorPosition, Color.White);
             }
+            /*
             spriteBatch.Draw(swordImageB, blueSword.getPosition(), Color.White);
             spriteBatch.Draw(warriorImageB, blueWarrior.getPosition(), Color.White);
             spriteBatch.Draw(mageImageB, blueMage.getPosition(), Color.White);
@@ -570,12 +543,16 @@ namespace SwordAndScaleTake2
             spriteBatch.Draw(mageImageR, redMage.getPosition(), Color.White);
             spriteBatch.Draw(archerImageR, redArcher.getPosition(), Color.White);
             spriteBatch.Draw(pikeImageR, redPike.getPosition(), Color.White);
+            */
+            //exampleUnit.Draw(spriteBatch);
+            unitInfo.Draw(spriteBatch);
 
-            spriteBatch.End();
-            base.Draw(gameTime);
-            //24*14
-            //64x64 tiles
-            //1536x896
+        }
+
+        public void UnitClicked(Unit unit, int x, int y)
+        {
+            unitInfo.setPixelPosition(unit, x + 64, y);
+            unitInfo.Show();
         }
 
         public void loadMap()
@@ -684,12 +661,84 @@ namespace SwordAndScaleTake2
                     }
                 }
             }
+				}
+			}
+    for (int i = 0; i < contiguous.Count; i++)
+    {
+        Vector2 moveItem = contiguous[i];
+        if(moveItem.X == 17*64 && moveItem.Y == 10*64 && !methodCalled)
+        {
+            methodCalled = true;
+            contiguous = reHighlight(origin, moveItem, 2 ,contiguous);
         }
 	}
 
-
 	return contiguous;
 
+}
+
+       public List<Vector2> reHighlight(Vector2 playerOrigin, Vector2 origin, int Mvmt, List<Vector2> moveable)
+      {
+          highlight = true;
+          List<Vector2> bridge = new List<Vector2>();
+          for (int i = 1; i < Mvmt + 1; i++)
+          {
+              if (cursorPosition.X + (64 * i) < 24 * 64)
+              {
+                  Vector2 pathCor1 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y);
+                  moveable.Add(pathCor1);
+              }
+              if (cursorPosition.X - (64 * i) >= 0)
+              {
+                  Vector2 pathCor2 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y);
+                  moveable.Add(pathCor2);
+              }
+              if (cursorPosition.Y + (64 * i) < 14 * 64)
+              {
+                  Vector2 pathCor3 = new Vector2(cursorPosition.X, cursorPosition.Y + (64 * i));
+                  moveable.Add(pathCor3);
+              }
+              if (cursorPosition.Y - (64 * i) >= 0)
+              {
+                  Vector2 pathCor4 = new Vector2(cursorPosition.X, cursorPosition.Y - (64 * i));
+                  moveable.Add(pathCor4);
+              }
+
+              for (int j = 1; j < Mvmt; j++)
+              {
+                  if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y + (64 * j) < 14 * 64)
+                  {
+                      Vector2 pathCor11 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y + (64 * j));
+                      PathSprite path11 = new PathSprite(pathCor11, this);
+                      path.Add(path11);
+                      moveable.Add(pathCor11);
+                  }
+                  if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y - (64 * j) >= 0)
+                  {
+                      Vector2 pathCor12 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y - (64 * j));
+                      PathSprite path12 = new PathSprite(pathCor12, this);
+                      path.Add(path12);
+                      moveable.Add(pathCor12);
+                  }
+                  if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y + (64 * j) < 14 * 64)
+                  {
+                      Vector2 pathCor21 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y + (64 * j));
+                      PathSprite path21 = new PathSprite(pathCor21, this);
+                      path.Add(path21);
+                      moveable.Add(pathCor21);
+                  }
+                  if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y - (64 * j) >= 0)
+                  {
+                      Vector2 pathCor22 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y - (64 * j));
+                      PathSprite path22 = new PathSprite(pathCor22, this);
+                      path.Add(path22);
+                      moveable.Add(pathCor22);
+                  }
+              }
+              Mvmt--;
+          }
+          bridge = highlighter(moveable, origin);
+          return bridge;
 }
     }
 }
