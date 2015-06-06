@@ -11,7 +11,7 @@ namespace SwordAndScaleTake2
     class UnitInfoPane
     {
         Texture2D background;
-        SpriteFont courierNew;
+        SpriteFont courierNew; //doesn't support unicode
         Unit unit;
         int x, y;
         bool visible;
@@ -43,7 +43,7 @@ namespace SwordAndScaleTake2
             {
                 spriteBatch.Draw(background, new Rectangle(x, y, 320, 320), Color.White);
                 unit.DrawAtPixel(spriteBatch, x + 30, y + 5);
-                spriteBatch.DrawString(courierNew,                     unit.getType(),   new Vector2(x + 124, y + 18), Color.Black);
+                spriteBatch.DrawString(courierNew,                     unit.AssetName,   new Vector2(x + 124, y + 18), Color.Black);
                 spriteBatch.DrawString(courierNew, "Health: "        + unit.getHealth(), new Vector2(x + 30, y + 74), Color.Black);
                 spriteBatch.DrawString(courierNew, "Strength: "      + unit.getStr(),    new Vector2(x + 30, y + 114), Color.Black);
                 spriteBatch.DrawString(courierNew, "Skill: "         + unit.getSkill(),  new Vector2(x + 30, y + 154),  Color.Black);

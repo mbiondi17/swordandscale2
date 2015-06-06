@@ -171,7 +171,7 @@ namespace SwordAndScaleTake2
             // TODO: Unload any non ContentManager content here
         }
 
-        public void OnClick(string button, int x, int y)
+        public void OnClick(string button)
         {
             if (button == "start")
             {

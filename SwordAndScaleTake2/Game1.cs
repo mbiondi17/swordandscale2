@@ -14,7 +14,7 @@ namespace SwordAndScaleTake2
         BlueTurn,
         Waiting
     }
-    public class Game1 : Game
+    public class Game1
     {
         Terrain[,] map;
         List<Unit> blueUnits;
@@ -73,16 +73,13 @@ namespace SwordAndScaleTake2
         GameState gameState;
         SpriteBatch spriteBatch;
         bool highlight = false;
+        UnitInfoPane unitInfo;
 
         public Game1()
         {
             //exampleUnit = new Unit("blueArcher", "archer", 6, 9, 2, 4, 6, true);
             //exampleUnitList.Add(exampleUnit);
             //unitInfo = new UnitInfoPane();
-        }
-
-        protected override void Initialize() 
-        {
             loadMap();
             cursorPosition = new Vector2(0, 0);
             blueUnits = new List<Unit>();
@@ -102,16 +99,16 @@ namespace SwordAndScaleTake2
             pikeRPosition = new Vector2(64 * 6, 64 * 7);
             generalBPosition = new Vector2(64 * 22, 64 * 11);
             generalRPosition = new Vector2(64 * 1, 64 * 2);
-            blueMage = new Unit("blueMage","mage", 10, 8, 7, 1, 4, 5, true, mageBPosition);
-            blueSword = new Unit("blueSword","swordmaster", 10, 7, 9, 2, 3, 5, true, swordBPosition);
-            blueWarrior = new Unit("blueWarrior","warrior", 10, 9, 6, 3, 2, 4, true, warriorBPosition);
-            blueArcher = new Unit("blueArcher","archer", 10, 6, 9, 2, 4, 6, true, archerBPosition);
-            bluePike = new Unit("bluePike","pike", 10, 7, 7, 4, 1, 4, true, pikeBPosition);
-            redMage = new Unit("redMage","mage", 10, 8, 7, 1, 4, 5, false, mageRPosition);
-            redSword = new Unit("redSword","swordmaster", 10, 7, 9, 2, 3, 5, false, swordRPosition);
-            redWarrior = new Unit("redWarrior","warrior", 10, 9, 6, 3, 2, 4, false, warriorRPosition);
-            redArcher = new Unit("redArcher","archer", 10, 6, 9, 2, 4, 6, false, archerRPosition);
-            redPike = new Unit("redPike","pike", 10, 7, 7, 4, 1, 4, false, pikeRPosition);
+            blueMage = new Unit("blueMage", "mage", 10, 8, 7, 1, 4, 5, true, mageBPosition);
+            blueSword = new Unit("blueSword", "swordmaster", 10, 7, 9, 2, 3, 5, true, swordBPosition);
+            blueWarrior = new Unit("blueWarrior", "warrior", 10, 9, 6, 3, 2, 4, true, warriorBPosition);
+            blueArcher = new Unit("blueArcher", "archer", 10, 6, 9, 2, 4, 6, true, archerBPosition);
+            bluePike = new Unit("bluePike", "pike", 10, 7, 7, 4, 1, 4, true, pikeBPosition);
+            redMage = new Unit("redMage", "mage", 10, 8, 7, 1, 4, 5, false, mageRPosition);
+            redSword = new Unit("redSword", "swordmaster", 10, 7, 9, 2, 3, 5, false, swordRPosition);
+            redWarrior = new Unit("redWarrior", "warrior", 10, 9, 6, 3, 2, 4, false, warriorRPosition);
+            redArcher = new Unit("redArcher", "archer", 10, 6, 9, 2, 4, 6, false, archerRPosition);
+            redPike = new Unit("redPike", "pike", 10, 7, 7, 4, 1, 4, false, pikeRPosition);
             blueUnits.Add(blueMage);
             blueUnits.Add(blueSword);
             blueUnits.Add(blueWarrior);
@@ -122,34 +119,31 @@ namespace SwordAndScaleTake2
             redUnits.Add(redWarrior);
             redUnits.Add(redArcher);
             redUnits.Add(redPike);
+            unitInfo = new UnitInfoPane();
             gameState = GameState.BlueTurn;
-            base.Initialize();
         }
+
         public void LoadContent(ContentManager content)
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            mapImage = Content.Load<Texture2D>("alphamap");
-            swordImageB = Content.Load<Texture2D>("blueSword");
-            warriorImageB = Content.Load<Texture2D>("blueWarrior");
-            mageImageB = Content.Load<Texture2D>("blueMage");
-            archerImageB = Content.Load<Texture2D>("blueArcher");
-            pikeImageB = Content.Load<Texture2D>("bluePike");
-            swordImageR = Content.Load<Texture2D>("redSword");
-            warriorImageR = Content.Load<Texture2D>("redWarrior");
-            mageImageR = Content.Load<Texture2D>("redMage");
-            archerImageR = Content.Load<Texture2D>("redArcher");
-            pikeImageR = Content.Load<Texture2D>("redPike");
-            blank = Content.Load<Texture2D>("blanks");
-            yellow = Content.Load<Texture2D>("yellow");
+            mapImage = content.Load<Texture2D>("alphamap");
+            blank    = content.Load<Texture2D>("blanks");
+            yellow   = content.Load<Texture2D>("yellow");
 
-        //    foreach(Unit unit in exampleUnitList)
-        //    {
-        //        unit.LoadContent(content);
-        //        unit.clickEvent += UnitClicked;            
-        //}
-        //    exampleUnit.setPosition(4, 4);
+            foreach (Unit unit in blueUnits)
+            {
+                unit.LoadContent(content);
+                unit.unitClickEvent += UnitClicked;
+            }
 
-        //    unitInfo.LoadContent(content);
+            foreach (Unit unit in redUnits)
+            {
+                unit.LoadContent(content);
+                unit.unitClickEvent += UnitClicked;
+            }
+
+            //space.LoadContent();
+
+            unitInfo.LoadContent(content);
         }
 
         public void UnloadContent()
@@ -159,8 +153,16 @@ namespace SwordAndScaleTake2
 
         public void Update()
         {
-            exampleUnit.Update();
-            UnitInfoPane.Update();
+            //exampleUnit.Update();
+            foreach (Unit unit in blueUnits)
+            {
+                unit.Update();
+            }
+            foreach (Unit unit in redUnits)
+            {
+                unit.Update();
+            }
+            unitInfo.Update();
             if (Keyboard.GetState().IsKeyDown(Keys.B))
                 if (unitInfo.IsVisible())
                     unitInfo.Hide();
@@ -467,8 +469,7 @@ namespace SwordAndScaleTake2
             }
 
             oldState = pressedKey;  // set the new state as the old state for next time 
-            Console.WriteLine(gameState);
-            base.Update(gameTime);
+            //Console.WriteLine(gameState);
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -478,11 +479,19 @@ namespace SwordAndScaleTake2
             {
                 foreach (PathSprite space in path)
                 {
-                    space.LoadContent();
-                    space.Draw(spriteBatch);
+                    space.Draw(spriteBatch, blank);
                 }
             }
             spriteBatch.Draw(yellow, cursorPosition, Color.White);
+            foreach(Unit unit in blueUnits)
+            {
+                unit.Draw(spriteBatch);
+            }
+            foreach (Unit unit in redUnits)
+            {
+                unit.Draw(spriteBatch);
+            }
+            /*
             spriteBatch.Draw(swordImageB, blueSword.getPosition(), Color.White);
             spriteBatch.Draw(warriorImageB, blueWarrior.getPosition(), Color.White);
             spriteBatch.Draw(mageImageB, blueMage.getPosition(), Color.White);
@@ -493,15 +502,18 @@ namespace SwordAndScaleTake2
             spriteBatch.Draw(mageImageR, redMage.getPosition(), Color.White);
             spriteBatch.Draw(archerImageR, redArcher.getPosition(), Color.White);
             spriteBatch.Draw(pikeImageR, redPike.getPosition(), Color.White);
-            exampleUnit.Draw(spriteBatch);
+            */
+            //exampleUnit.Draw(spriteBatch);
             unitInfo.Draw(spriteBatch);
 
         }
-        public void UnitClicked(string unitType, int x, int y)
+
+        public void UnitClicked(Unit unit, int x, int y)
         {
-            unitInfo.setPixelPosition(exampleUnit, x + 64, y);
+            unitInfo.setPixelPosition(unit, x + 64, y);
             unitInfo.Show();
         }
+
         public void loadMap()
         {
             Terrain square = null;

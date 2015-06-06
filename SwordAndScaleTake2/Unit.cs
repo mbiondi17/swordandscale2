@@ -1,4 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +8,7 @@ using System.Text;
 
 namespace SwordAndScaleTake2
 {
-    public class Unit
+    public class Unit : GameElement
     {
         string type;
         int health;
@@ -22,7 +24,11 @@ namespace SwordAndScaleTake2
         bool hasActed;
         Vector2 position;
 
-        public Unit(string general)
+        public delegate void UnitClicked(Unit unit, int x, int y);
+
+        public event UnitClicked unitClickEvent;
+
+        public Unit(string general) : base(general)
         {
             Vector2 pos = new Vector2(22 * 64, 11 * 64);
             switch (general)
@@ -102,7 +108,7 @@ namespace SwordAndScaleTake2
             }
         }
 
-        public Unit(string textureName, string type, int health, int str, int skill, int def, int mDef, int mvmt, bool team, Vector2 position)
+        public Unit(string textureName, string type, int health, int str, int skill, int def, int mDef, int mvmt, bool team, Vector2 position) : base(textureName)
         {
             this.type = type;
             this.health = health;
@@ -119,13 +125,18 @@ namespace SwordAndScaleTake2
             this.hasActed = false;
         }
 
-        public Unit(string textureName)
-           : base(textureName)
+        public override void LoadContent(ContentManager content)
         {
-            dead = false;
-            usable = true;
-            hasMoved = false;
-            hasActed = false;
+            base.LoadContent(content);
+            setPixelPosition(position);
+        }
+
+        public override void Update()
+        {
+            if (containsPixel(Mouse.GetState().X, Mouse.GetState().Y) && Mouse.GetState().LeftButton == ButtonState.Pressed)
+            {
+                unitClickEvent(this, (int)Mouse.GetState().X, (int)Mouse.GetState().Y);
+            }
         }
 
         public int getHealth()
@@ -206,6 +217,7 @@ namespace SwordAndScaleTake2
         public void setPosition(Vector2 position)
         {
             this.position = position;
+            this.setPixelPosition(position);
         }
 
         public void attack(Unit enemy)

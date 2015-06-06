@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 namespace SwordAndScaleTake2
 
 {
-    class GameElement
+    public class GameElement
     {
         //going to need a texture
         private Texture2D texture;
@@ -27,7 +27,7 @@ namespace SwordAndScaleTake2
             set { assetName = value; }
         }
 
-        public delegate void ElementClicked(string element, int x, int y);
+        public delegate void ElementClicked(string element);
 
         public event ElementClicked clickEvent;
 
@@ -37,7 +37,7 @@ namespace SwordAndScaleTake2
             this.assetName = assetName;
         }
 
-        public void LoadContent(ContentManager content)
+        public virtual void LoadContent(ContentManager content)
         {
             //load a texture
             texture = content.Load<Texture2D>(assetName);
@@ -46,12 +46,11 @@ namespace SwordAndScaleTake2
 
         }
 
-        public void Update()
+        public virtual void Update()
         {
-            if (rect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Pressed
-                )
+            if (containsPixel(Mouse.GetState().X, Mouse.GetState().Y) && Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
-                clickEvent(assetName, rect.X, rect.Y);
+                clickEvent(assetName);
             }
         }
 
@@ -77,9 +76,19 @@ namespace SwordAndScaleTake2
             rect = new Rectangle(rect.X += x, rect.Y += y, rect.Width, rect.Height);
         }
 
+        public void setPixelPosition(Vector2 position)
+        {
+            rect = new Rectangle(rect.X += (int)position.X, rect.Y += (int)position.Y, rect.Width, rect.Height);
+        }
+
         public Vector2 getPixelPosition()
         {
             return new Vector2(rect.X, rect.Y);
+        }
+
+        public bool containsPixel(int x, int y)
+        {
+            return rect.Contains(x, y);
         }
     }
 }
