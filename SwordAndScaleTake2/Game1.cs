@@ -155,7 +155,7 @@ namespace SwordAndScaleTake2
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            mapImage = Content.Load<Texture2D>("alphamap");
+            mapImage = Content.Load<Texture2D>("betamapgrid");
             swordImageB = Content.Load<Texture2D>("blueSword");
             warriorImageB = Content.Load<Texture2D>("blueWarrior");
             mageImageB = Content.Load<Texture2D>("blueMage");
