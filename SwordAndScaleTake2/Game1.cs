@@ -14,7 +14,8 @@ namespace SwordAndScaleTake2
         Moving,
         RedTurn,
         BlueTurn,
-        Waiting
+        Waiting,
+        Interacting
     }
     enum TurnState
     {
@@ -192,7 +193,7 @@ namespace SwordAndScaleTake2
             }
             if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space))
             {
-                if (gameState == GameState.BlueTurn)
+                if (turnState == TurnState.BlueTurn)
                 {
                     for (int v = 0; v < blueUnits.Count; v++)
                     {
@@ -203,99 +204,11 @@ namespace SwordAndScaleTake2
                             {
                                 break;
                             }
-                            int currentMv = currentUnit.getMvmt();
-                            highlight = true;
-                            for (int i = 1; i < currentUnit.getMvmt() + 1; i++)
-                            {
-                                if (cursorPosition.X + (64 * i) < 24 * 64)
-                                {
-                                    Vector2 pathCor1 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y);
-                                    PathSprite path1 = new PathSprite(pathCor1, this);
-                                    path.Add(path1);
-                                    moveable.Add(pathCor1);
-                                }
-                                if (cursorPosition.X - (64 * i) >= 0)
-                                {
-                                    Vector2 pathCor2 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y);
-                                    PathSprite path2 = new PathSprite(pathCor2, this);
-                                    path.Add(path2);
-                                    moveable.Add(pathCor2);
-                                }
-                                if (cursorPosition.Y + (64 * i) < 14 * 64)
-                                {
-                                    Vector2 pathCor3 = new Vector2(cursorPosition.X, cursorPosition.Y + (64 * i));
-                                    PathSprite path3 = new PathSprite(pathCor3, this);
-                                    path.Add(path3);
-                                    moveable.Add(pathCor3);
-                                }
-                                if (cursorPosition.Y - (64 * i) >= 0)
-                                {
-                                    Vector2 pathCor4 = new Vector2(cursorPosition.X, cursorPosition.Y - (64 * i));
-                                    PathSprite path4 = new PathSprite(pathCor4, this);
-                                    path.Add(path4);
-                                    moveable.Add(pathCor4);
-                                }
-
-                                for (int j = 1; j < currentMv; j++)
-                                {
-                                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y + (64 * j) < 14 * 64)
-                                    {
-                                        Vector2 pathCor11 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y + (64 * j));
-                                        PathSprite path11 = new PathSprite(pathCor11, this);
-                                        path.Add(path11);
-                                        moveable.Add(pathCor11);
-                                    }
-                                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y - (64 * j) >= 0)
-                                    {
-                                        Vector2 pathCor12 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y - (64 * j));
-                                        PathSprite path12 = new PathSprite(pathCor12, this);
-                                        path.Add(path12);
-                                        moveable.Add(pathCor12);
-                                    }
-                                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y + (64 * j) < 14 * 64)
-                                    {
-                                        Vector2 pathCor21 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y + (64 * j));
-                                        PathSprite path21 = new PathSprite(pathCor21, this);
-                                        path.Add(path21);
-                                        moveable.Add(pathCor21);
-                                    }
-                                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y - (64 * j) >= 0)
-                                    {
-                                        Vector2 pathCor22 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y - (64 * j));
-                                        PathSprite path22 = new PathSprite(pathCor22, this);
-                                        path.Add(path22);
-                                        moveable.Add(pathCor22);
-                                    }
-                                }
-                                currentMv--;
-                            }
-                             List<Vector2> moveNew = highlighter(moveable, currentUnit.getPosition());
-                             methodCalled = false;
-                             moveable = moveNew;
-                                
-                                for (int i = path.Count - 1; i >= 0; i--)
-                                {
-                                    bool correct = false;
-                                    PathSprite sprite = path[i];
-                                foreach (Vector2 item in moveable)
-                                {
-                                    if (sprite.getPosition() == item)
-                                    {
-                                        correct = true;
-                                        break;
-                                    }
-                                }
-                                if (!correct)
-                                {
-                                    path.RemoveAt(i);
-                                }
-                            }
-                            
                         }
-
+                        gameState = GameState.Moving;
                     }
                 }
-                if (gameState == GameState.RedTurn)
+                if (turnState == TurnState.RedTurn)
                 {
                     for (int k = 0; k < redUnits.Count; k++)
                     {
@@ -306,97 +219,100 @@ namespace SwordAndScaleTake2
                             {
                                 break;
                             }
-                            int currentMv = currentUnit.getMvmt();
-                            highlight = true;
-                            for (int i = 1; i < currentUnit.getMvmt() + 1; i++)
-                            {
-                                if (cursorPosition.X + (64 * i) < 24 * 64)
-                                {
-                                    Vector2 pathCor1 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y);
-                                    PathSprite path1 = new PathSprite(pathCor1, this);
-                                    path.Add(path1);
-                                    moveable.Add(pathCor1);
-                                }
-                                if (cursorPosition.X - (64 * i) >= 0)
-                                {
-                                    Vector2 pathCor2 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y);
-                                    PathSprite path2 = new PathSprite(pathCor2, this);
-                                    path.Add(path2);
-                                    moveable.Add(pathCor2);
-                                }
-                                if (cursorPosition.Y + (64 * i) < 14 * 64)
-                                {
-                                    Vector2 pathCor3 = new Vector2(cursorPosition.X, cursorPosition.Y + (64 * i));
-                                    PathSprite path3 = new PathSprite(pathCor3, this);
-                                    path.Add(path3);
-                                    moveable.Add(pathCor3);
-                                }
-                                if (cursorPosition.Y - (64 * i) >= 0)
-                                {
-                                    Vector2 pathCor4 = new Vector2(cursorPosition.X, cursorPosition.Y - (64 * i));
-                                    PathSprite path4 = new PathSprite(pathCor4, this);
-                                    path.Add(path4);
-                                    moveable.Add(pathCor4);
-                                }
-
-                                for (int j = 1; j < currentMv; j++)
-                                {
-                                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y + (64 * j) < 14 * 64)
-                                    {
-                                        Vector2 pathCor11 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y + (64 * j));
-                                        PathSprite path11 = new PathSprite(pathCor11, this);
-                                        path.Add(path11);
-                                        moveable.Add(pathCor11);
-                                    }
-                                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y - (64 * j) >= 0)
-                                    {
-                                        Vector2 pathCor12 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y - (64 * j));
-                                        PathSprite path12 = new PathSprite(pathCor12, this);
-                                        path.Add(path12);
-                                        moveable.Add(pathCor12);
-                                    }
-                                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y + (64 * j) < 14 * 64)
-                                    {
-                                        Vector2 pathCor21 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y + (64 * j));
-                                        PathSprite path21 = new PathSprite(pathCor21, this);
-                                        path.Add(path21);
-                                        moveable.Add(pathCor21);
-                                    }
-                                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y - (64 * j) >= 0)
-                                    {
-                                        Vector2 pathCor22 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y - (64 * j));
-                                        PathSprite path22 = new PathSprite(pathCor22, this);
-                                        path.Add(path22);
-                                        moveable.Add(pathCor22);
-                                    }
-                                }
-                                currentMv--;
-                            }
-                            List<Vector2> moveNew = highlighter(moveable, currentUnit.getPosition());
-                            moveable = moveNew;
-                            for (int i = path.Count - 1; i >= 0; i--)
-                            {
-                                bool correct = false;
-                                PathSprite sprite = path[i];
-                                foreach (Vector2 item in moveable)
-                                {
-                                    if (sprite.getPosition() == item)
-                                    {
-                                        correct = true;
-                                        break;
-                                    }
-                                }
-                                if (!correct)
-                                {
-                                    path.RemoveAt(i);
-                                }
-                            }
                         }
+                        gameState = GameState.Moving;
                     }
                 }
 
                 if (gameState == GameState.Moving)
                 {
+                    int currentMv = currentUnit.getMvmt();
+                    highlight = true;
+                    for (int i = 1; i < currentUnit.getMvmt() + 1; i++)
+                    {
+                        if (cursorPosition.X + (64 * i) < 24 * 64)
+                        {
+                            Vector2 pathCor1 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y);
+                            PathSprite path1 = new PathSprite(pathCor1, this);
+                            path.Add(path1);
+                            moveable.Add(pathCor1);
+                        }
+                        if (cursorPosition.X - (64 * i) >= 0)
+                        {
+                            Vector2 pathCor2 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y);
+                            PathSprite path2 = new PathSprite(pathCor2, this);
+                            path.Add(path2);
+                            moveable.Add(pathCor2);
+                        }
+                        if (cursorPosition.Y + (64 * i) < 14 * 64)
+                        {
+                            Vector2 pathCor3 = new Vector2(cursorPosition.X, cursorPosition.Y + (64 * i));
+                            PathSprite path3 = new PathSprite(pathCor3, this);
+                            path.Add(path3);
+                            moveable.Add(pathCor3);
+                        }
+                        if (cursorPosition.Y - (64 * i) >= 0)
+                        {
+                            Vector2 pathCor4 = new Vector2(cursorPosition.X, cursorPosition.Y - (64 * i));
+                            PathSprite path4 = new PathSprite(pathCor4, this);
+                            path.Add(path4);
+                            moveable.Add(pathCor4);
+                        }
+
+                        for (int j = 1; j < currentMv; j++)
+                        {
+                            if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y + (64 * j) < 14 * 64)
+                            {
+                                Vector2 pathCor11 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y + (64 * j));
+                                PathSprite path11 = new PathSprite(pathCor11, this);
+                                path.Add(path11);
+                                moveable.Add(pathCor11);
+                            }
+                            if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y - (64 * j) >= 0)
+                            {
+                                Vector2 pathCor12 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y - (64 * j));
+                                PathSprite path12 = new PathSprite(pathCor12, this);
+                                path.Add(path12);
+                                moveable.Add(pathCor12);
+                            }
+                            if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y + (64 * j) < 14 * 64)
+                            {
+                                Vector2 pathCor21 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y + (64 * j));
+                                PathSprite path21 = new PathSprite(pathCor21, this);
+                                path.Add(path21);
+                                moveable.Add(pathCor21);
+                            }
+                            if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y - (64 * j) >= 0)
+                            {
+                                Vector2 pathCor22 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y - (64 * j));
+                                PathSprite path22 = new PathSprite(pathCor22, this);
+                                path.Add(path22);
+                                moveable.Add(pathCor22);
+                            }
+                        }
+                        currentMv--;
+                    }
+                    List<Vector2> moveNew = highlighter(moveable, currentUnit.getPosition());
+                    methodCalled = false;
+                    moveable = moveNew;
+
+                    for (int i = path.Count - 1; i >= 0; i--)
+                    {
+                        bool correct = false;
+                        PathSprite sprite = path[i];
+                        foreach (Vector2 item in moveable)
+                        {
+                            if (sprite.getPosition() == item)
+                            {
+                                correct = true;
+                                break;
+                            }
+                        }
+                        if (!correct)
+                        {
+                            path.RemoveAt(i);
+                        }
+                    }
                     bool move = false;
                     foreach (Vector2 pos in moveable)
                     {
@@ -407,9 +323,9 @@ namespace SwordAndScaleTake2
                     }
                     if (move)
                     {
-                        if(currentUnit.getTeam()) 
+                        if (currentUnit.getTeam())
                         {
-                        map[(int)currentUnit.getPosition().X/64, (int)currentUnit.getPosition().Y/64].setBlueOcc(false);
+                            map[(int)currentUnit.getPosition().X / 64, (int)currentUnit.getPosition().Y / 64].setBlueOcc(false);
                         }
                         if (!currentUnit.getTeam())
                         {
@@ -427,7 +343,7 @@ namespace SwordAndScaleTake2
                         currentUnit.setUsable(false);
                         path.Clear();
                         moveable.Clear();
-                           
+
                         //reset the gamestate to allow play to continue.
                         if (currentUnit.getTeam())
                         {
@@ -436,13 +352,24 @@ namespace SwordAndScaleTake2
                         else
                         {
                             gameState = GameState.RedTurn;
-                            
+
                         }
 
                         currentUnit = null;
                         highlight = false;
 
-                        //begin turn logic
+                    }         
+                }
+                if (highlight)
+                {
+                    gameState = GameState.Moving;
+                }
+            }
+
+            oldState = pressedKey;  // set the new state as the old state for next time 
+            //Console.WriteLine(gameState);
+
+            //begin turn logic
                         //check if red turn is over. If so, set gameState to blue turn.
                         if (gameState == GameState.BlueTurn)
                         {
@@ -491,17 +418,7 @@ namespace SwordAndScaleTake2
                                 }
                             }
                         }
-                    }
                     //end turn logic!
-                }
-                if (highlight)
-                {
-                    gameState = GameState.Moving;
-                }
-            }
-
-            oldState = pressedKey;  // set the new state as the old state for next time 
-            //Console.WriteLine(gameState);
         }
 
         public void Draw(SpriteBatch spriteBatch)
