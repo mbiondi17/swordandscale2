@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Microsoft.Xna.Framework; //Tried to avoid using this but I need the Rectangle struct. TODO: find a work around
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Content;
+using System;
+using System.Collections.Generic;
 
 namespace SwordAndScaleTake2
 {
@@ -20,7 +21,7 @@ namespace SwordAndScaleTake2
         RedTurn,
         BlueTurn,
     }
-    public class Game1 : Game
+    public class Game1
     {
         Terrain[,] map;
         List<Unit> blueUnits;
@@ -28,16 +29,6 @@ namespace SwordAndScaleTake2
         Texture2D blank;
         Texture2D yellow;
         Texture2D mapImage;
-        Texture2D swordImageB;
-        Texture2D mageImageB;
-        Texture2D warriorImageB;
-        Texture2D archerImageB;
-        Texture2D pikeImageB;
-        Texture2D swordImageR;
-        Texture2D mageImageR;
-        Texture2D warriorImageR;
-        Texture2D archerImageR;
-        Texture2D pikeImageR;
         Texture2D blueteam;
         Texture2D redteam;
         //Song backgroundMusic;
@@ -63,16 +54,6 @@ namespace SwordAndScaleTake2
         Vector2 pikeRPosition;
         Vector2 generalBPosition;
         Vector2 generalRPosition;
-        Unit generalMageB;
-        Unit generalSwordB;
-        Unit generalWarriorB;
-        Unit generalArcherB;
-        Unit generalPikeB;
-        Unit generalMageR;
-        Unit generalSwordR;
-        Unit generalWarriorR;
-        Unit generalArcherR;
-        Unit generalPikeR;
         Unit currentUnit;
         Vector2 cursorPosition;
         KeyboardState pressedKey;
@@ -138,7 +119,7 @@ namespace SwordAndScaleTake2
 
         public void LoadContent(ContentManager content)
         {
-            mapImage = content.Load<Texture2D>("betamapgrid");
+            mapImage = content.Load<Texture2D>("betamap");
             blank    = content.Load<Texture2D>("blanks");
             yellow   = content.Load<Texture2D>("yellow");
 
@@ -294,10 +275,10 @@ namespace SwordAndScaleTake2
                                 
                                 for (int i = path.Count - 1; i >= 0; i--)
                                 {
-                            bool correct = false;
+                                    bool correct = false;
                                     PathSprite sprite = path[i];
                                 foreach (Vector2 item in moveable)
-                            {
+                                {
                                     if (sprite.getPosition() == item)
                                     {
                                         correct = true;
@@ -403,12 +384,12 @@ namespace SwordAndScaleTake2
                                     {
                                         correct = true;
                                         break;
-                        }
-                    }
+                                    }
+                                }
                                 if (!correct)
                                 {
                                     path.RemoveAt(i);
-                }
+                                }
                             }
                         }
                     }
@@ -537,7 +518,7 @@ namespace SwordAndScaleTake2
             foreach(Unit unit in blueUnits)
             {
                 unit.Draw(spriteBatch);
-            }
+                }
             foreach (Unit unit in redUnits)
             {
                 unit.Draw(spriteBatch);
@@ -636,19 +617,19 @@ namespace SwordAndScaleTake2
 	// (Those already occupied and river spaces)
 
           for (int i = moveable.Count - 1; i >= 0; i--)
-	{
+          {
               Vector2 checkValid = moveable[i];
-        Terrain check = map[(int)checkValid.X / 64, (int)checkValid.Y / 64];
+              Terrain check = map[(int)checkValid.X / 64, (int)checkValid.Y / 64];
 
               if (check.getRedOcc() || check.getBlueOcc())
-		{
+              {
                   moveable.RemoveAt(i);
-		}
+              }
               if (check.getImpassible())
-		{
+              {
                   moveable.RemoveAt(i);
-		}
-	}
+              }
+          }
 
 	//This might be kind of clever. Remove any squares from the list that are not adjacent to
 	//The group that is adjacent to the origin.
@@ -663,20 +644,20 @@ namespace SwordAndScaleTake2
 		added = 0;
 
         for (int j = moveable.Count - 1; j >= 0; j--)
-		{
+        {
             for (int k = 0; k < contiguous.Count; k++)
-			{
+            {
                 Vector2 test = moveable[j];
                 Vector2 cont = contiguous[k];
                 if ((test.X == cont.X && test.Y == (cont.Y - 64)) ||
-					(test.X == cont.X && test.Y == (cont.Y + 64)) ||
-					(test.X == (cont.X + 64) && test.Y == cont.Y) ||
+                    (test.X == cont.X && test.Y == (cont.Y + 64)) ||
+                    (test.X == (cont.X + 64) && test.Y == cont.Y) ||
                     (test.X == (cont.X - 64) && test.Y == cont.Y))
                 {
                     if(!contiguous.Contains(test))
-				{
-				contiguous.Add(test);
-				added++;
+                    {
+                    contiguous.Add(test);
+                    added++;
                     }
                 }
             }
@@ -689,7 +670,7 @@ namespace SwordAndScaleTake2
         {
             methodCalled = true;
             contiguous = reHighlight(origin, moveItem, 2 ,contiguous);
-		}
+        }
 	}
 
 	return contiguous;
