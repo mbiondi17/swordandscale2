@@ -11,7 +11,7 @@ namespace SwordAndScaleTake2
     class PathSprite
     {
         Vector2 position;
-        Texture2D blue;
+        //Texture2D blue;
         Game1 game;
 
         public PathSprite(Game1 game)
