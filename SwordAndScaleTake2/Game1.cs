@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 
@@ -12,6 +13,11 @@ namespace SwordAndScaleTake2
         RedTurn,
         BlueTurn,
         Waiting
+    }
+    enum TurnState
+    {
+        RedTurn,
+        BlueTurn,
     }
     public class Game1 : Game
     {
@@ -33,6 +39,9 @@ namespace SwordAndScaleTake2
         Texture2D warriorImageR;
         Texture2D archerImageR;
         Texture2D pikeImageR;
+        Texture2D blueteam;
+        Texture2D redteam;
+        Song backgroundMusic;
         Unit blueMage;
         Unit blueSword;
         Unit blueWarrior;
@@ -72,6 +81,7 @@ namespace SwordAndScaleTake2
         List<Vector2> moveable = new List<Vector2>();
         List<PathSprite> path = new List<PathSprite>();
         GameState gameState;
+        TurnState turnState;
         bool highlight = false;
 
         public Game1()
@@ -80,6 +90,7 @@ namespace SwordAndScaleTake2
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferHeight = 960;  // set this value to the desired Height of your window
             graphics.PreferredBackBufferWidth = 1536;  // set this value to the desired width of your window
+            graphics.IsFullScreen = true;
             graphics.ApplyChanges();
         }
 
@@ -131,6 +142,8 @@ namespace SwordAndScaleTake2
             redUnits.Add(redArcher);
             redUnits.Add(redPike);
             gameState = GameState.BlueTurn;
+            turnState = TurnState.BlueTurn;
+            cursorPosition = swordBPosition;
             base.Initialize();
         }
 
@@ -154,7 +167,11 @@ namespace SwordAndScaleTake2
             archerImageR = Content.Load<Texture2D>("redArcher");
             pikeImageR = Content.Load<Texture2D>("redPike");
             blank = Content.Load<Texture2D>("blanks");
-            yellow = Content.Load<Texture2D>("yellow");
+            blueteam = Content.Load<Texture2D>("blueteam");
+            redteam = Content.Load<Texture2D>("redteam");
+            //backgroundMusic = Content.Load<Song>("Sounds/BackTrack");
+            //MediaPlayer.Play(backgroundMusic);
+           // MediaPlayer.IsRepeating = true;
 
             // TODO: use this.Content to load your game content here
         }
@@ -446,6 +463,7 @@ namespace SwordAndScaleTake2
                         else
                         {
                             gameState = GameState.RedTurn;
+                            
                         }
 
                         currentUnit = null;
@@ -467,6 +485,8 @@ namespace SwordAndScaleTake2
                             if (blueTurnOver)
                             {
                                 gameState = GameState.RedTurn;
+                                turnState = TurnState.RedTurn;
+                                cursorPosition = swordRPosition;
                                 foreach (Unit usable in redUnits)
                                 {
                                     usable.setUsable(true);
@@ -490,6 +510,8 @@ namespace SwordAndScaleTake2
                             if (redTurnOver)
                             {
                                 gameState = GameState.BlueTurn;
+                                turnState = TurnState.BlueTurn;
+                                cursorPosition = swordBPosition;
                                 foreach (Unit usable in blueUnits)
                                 {
                                     usable.setUsable(true);
@@ -529,7 +551,14 @@ namespace SwordAndScaleTake2
                     space.Draw(spriteBatch);
                 }
             }
-            spriteBatch.Draw(yellow, cursorPosition, Color.White);
+            if (turnState == TurnState.RedTurn)
+            {
+                spriteBatch.Draw(redteam, cursorPosition, Color.White);
+            }
+            if (turnState == TurnState.BlueTurn)
+            {
+                spriteBatch.Draw(blueteam, cursorPosition, Color.White);
+            }
             spriteBatch.Draw(swordImageB, blueSword.getPosition(), Color.White);
             spriteBatch.Draw(warriorImageB, blueWarrior.getPosition(), Color.White);
             spriteBatch.Draw(mageImageB, blueMage.getPosition(), Color.White);
@@ -594,7 +623,7 @@ namespace SwordAndScaleTake2
             map[15, 9].setImpassible(true);
             map[15, 10].setImpassible(true);
             map[16, 10].setImpassible(true);
-            map[17, 10].setImpassible(true);
+            map[18, 10].setImpassible(true);
             map[19, 10].setImpassible(true);
             map[20, 10].setImpassible(true);
             map[19, 11].setImpassible(true);
