@@ -42,7 +42,7 @@ namespace SwordAndScaleTake2
         Texture2D pikeImageR;
         Texture2D blueteam;
         Texture2D redteam;
-        SoundEffect backgroundMusic;
+        //Song backgroundMusic;
         Unit blueMage;
         Unit blueSword;
         Unit blueWarrior;
@@ -89,7 +89,7 @@ namespace SwordAndScaleTake2
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferHeight = 960;  // set this value to the desired Height of your window
+            graphics.PreferredBackBufferHeight = 1024;  // set this value to the desired Height of your window
             graphics.PreferredBackBufferWidth = 1536;  // set this value to the desired width of your window
             graphics.IsFullScreen = true;
             graphics.ApplyChanges();
@@ -170,10 +170,9 @@ namespace SwordAndScaleTake2
             blank = Content.Load<Texture2D>("blanks");
             blueteam = Content.Load<Texture2D>("blueteam");
             redteam = Content.Load<Texture2D>("redteam");
-            backgroundMusic = Content.Load<SoundEffect>("BackTrack");
-            backgroundMusic.Play();
-            SoundEffectInstance instance = backgroundMusic.CreateInstance();
-            instance.IsLooped = true;
+            //backgroundMusic = Content.Load<Song>("music/BackTrack");
+            //MediaPlayer.Play(backgroundMusic);
+            //MediaPlayer.IsRepeating = true;
 
             // TODO: use this.Content to load your game content here
         }
