@@ -155,7 +155,7 @@ namespace SwordAndScaleTake2
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            mapImage = Content.Load<Texture2D>("alphamap");
+            mapImage = Content.Load<Texture2D>("betamap");
             swordImageB = Content.Load<Texture2D>("blueSword");
             warriorImageB = Content.Load<Texture2D>("blueWarrior");
             mageImageB = Content.Load<Texture2D>("blueMage");
@@ -486,7 +486,7 @@ namespace SwordAndScaleTake2
                             {
                                 gameState = GameState.RedTurn;
                                 turnState = TurnState.RedTurn;
-                                cursorPosition = swordRPosition;
+                                cursorPosition = redSword.getPosition();
                                 foreach (Unit usable in redUnits)
                                 {
                                     usable.setUsable(true);
@@ -511,7 +511,7 @@ namespace SwordAndScaleTake2
                             {
                                 gameState = GameState.BlueTurn;
                                 turnState = TurnState.BlueTurn;
-                                cursorPosition = swordBPosition;
+                                cursorPosition = blueSword.getPosition();
                                 foreach (Unit usable in blueUnits)
                                 {
                                     usable.setUsable(true);
