@@ -65,12 +65,14 @@ namespace SwordAndScaleTake2
         bool highlight = false;
         UnitInfoPane unitInfo;
         bool methodCalled = false;
+        GamePreferences gamePrefs;
 
-        public Game1()
+        public Game1(GamePreferences gamePrefs)
         {
             //exampleUnit = new Unit("blueArcher", "archer", 6, 9, 2, 4, 6, true);
             //exampleUnitList.Add(exampleUnit);
             //unitInfo = new UnitInfoPane();
+            this.gamePrefs = gamePrefs;
             loadMap();
             cursorPosition = new Vector2(0, 0);
             blueUnits = new List<Unit>();

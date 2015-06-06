@@ -185,7 +185,7 @@ namespace SwordAndScaleTake2
             {
                 gamePrefs.chosenGeneral = button;
                 gameState = GameState.inGame;
-                game = new Game1();
+                game = new Game1(gamePrefs);
                 game.LoadContent(Content);
             }
             if (button == "exit")

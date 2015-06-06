@@ -7,7 +7,7 @@ namespace SwordAndScaleTake2
 {
     //This is basically just a struct that can be passed from GameShell to Game
     //It can be expanded to hold more preferences
-    class GamePreferences
+    public class GamePreferences
     {
         public String chosenGeneral;
     }
