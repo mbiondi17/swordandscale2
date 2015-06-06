@@ -178,6 +178,10 @@ namespace SwordAndScaleTake2
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             pressedKey = Keyboard.GetState();
+            if (oldState.IsKeyUp(Keys.Enter) && pressedKey.IsKeyDown(Keys.Enter))
+            {
+                Console.WriteLine(cursorPosition.X/64 +","+ cursorPosition.Y/64);
+            }
 
             if (oldState.IsKeyUp(Keys.Left) && pressedKey.IsKeyDown(Keys.Left) && cursorPosition.X > 0)
             {
@@ -276,23 +280,27 @@ namespace SwordAndScaleTake2
                                 }
                                 currentMv--;
                             }
-                           /* List<Vector2> moveNew = highlighter(moveable, currentUnit.getPosition());
-                            bool correct = false;
-                            foreach (PathSprite sprite in path)
-                            {
-                                foreach (Vector2 item in moveNew)
+                             List<Vector2> moveNew = highlighter(moveable, currentUnit.getPosition());
+                             moveable = moveNew;
+                                
+                                for (int i = path.Count - 1; i >= 0; i--)
+                                {
+                                    bool correct = false;
+                                    PathSprite sprite = path[i];
+                                foreach (Vector2 item in moveable)
                                 {
                                     if (sprite.getPosition() == item)
                                     {
                                         correct = true;
+                                        break;
                                     }
                                 }
                                 if (!correct)
                                 {
-                                    moveable.Remove(sprite.getPosition());
+                                    path.RemoveAt(i);
                                 }
                             }
-                            */
+                            
                         }
 
                     }
@@ -373,6 +381,25 @@ namespace SwordAndScaleTake2
                                     }
                                 }
                                 currentMv--;
+                            }
+                            List<Vector2> moveNew = highlighter(moveable, currentUnit.getPosition());
+                            moveable = moveNew;
+                            for (int i = path.Count - 1; i >= 0; i--)
+                            {
+                                bool correct = false;
+                                PathSprite sprite = path[i];
+                                foreach (Vector2 item in moveable)
+                                {
+                                    if (sprite.getPosition() == item)
+                                    {
+                                        correct = true;
+                                        break;
+                                    }
+                                }
+                                if (!correct)
+                                {
+                                    path.RemoveAt(i);
+                                }
                             }
                         }
                     }
@@ -479,7 +506,7 @@ namespace SwordAndScaleTake2
             }
 
             oldState = pressedKey;  // set the new state as the old state for next time 
-            Console.WriteLine(gameState);
+           // Console.WriteLine(gameState);
             base.Update(gameTime);
         }
 
@@ -582,19 +609,20 @@ namespace SwordAndScaleTake2
 	// immediately remove any Terrain squares that cannot be moved into 
 	// (Those already occupied and river spaces)
 
-	foreach(Vector2 checkValid in moveable) 
-	{
-        Terrain check = map[(int)checkValid.X / 64, (int)checkValid.Y / 64];
+          for (int i = moveable.Count - 1; i >= 0; i--)
+          {
+              Vector2 checkValid = moveable[i];
+              Terrain check = map[(int)checkValid.X / 64, (int)checkValid.Y / 64];
 
-		if(check.getRedOcc() || check.getBlueOcc())
-		{
-			moveable.Remove(checkValid);
-		}
-		if(check.getImpassible()) 
-		{
-			moveable.Remove(checkValid);
-		}
-	}
+              if (check.getRedOcc() || check.getBlueOcc())
+              {
+                  moveable.RemoveAt(i);
+              }
+              if (check.getImpassible())
+              {
+                  moveable.RemoveAt(i);
+              }
+          }
 
 	//This might be kind of clever. Remove any squares from the list that are not adjacent to
 	//The group that is adjacent to the origin.
@@ -606,26 +634,27 @@ namespace SwordAndScaleTake2
 
 	while(added != 0) 
 	{
-
 		added = 0;
 
-		foreach(Vector2 test in moveable) 
-		{
-			foreach(Vector2 cont in contiguous) 
-			{
-				if( (test.X == cont.X && test.Y == (cont.Y - 64)) ||
-					(test.X == cont.X && test.Y == (cont.Y + 64)) ||
-					(test.X == (cont.X + 64) && test.Y == cont.Y) ||
-					(test.X == (cont.X - 64) && test.Y == cont.Y) )
-				{
-
-				contiguous.Add(test);
-				moveable.Remove(test);
-				added++;
-
-				}
-			}
-		}
+        for (int j = moveable.Count - 1; j >= 0; j--)
+        {
+            for (int k = 0; k < contiguous.Count; k++)
+            {
+                Vector2 test = moveable[j];
+                Vector2 cont = contiguous[k];
+                if ((test.X == cont.X && test.Y == (cont.Y - 64)) ||
+                    (test.X == cont.X && test.Y == (cont.Y + 64)) ||
+                    (test.X == (cont.X + 64) && test.Y == cont.Y) ||
+                    (test.X == (cont.X - 64) && test.Y == cont.Y))
+                {
+                    if(!contiguous.Contains(test))
+                    {
+                    contiguous.Add(test);
+                    added++;
+                    }
+                }
+            }
+        }
 	}
 
 
