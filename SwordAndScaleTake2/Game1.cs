@@ -301,14 +301,14 @@ namespace SwordAndScaleTake2
                     DetectUnitHovered();
                     isUnitInteracting = false;
                 }
-                //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
-                if (oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
-                {
-                    EndTurn();
-                }
-                // set the new state as the old state for next time 
-                oldState = pressedKey;
             }
+            //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
+            if (oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
+            {
+                EndTurn();
+            }
+            // set the new state as the old state for next time 
+            oldState = pressedKey;
         }
 
         public void Draw(SpriteBatch spriteBatch)
