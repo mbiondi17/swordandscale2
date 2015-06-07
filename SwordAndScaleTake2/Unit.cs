@@ -139,6 +139,11 @@ namespace SwordAndScaleTake2
             }
         }
 
+        public string getType()
+        {
+            return this.type;
+        }
+
         public int getHealth()
         {
             return this.health;
@@ -189,9 +194,19 @@ namespace SwordAndScaleTake2
             return this.hasActed;
         }
 
+        public bool getDead()
+        {
+            return this.dead;
+        }
+
         public Vector2 getPosition()
         {
             return this.position;
+        }
+
+        public void setType(string type)
+        {
+            this.type = type;
         }
 
         public void setHealth(int health)
@@ -225,46 +240,6 @@ namespace SwordAndScaleTake2
             this.setPixelPosition(position);
         }
 
-        public void attack(Unit enemy)
-        {
-            Random rand = new Random();
-            int unitHit = rand.Next(1, 11);
-            int enemyHit = rand.Next(1, 11);
-
-            if (enemy.type != "mage" && enemy.type != "genMage")
-            {
-
-                if (unitHit <= this.skill)
-                {
-                    enemy.health -= (this.str - enemy.def);
-                }
-
-                if (enemy.health > 0)
-                {
-                    if (enemyHit <= enemy.skill)
-                    {
-                        this.health -= (enemy.str - this.def);
-                    }
-                }
-            }
-
-
-            if (enemy.type == "mage" || enemy.type == "genMage")
-            {
-                if (unitHit <= this.skill)
-                {
-                    enemy.health -= (this.str - enemy.mDef);
-                }
-
-                if (enemy.health > 0)
-                {
-                    if (enemyHit <= enemy.skill)
-                    {
-                        this.health -= (enemy.str - this.mDef);
-                    }
-                }
-            }
-        }
         public bool isBlue()
         {
             return team == Teams.Blue;
