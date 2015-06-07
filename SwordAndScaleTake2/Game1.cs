@@ -242,7 +242,7 @@ namespace SwordAndScaleTake2
                         //When done
                         DeactivateUnit();
                     }
-                    }
+                }
                     //If I is pressed
                     else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
                     {
