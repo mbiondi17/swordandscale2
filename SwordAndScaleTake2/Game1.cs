@@ -34,6 +34,11 @@ namespace SwordAndScaleTake2
         List<Unit> redUnits;
         Texture2D blank;
         Texture2D yellow;
+        Texture2D fire;
+        Texture2D castleBlue;
+        Texture2D castleRed;
+        Texture2D gate;
+        Texture2D poison;
         Texture2D mapImage;
         Texture2D blueteam;
         Texture2D redteam;
@@ -143,6 +148,12 @@ namespace SwordAndScaleTake2
             mapImage = content.Load<Texture2D>("BetaMap");
             blank = content.Load<Texture2D>("blanks");
             yellow = content.Load<Texture2D>("yellow");
+            fire = content.Load<Texture2D>("fire");
+            gate = content.Load<Texture2D>("gate");
+            castleBlue = content.Load<Texture2D>("castleBlue");
+            castleRed = content.Load<Texture2D>("CastleRed");
+            poison = content.Load<Texture2D>("poison");
+
 
             foreach (Unit unit in blueUnits)
             {
@@ -277,6 +288,10 @@ namespace SwordAndScaleTake2
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(mapImage, new Rectangle(0, 0, 1536, 896), Color.White);
+            foreach (Terrain terr in map)
+            {
+                terr.Draw(spriteBatch, fire, gate, castleRed, castleBlue, poison);
+            }
             if (path.Count > 0)
             {
                 foreach (PathSprite space in path)
@@ -366,6 +381,43 @@ namespace SwordAndScaleTake2
             map[19, 11].setImpassible(true);
             map[19, 12].setImpassible(true);
             map[19, 13].setImpassible(true);
+            map[18,9].setInteractable(true);
+            map[19, 9].setInteractable(true);
+            map[20, 9].setInteractable(true);
+            map[18, 11].setInteractable(true);
+            map[20, 11].setInteractable(true);
+            map[3, 0].setInteractable(true);
+            map[4, 0].setInteractable(true);
+            map[5, 0].setInteractable(true);
+            map[3, 2].setInteractable(true);
+            map[4, 2].setInteractable(true);
+            map[5, 2].setInteractable(true);
+            map[3, 4].setInteractable(true);
+            map[1, 12].setInteractable(true);
+            map[6, 12].setInteractable(true);
+            map[9, 10].setInteractable(true);
+            map[5, 8].setInteractable(true);
+            map[1, 6].setInteractable(true);
+            map[0, 4].setInteractable(true);
+            map[1, 10].setInteractable(true);
+            map[4, 12].setInteractable(true);
+            map[1, 1].setInteractable(true);
+            map[1, 2].setInteractable(true);
+            map[2, 1].setInteractable(true);
+            map[2, 2].setInteractable(true);
+            map[12, 1].setInteractable(true);
+            map[17, 2].setInteractable(true);
+            map[17, 6].setInteractable(true);
+            map[19, 8].setInteractable(true);
+            map[14, 3].setInteractable(true);
+            map[22, 5].setInteractable(true);
+            map[23, 8].setInteractable(true);
+            map[22, 2].setInteractable(true);
+            map[19, 1].setInteractable(true);
+            map[21, 10].setInteractable(true);
+            map[22, 10].setInteractable(true);
+            map[21, 11].setInteractable(true);
+            map[22, 11].setInteractable(true);
         }
 
         private void CreatePathingArea()
