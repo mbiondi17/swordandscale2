@@ -13,8 +13,8 @@ namespace SwordAndScaleTake2
     enum GameState
     {
         Moving,
-        RedTurn,
-        BlueTurn,
+        Attacking,
+        Interacting,
         Waiting
     }
     enum TurnState
@@ -43,13 +43,13 @@ namespace SwordAndScaleTake2
         Unit blueWarrior;
         Unit blueArcher;
         Unit bluePike;
-        Unit generalB;
+        Unit blueGeneral;
         Unit redMage;
         Unit redSword;
         Unit redWarrior;
         Unit redArcher;
         Unit redPike;
-        Unit generalR;
+        Unit redGeneral;
         Vector2 swordBPosition;
         Vector2 warriorBPosition;
         Vector2 mageBPosition;
@@ -68,16 +68,20 @@ namespace SwordAndScaleTake2
         KeyboardState pressedKey;
         KeyboardState oldState;
         List<Vector2> moveable = new List<Vector2>();
+        List<Unit> attackable = new List<Unit>();
         List<PathSprite> path = new List<PathSprite>();
+        List<PathSprite> enemies = new List<PathSprite>();
         Teams activeTeam;
         bool isUnitMoving = false;
+        bool isUnitAttacking = false;
+        bool isUnitInteracting = false;
         UnitInfoPane blueInfoPane = new UnitInfoPane();
         UnitInfoPane redInfoPane = new UnitInfoPane();
         UnitActionPane unitActionPane = new UnitActionPane();
         bool methodCalled = false;
         GamePreferences gamePrefs;
-        MoralePane blueMorale = new MoralePane(10, "blue");
-        MoralePane redMorale = new MoralePane(10, "red");
+        MoralePane blueMorale = new MoralePane(10, "black");
+        MoralePane redMorale = new MoralePane(10, "black");
 
         public Game1(GamePreferences gamePrefs)
         {
@@ -105,37 +109,41 @@ namespace SwordAndScaleTake2
             pikeRPosition = new Vector2(64 * 6, 64 * 7);
             generalBPosition = new Vector2(64 * 22, 64 * 11);
             generalRPosition = new Vector2(64 * 1, 64 * 2);
+
             blueMage = new Unit("blueMage", "mage", 10, 8, 7, 1, 4, 5, Teams.Blue, mageBPosition);
             blueSword = new Unit("blueSword", "swordmaster", 10, 7, 9, 2, 3, 5, Teams.Blue, swordBPosition);
             blueWarrior = new Unit("blueWarrior", "warrior", 10, 9, 6, 3, 2, 4, Teams.Blue, warriorBPosition);
             blueArcher = new Unit("blueArcher", "archer", 10, 6, 9, 2, 4, 6, Teams.Blue, archerBPosition);
             bluePike = new Unit("bluePike", "pike", 10, 7, 7, 4, 1, 4, Teams.Blue, pikeBPosition);
-            generalB = new Unit(gamePrefs.chosenGeneral);
             redMage = new Unit("redMage", "mage", 10, 8, 7, 1, 4, 5, Teams.Red, mageRPosition);
             redSword = new Unit("redSword", "swordmaster", 10, 7, 9, 2, 3, 5, Teams.Red, swordRPosition);
             redWarrior = new Unit("redWarrior", "warrior", 10, 9, 6, 3, 2, 4, Teams.Red, warriorRPosition);
             redArcher = new Unit("redArcher", "archer", 10, 6, 9, 2, 4, 6, Teams.Red, archerRPosition);
             redPike = new Unit("redPike", "pike", 10, 7, 7, 4, 1, 4, Teams.Red, pikeRPosition);
-            generalR = randomGeneral();
+
             blueUnits.Add(blueMage);
             blueUnits.Add(blueSword);
             blueUnits.Add(blueWarrior);
             blueUnits.Add(blueArcher);
             blueUnits.Add(bluePike);
-            blueUnits.Add(generalB);
+
             redUnits.Add(redMage);
             redUnits.Add(redSword);
             redUnits.Add(redWarrior);
             redUnits.Add(redArcher);
             redUnits.Add(redPike);
-            redUnits.Add(generalR);
-            redMorale   .setPixelPosition(   0, 896);
-            redInfoPane .setPixelPosition( 192, 896);
-            blueInfoPane.setPixelPosition( 768, 896);
-            blueMorale  .setPixelPosition(1344, 896);
+
+            // redGeneral = redGeneralChoice();
+            // redUnits.Add(redGeneral);
+            //TODO blue general
+
+            redMorale.setPixelPosition(0, 896);
+            redInfoPane.setPixelPosition(192, 896);
+            blueInfoPane.setPixelPosition(768, 896);
+            blueMorale.setPixelPosition(1344, 896);
             activeTeam = Teams.Blue;
-            cursorPosition = mageBPosition;
-            hoveredUnit = blueMage;
+            cursorPosition = swordBPosition;
+            hoveredUnit = blueSword;
         }
 
         public void LoadContent(ContentManager content)
@@ -158,7 +166,7 @@ namespace SwordAndScaleTake2
 
             blueteam = content.Load<Texture2D>("blueteam");
             redteam = content.Load<Texture2D>("redteam");
-            //backgroundMusic = content.Load<Song>("sounds/backtrack");
+            //backgroundMusic = Content.Load<Song>("Sounds/BackTrack");
             //MediaPlayer.Play(backgroundMusic);
             //MediaPlayer.IsRepeating = true;
             //space.LoadContent();
@@ -197,12 +205,12 @@ namespace SwordAndScaleTake2
                 UpdateInfoPanes();
             }
             //If the player isn't in the middle of moving a unit AND the cursor is over a unit (runs every update)
-            if (!isUnitMoving && hoveredUnit != null)
+            if (!isUnitMoving && !isUnitAttacking && !isUnitInteracting && hoveredUnit != null)
             {
                 //If Spacebar is pressed AND Unit is on the activeTeam AND Unit isUsable
                 if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
                     hoveredUnit.getTeam() == activeTeam &&
-                    hoveredUnit.getUsable())
+                    hoveredUnit.getUsable() && !hoveredUnit.getDead())
                 {
                     //Select that unit
                     activeUnit = hoveredUnit;
@@ -214,27 +222,27 @@ namespace SwordAndScaleTake2
                 if (activeUnit != null)
                 {
                     //If A is pressed
-                    if (oldState.IsKeyUp(Keys.A) && pressedKey.IsKeyDown(Keys.A))
+                    if (oldState.IsKeyUp(Keys.A) && pressedKey.IsKeyDown(Keys.A) && !activeUnit.getHasActed())
                     {
                         //Hide UnitActionPane
                         unitActionPane.Hide();
-                        //Attack
-                        //TODO: Attack(Unit other) method call goes here
-                        //When done
-                        DeactivateUnit();
+                        //Prepare for Attack
+                        CreateAttackingArea();
+                        isUnitAttacking = true;
                     }
                     //If I is pressed
-                    else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I))
+                    else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
                     {
                         //Hide UnitActionPane
                         unitActionPane.Hide();
                         //Interact
-                        interact(activeUnit, map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
+                        //TODO: Interact(GameElement other) method call goes here
                         //When done
+                        //isUnitInteracting = true;
                         DeactivateUnit();
                     }
                     //If M is pressed
-                    else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M))
+                    else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
                     {
                         //Hide UnitActionPane
                         unitActionPane.Hide();
@@ -254,7 +262,7 @@ namespace SwordAndScaleTake2
                 }
             }
             //If the player is moving a unit
-            else
+            else if (isUnitMoving)
             {
                 //If spacebar is pressed AND unit can move to the cursor's location
                 if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
@@ -262,8 +270,36 @@ namespace SwordAndScaleTake2
                 {
                     MoveUnit();
                     //When done
-                    DeactivateUnit();
+                    activeUnit.setHasMoved(true);
+                    if (activeUnit.getHasActed())
+                    {
+                        DeactivateUnit();
+                    }
                 }
+            }
+            //If the player is attacking
+            else if (isUnitAttacking)
+            {
+                if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
+                    CanAttackEnemy())
+                {
+                    //get enemy to attack and do so
+                    Unit theEnemy = unitToAttack();
+                    attack(ref theEnemy);
+
+                    // enemies.Clear();
+                    // attackable.Clear();
+                    activeUnit.setHasActed(true);
+
+                    if (activeUnit.getHasMoved())
+                    {
+                        DeactivateUnit();
+                    }
+                }
+            }
+            else if (isUnitInteracting)
+            {
+                //TODO
             }
             //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
             if (oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
@@ -284,13 +320,29 @@ namespace SwordAndScaleTake2
                     space.Draw(spriteBatch, blank);
                 }
             }
+
+            if (attackable.Count > 0)
+            {
+
+                //Console.WriteLine(attackable.Count);
+                foreach (PathSprite enemy in enemies)
+                {
+                    enemy.Draw(spriteBatch, blank);
+                }
+            }
             foreach (Unit unit in blueUnits)
             {
-                unit.Draw(spriteBatch);
+                if (!unit.getDead())
+                {
+                    unit.Draw(spriteBatch);
+                }
             }
             foreach (Unit unit in redUnits)
             {
-                unit.Draw(spriteBatch);
+                if (!unit.getDead())
+                {
+                    unit.Draw(spriteBatch);
+                }
             }
 
             if (activeTeam == Teams.Red)
@@ -339,33 +391,171 @@ namespace SwordAndScaleTake2
             map[2, 6].setRedOcc(true);
             map[6, 7].setRedOcc(true);
             map[1, 2].setRedOcc(true);
-            map[6, 1].setImpassible(true);
-            map[5, 1].setImpassible(true);
-            map[4, 1].setImpassible(true);
-            map[3, 1].setImpassible(true);
-            map[6, 2].setImpassible(true);
-            map[6, 4].setImpassible(true);
-            map[7, 4].setImpassible(true);
-            map[8, 4].setImpassible(true);
-            map[8, 5].setImpassible(true);
-            map[9, 5].setImpassible(true);
-            map[9, 6].setImpassible(true);
-            map[9, 7].setImpassible(true);
-            map[10, 7].setImpassible(true);
-            map[12, 7].setImpassible(true);
-            map[13, 7].setImpassible(true);
-            map[13, 8].setImpassible(true);
-            map[14, 8].setImpassible(true);
-            map[15, 8].setImpassible(true);
-            map[15, 9].setImpassible(true);
-            map[15, 10].setImpassible(true);
-            map[16, 10].setImpassible(true);
-            map[18, 10].setImpassible(true);
-            map[19, 10].setImpassible(true);
-            map[20, 10].setImpassible(true);
-            map[19, 11].setImpassible(true);
-            map[19, 12].setImpassible(true);
-            map[19, 13].setImpassible(true);
+            map[6, 1].setimpassable(true);
+            map[5, 1].setimpassable(true);
+            map[4, 1].setimpassable(true);
+            map[3, 1].setimpassable(true);
+            map[6, 2].setimpassable(true);
+            map[6, 4].setimpassable(true);
+            map[7, 4].setimpassable(true);
+            map[8, 4].setimpassable(true);
+            map[8, 5].setimpassable(true);
+            map[9, 5].setimpassable(true);
+            map[9, 6].setimpassable(true);
+            map[9, 7].setimpassable(true);
+            map[10, 7].setimpassable(true);
+            map[12, 7].setimpassable(true);
+            map[13, 7].setimpassable(true);
+            map[13, 8].setimpassable(true);
+            map[14, 8].setimpassable(true);
+            map[15, 8].setimpassable(true);
+            map[15, 9].setimpassable(true);
+            map[15, 10].setimpassable(true);
+            map[16, 10].setimpassable(true);
+            map[18, 10].setimpassable(true);
+            map[19, 10].setimpassable(true);
+            map[20, 10].setimpassable(true);
+            map[19, 11].setimpassable(true);
+            map[19, 12].setimpassable(true);
+            map[19, 13].setimpassable(true);
+        }
+
+        public void CreateAttackingArea()
+        {
+            Teams team = activeUnit.getTeam();
+            string unitType = activeUnit.getType();
+            List<Vector2> reachable = new List<Vector2>();
+            float activeX = activeUnit.getPosition().X;
+            float activeY = activeUnit.getPosition().Y;
+
+            if (unitType.Contains("rch"))
+            {
+                for (int x = -1; x < 2; x++)
+                {
+                    for (int y = -1; y < 2; y++)
+                    {
+                        reachable.Add(new Vector2(activeX + x * 64, activeY + y * 64));
+                    }
+                }
+
+                reachable.Add(new Vector2(activeX + 2 * 64, activeY));
+                reachable.Add(new Vector2(activeX - 2 * 64, activeY));
+                reachable.Add(new Vector2(activeX, activeY + 2 * 64));
+                reachable.Add(new Vector2(activeX, activeY - 2 * 64));
+            }
+
+            else
+            {
+                reachable.Add(new Vector2(activeX - 64, activeY));
+                reachable.Add(new Vector2(activeX, activeY - 64));
+                reachable.Add(new Vector2(activeX + 64, activeY));
+                reachable.Add(new Vector2(activeX, activeY + 64));
+            }
+
+            Console.WriteLine("reachable size: " + reachable.Count);
+
+            foreach (Vector2 pos in reachable)
+            {
+                foreach (Unit enemy in (team == Teams.Blue ? redUnits : blueUnits))
+                {
+                    if (!enemy.getDead() && enemy.getPosition() == pos)
+                    {
+                        attackable.Add(enemy);
+                    }
+                }
+            }
+
+            //Console.WriteLine("attackable size: " + attackable.Count);
+
+            foreach (Unit enemy in attackable)
+            {
+
+                PathSprite square = new PathSprite(enemy.getPosition(), this);
+                enemies.Add(square);
+            }
+
+            //Console.WriteLine("enemies size: " + enemies.Count);
+        }
+
+
+        public void attack(ref Unit enemy)
+        {
+            Random rand = new Random();
+            int unitHit = rand.Next(1, 11);
+            int enemyHit = rand.Next(1, 11);
+
+            if (!enemy.getType().Equals("mage") && !enemy.getType().Contains("genMage") && !enemy.getType().Contains("MageGen"))
+            {
+
+                if (unitHit <= activeUnit.getSkill())
+                {
+                    Console.WriteLine("ATTACK");
+                    enemy.setHealth(enemy.getHealth() - (activeUnit.getStr() - enemy.getDef()));
+                }
+
+                if (enemy.getHealth() > 0)
+                {
+                    if (enemyHit <= enemy.getSkill())
+                    {
+                        Console.WriteLine("COUNTERATTACK");
+                        activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getDef()));
+                    }
+                }
+            }
+
+
+            if (enemy.getType().Equals("mage") || enemy.getType().Equals("genMage"))
+            {
+                if (unitHit <= activeUnit.getSkill())
+                {
+                    enemy.setHealth(activeUnit.getHealth() - (activeUnit.getStr() - enemy.getMDef()));
+                }
+
+                if (enemy.getHealth() > 0)
+                {
+                    if (enemyHit <= enemy.getSkill())
+                    {
+                        activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getMDef()));
+                    }
+                }
+            }
+
+            if (enemy.getHealth() <= 0)
+            {
+                enemy.setDead(true);
+                enemy.setUsable(false);
+                (enemy.getTeam() == Teams.Blue ? blueMorale : redMorale).Morale--;
+
+                if (enemy.getTeam() == Teams.Blue)
+                {
+                    map[(int)enemy.getPosition().X / 64, (int)enemy.getPosition().Y / 64].setBlueOcc(false);
+                }
+                else
+                {
+
+                    map[(int)enemy.getPosition().X / 64, (int)enemy.getPosition().Y / 64].setRedOcc(false);
+                }
+            }
+
+            if (activeUnit.getHealth() <= 0)
+            {
+                activeUnit.setDead(true);
+                activeUnit.setUsable(false);
+                (activeUnit.getTeam() == Teams.Blue ? blueMorale : redMorale).Morale--;
+                if (activeUnit.getTeam() == Teams.Blue)
+                {
+                    map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].setBlueOcc(false);
+                }
+                else
+                {
+
+                    map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].setRedOcc(false);
+                }
+                //morale
+            }
+            attackable.Clear();
+            enemies.Clear();
+            isUnitAttacking = false;
         }
 
         private void CreatePathingArea()
@@ -474,7 +664,7 @@ namespace SwordAndScaleTake2
                 {
                     moveable.RemoveAt(i);
                 }
-                if (check.getImpassible())
+                if (check.getimpassable())
                 {
                     moveable.RemoveAt(i);
                 }
@@ -525,6 +715,8 @@ namespace SwordAndScaleTake2
             return contiguous;
 
         }
+
+
 
         public List<Vector2> reHighlight(Vector2 playerOrigin, Vector2 origin, int Mvmt, List<Vector2> moveable)
         {
@@ -589,6 +781,31 @@ namespace SwordAndScaleTake2
             return bridge;
         }
 
+        public Unit unitToAttack()
+        {
+            Unit ret = null;
+            foreach (Unit enemy in attackable)
+            {
+                if (enemy.getPosition() == cursorPosition)
+                {
+                    ret = enemy;
+                }
+            }
+            return ret;
+        }
+
+        private bool CanAttackEnemy()
+        {
+            foreach (Unit enemy in attackable)
+            {
+                if (enemy.getPosition() == cursorPosition)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private bool CanMoveUnit()
         {
             foreach (Vector2 pos in moveable)
@@ -624,140 +841,6 @@ namespace SwordAndScaleTake2
             moveable.Clear();
             isUnitMoving = false;
         }
-
-
-        //Interacting method!
-        //takes in activeUnit and the activeUnit's space (in map position form)
-        public void interact(Unit interacter, Terrain thing) {
-		
-	    //if the interacter is blue, he can act on red interactable terrain		
-	    if(interacter.team == Teams.Blue) 
-        {
-
-		    //red houses
-		    if( thing.getPosition() == map[3,4].getPosition() || 
-			    thing.getPosition() == map[1,12].getPosition() ||
-			    thing.getPosition() == map[6,12].getPosition() ||
-			    thing.getPosition() == map[9,10].getPosition() )
-		    {
-                //make it not interactable so draw() will draw its appropriate overlay.
-			    thing.isInteractable = false;
-                redMorale.Morale--;
-		    }
-
-		    //red livestock
-		    else if( thing.getPosition() == map[5,8].getPosition() ||
-			    thing.getPosition() == map[1,6].getPosition() )
-		    {
-                //make it not interactable so draw() will draw its appropriate overlay.
-			    thing.isInteractable = false;
-                redMorale.Morale--;
-		    }
-
-		    //red fields
-		    else if( thing.getPosition() == map[0,4].getPosition() ||
-			    thing.getPosition() == map[1,10].getPosition() ||
-			    thing.getPosition() == map[4,12].getPosition() )
-		    {
-                //make it not interactable so draw() will draw its appropriate overlay.
-			    thing.isInteractable = false;
-                redMorale.Morale--;
-		    }
-
-		    //red poisonable river
-		    else if( thing.getPosition() == map[3,0].getPosition() ||
-				    thing.getPosition() == map[4,0].getPosition() ||
-				    thing.getPosition() == map[5,0].getPosition() ||
-				    thing.getPosition() == map[3,2].getPosition() ||
-				    thing.getPosition() == map[4,2].getPosition() ||
-				    thing.getPosition() == map[5,2].getPosition() )
-		    {
-                //make it not interactable so draw() will draw its appropriate overlay.
-			    thing.isInteractable = false;
-                redMorale.Morale--;
-		    }
-
-		    //red castle
-		    else if(thing.getPosition() == map[1,1].getPosition() ||
-			    thing.getPosition() == map[2,1].getPosition() ||
-			    thing.getPosition() == map[1,2].getPosition() ||
-			    thing.getPosition() == map[2,2].getPosition() )
-		    {
-                //make it not interactable so draw() will draw its appropriate overlay.
-			    thing.isInteractable = false;
-                redMorale.Morale--;
-		    }
-
-		    else
-		    {
-
-		    }
-	    }
-
-	    //If the Unit is red, they can interact with Blue terrains.
-	    else{
-
-		    //blue houses
-		    if( thing.getPosition() == map[12,1].getPosition() || 
-			    thing.getPosition() == map[17,2].getPosition() ||
-			    thing.getPosition() == map[17,6].getPosition() ||
-			    thing.getPosition() == map[19,8].getPosition() )
-		    {
-                //make it not interactable so draw() will draw its appropriate overlay.
-			    thing.isInteractable = false;
-			    blueMorale.Morale--;
-		    }
-
-		    //blue livestock
-		    else if( thing.getPosition() == map[14,3].getPosition() ||
-			    thing.getPosition() == map[22,5].getPosition() ) 
-		    {
-                //make it not interactable so draw() will draw its appropriate overlay.
-			    thing.isInteractable = false;
-                blueMorale.Morale--;
-		    }
-
-		    //blue fields
-		    else if( thing.getPosition() == map[23,8].getPosition() ||
-			    thing.getPosition() == map[22,2].getPosition() ||
-			    thing.getPosition() == map[19,1].getPosition() )
-		    {
-                //make it not interactable so draw() will draw its appropriate overlay.
-			    thing.isInteractable = false;
-                blueMorale.Morale--;
-		    }
-
-		    //blue poisonable river
-		    else if( thing.getPosition() == map[18,9].getPosition()  ||
-				     thing.getPosition() == map[19,9].getPosition()  ||
-			 	     thing.getPosition() == map[20,9].getPosition()  ||
-			  	     thing.getPosition() == map[18,11].getPosition() ||
-			   	     thing.getPosition() == map[20,11].getPosition() )
-		    {
-                //make it not interactable so draw() will draw its appropriate overlay.
-			    thing.isInteractable = false;
-                blueMorale.Morale--;
-		    }
-
-		    //blue castle
-		    else if(thing.getPosition() == map[21,10].getPosition() ||
-			    thing.getPosition() == map[22,10].getPosition() ||
-			    thing.getPosition() == map[21,11].getPosition() ||
-			    thing.getPosition() == map[22,11].getPosition() )
-		    {
-                //make it not interactable so draw() will draw its appropriate overlay.
-			    thing.isInteractable = false;
-                blueMorale.Morale--;
-		    }
-
-		    else
-		    {
-
-		    }
-	    }
-
-    //end interact method
-    }
 
         private bool MoveCursor(KeyboardState oldState, KeyboardState newState, ref Vector2 cursorPos)
         {
@@ -817,9 +900,12 @@ namespace SwordAndScaleTake2
             //If there is a next unit
             if (nextUnit != null)
             {
-                //Move cursor to next unit
-                cursorPosition = nextUnit.getPosition();
-                DetectUnitHovered();
+                if (nextUnit.getUsable())
+                {
+                    //Move cursor to next unit
+                    cursorPosition = nextUnit.getPosition();
+                    DetectUnitHovered();
+                }
             }
             //If there are no more usable units
             else
@@ -827,6 +913,38 @@ namespace SwordAndScaleTake2
                 EndTurn();
             }
             activeUnit = null;
+        }
+
+        public Unit redGeneralChoice()
+        {
+            string compChoice = "";
+            Random genNum = new Random();
+            int compGen = genNum.Next(0, 5);
+            if (compGen == 0)
+            {
+                compChoice = "blueMageGen";
+            }
+            if (compGen == 1)
+            {
+                compChoice = "blueArcherGen";
+            }
+            if (compGen == 2)
+            {
+                compChoice = "bluePikeGen";
+            }
+            if (compGen == 3)
+            {
+                compChoice = "blueSwordGen";
+            }
+            if (compGen == 4)
+            {
+                compChoice = "blueWarriorGen";
+            }
+
+            Unit generalR = new Unit(compChoice);
+            generalR.setType("red" + compChoice.Substring(4));
+            generalR.setPosition(generalRPosition);
+            return generalR;
         }
 
         private void EndTurn()
@@ -837,38 +955,12 @@ namespace SwordAndScaleTake2
             //Reset each unit in current team
             foreach (Unit unit in (activeTeam == Teams.Blue ? blueUnits : redUnits))
             {
+                unit.setHasActed(false);
+                unit.setHasMoved(false);
                 unit.setUsable(true);
             }
             //Other team's turn
             activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
-        }
-
-        private Unit randomGeneral()
-        {
-            Unit chosenGen = null;
-            Random genNum = new Random();
-            int compGen = genNum.Next(0, 5);
-            if (compGen == 0)
-            {
-                chosenGen = new Unit("redMageGen","MageGen",8, 15, 9, 2, 5, 3, Teams.Red, generalRPosition);
-            }
-            if (compGen == 1)
-            {
-                chosenGen = new Unit("redArcherGen", "ArcherGen", 15, 8, 9, 3, 4, 3, Teams.Red, generalRPosition); ;
-            }
-            if (compGen == 2)
-            {
-                chosenGen = new Unit("redPikeGen", "PikeGen", 15, 9, 7, 5, 2, 3, Teams.Red, generalRPosition);
-            }
-            if (compGen == 3)
-            {
-                chosenGen = new Unit("redSwordGen", "SwordGen", 15, 9, 9, 2, 4, 3, Teams.Red, generalRPosition);
-            }
-            if (compGen == 4)
-            {
-                chosenGen = new Unit("redWarriorGen", "WarriorGen", 15, 9, 8, 4, 2, 3, Teams.Red, generalRPosition);
-            }
-            return chosenGen;
         }
     }
 }

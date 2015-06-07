@@ -8,19 +8,18 @@ namespace SwordAndScaleTake2
 {
     public class Terrain
     {
-        bool impassible;
+        bool impassable;
         bool blueOccupied;
         bool redOccupied;
         bool owner;
         public bool isInteractable;
-        public void Draw();
         Vector2 position;
 
         public Terrain(int x, int y)
         {
             this.position.X = x * 64;
             this.position.Y = y * 64;
-            impassible = false;
+            impassable = false;
             blueOccupied = false;
             redOccupied = false;
             owner = false;
@@ -46,14 +45,14 @@ namespace SwordAndScaleTake2
             this.position = position;
         }
 
-        public bool getImpassible()
+        public bool getimpassable()
         {
-            return this.impassible;
+            return this.impassable;
         }
 
-        public void setImpassible(bool impassible)
+        public void setimpassable(bool impassable)
         {
-            this.impassible = impassible;
+            this.impassable = impassable;
         }
 
         public bool getInteractable()
@@ -92,7 +91,7 @@ namespace SwordAndScaleTake2
         }
 
         
-        public void Draw() 
+        public void Draw()   //renamed for compatibility errors
         {
 
             if (!this.isInteractable)
