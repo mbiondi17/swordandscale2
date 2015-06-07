@@ -128,8 +128,8 @@ namespace SwordAndScaleTake2
             blueInfoPane.setPixelPosition( 768, 896);
             blueMorale  .setPixelPosition(1344, 896);
             activeTeam = Teams.Blue;
-            cursorPosition = swordBPosition;
-            hoveredUnit = blueSword;
+            cursorPosition = mageBPosition;
+            hoveredUnit = blueMage;
         }
 
         public void LoadContent(ContentManager content)
@@ -152,7 +152,7 @@ namespace SwordAndScaleTake2
 
             blueteam = content.Load<Texture2D>("blueteam");
             redteam = content.Load<Texture2D>("redteam");
-            //backgroundMusic = BackTrack;
+            //backgroundMusic = content.Load<Song>("sounds/backtrack");
             //MediaPlayer.Play(backgroundMusic);
             //MediaPlayer.IsRepeating = true;
             //space.LoadContent();
@@ -223,7 +223,7 @@ namespace SwordAndScaleTake2
                         //Hide UnitActionPane
                         unitActionPane.Hide();
                         //Interact
-                        //TODO: Interact(GameElement other) method call goes here
+                        interact(activeUnit, map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
                         //When done
                         DeactivateUnit();
                     }
@@ -618,6 +618,140 @@ namespace SwordAndScaleTake2
             moveable.Clear();
             isUnitMoving = false;
         }
+
+
+        //Interacting method!
+        //takes in activeUnit and the activeUnit's space (in map position form)
+        public void interact(Unit interacter, Terrain thing) {
+		
+	    //if the interacter is blue, he can act on red interactable terrain		
+	    if(interacter.team == Teams.Blue) 
+        {
+
+		    //red houses
+		    if( thing.getPosition() == map[3,4].getPosition() || 
+			    thing.getPosition() == map[1,12].getPosition() ||
+			    thing.getPosition() == map[6,12].getPosition() ||
+			    thing.getPosition() == map[9,10].getPosition() )
+		    {
+			    thing.isInteractable = false;
+			    //make thing visibly interacted with.
+                redMorale.Morale--;
+		    }
+
+		    //red livestock
+		    else if( thing.getPosition() == map[5,8].getPosition() ||
+			    thing.getPosition() == map[1,6].getPosition() )
+		    {
+			    thing.isInteractable = false;
+			    //make thing visibly interacted with.
+                redMorale.Morale--;
+		    }
+
+		    //red fields
+		    else if( thing.getPosition() == map[0,4].getPosition() ||
+			    thing.getPosition() == map[1,10].getPosition() ||
+			    thing.getPosition() == map[4,12].getPosition() )
+		    {
+			    thing.isInteractable = false;
+			    //make thing visibly interacted with.
+                redMorale.Morale--;
+		    }
+
+		    //red poisonable river
+		    else if( thing.getPosition() == map[3,0].getPosition() ||
+				    thing.getPosition() == map[4,0].getPosition() ||
+				    thing.getPosition() == map[5,0].getPosition() ||
+				    thing.getPosition() == map[3,2].getPosition() ||
+				    thing.getPosition() == map[4,2].getPosition() ||
+				    thing.getPosition() == map[5,2].getPosition() )
+		    {
+			    thing.isInteractable = false;
+			    //make thing visibly interacted with.
+                redMorale.Morale--;
+		    }
+
+		    //red castle
+		    else if(thing.getPosition() == map[1,1].getPosition() ||
+			    thing.getPosition() == map[2,1].getPosition() ||
+			    thing.getPosition() == map[1,2].getPosition() ||
+			    thing.getPosition() == map[2,2].getPosition() )
+		    {
+			    thing.isInteractable = false;
+			    //make thing visibly interacted with.
+                redMorale.Morale--;
+		    }
+
+		    else
+		    {
+
+		    }
+	    }
+
+	    //If the Unit is red, they can interact with Blue terrains.
+	    else{
+
+		    //blue houses
+		    if( thing.getPosition() == map[12,1].getPosition() || 
+			    thing.getPosition() == map[17,2].getPosition() ||
+			    thing.getPosition() == map[17,6].getPosition() ||
+			    thing.getPosition() == map[19,8].getPosition() )
+		    {
+			    thing.isInteractable = false;
+			    //make thing visibly interacted with.
+			    blueMorale.Morale--;
+		    }
+
+		    //blue livestock
+		    else if( thing.getPosition() == map[14,3].getPosition() ||
+			    thing.getPosition() == map[22,5].getPosition() ) 
+		    {
+			    thing.isInteractable = false;
+			    //make thing visibly interacted with.
+                blueMorale.Morale--;
+		    }
+
+		    //blue fields
+		    else if( thing.getPosition() == map[23,8].getPosition() ||
+			    thing.getPosition() == map[22,2].getPosition() ||
+			    thing.getPosition() == map[19,1].getPosition() )
+		    {
+			    thing.isInteractable = false;
+			    //make thing visibly interacted with.
+                blueMorale.Morale--;
+		    }
+
+		    //blue poisonable river
+		    else if( thing.getPosition() == map[18,9].getPosition()  ||
+				     thing.getPosition() == map[19,9].getPosition()  ||
+			 	     thing.getPosition() == map[20,9].getPosition()  ||
+			  	     thing.getPosition() == map[18,11].getPosition() ||
+			   	     thing.getPosition() == map[20,11].getPosition() )
+		    {
+			    thing.isInteractable = false;
+			    //make thing visibly interacted with.
+                blueMorale.Morale--;
+		    }
+
+		    //blue castle
+		    else if(thing.getPosition() == map[21,10].getPosition() ||
+			    thing.getPosition() == map[22,10].getPosition() ||
+			    thing.getPosition() == map[21,11].getPosition() ||
+			    thing.getPosition() == map[22,11].getPosition() )
+		    {
+			    thing.isInteractable = false;
+			    //make thing visibly interacted with.
+                blueMorale.Morale--;
+		    }
+
+		    else
+		    {
+
+		    }
+	    }
+
+    //end interact method
+    }
 
         private bool MoveCursor(KeyboardState oldState, KeyboardState newState, ref Vector2 cursorPos)
         {

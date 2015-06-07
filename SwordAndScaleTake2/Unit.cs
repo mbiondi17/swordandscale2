@@ -17,7 +17,7 @@ namespace SwordAndScaleTake2
         int mvmt;
         int def;
         int mDef;
-        Teams team;
+        public Teams team;
         bool dead;
         bool usable;
         bool hasMoved;

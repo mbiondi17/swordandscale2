@@ -6,13 +6,13 @@ using System.Text;
 
 namespace SwordAndScaleTake2
 {
-    class Terrain
+    public class Terrain
     {
         bool impassible;
         bool blueOccupied;
         bool redOccupied;
         bool owner;
-        bool isInteractable;
+        public bool isInteractable;
         Vector2 position;
 
         public Terrain(int x, int y)
