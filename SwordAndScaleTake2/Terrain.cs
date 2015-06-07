@@ -13,6 +13,7 @@ namespace SwordAndScaleTake2
         bool redOccupied;
         bool owner;
         public bool isInteractable;
+        public void Draw();
         Vector2 position;
 
         public Terrain(int x, int y)
@@ -88,6 +89,106 @@ namespace SwordAndScaleTake2
         public bool getOwner()
         {
             return this.owner;
+        }
+
+        
+        public void Draw() 
+        {
+
+            if (!this.isInteractable)
+            {
+                //red houses
+               if( this.getPosition() == new Vector2(3*64, 4*64)    || 
+			        this.getPosition() == new Vector2(1*64, 12*64)  ||
+			        this.getPosition() == new Vector2(6*64, 12*64)  ||
+			        this.getPosition() == new Vector2(9*64, 10*64)  )
+		    {
+			
+		    }
+
+		       //red livestock
+		        else if( this.getPosition() == new Vector2(5*64, 8*64)  ||
+			        this.getPosition() == new Vector2(1*64, 6*64)       )
+		        {
+		
+		        }
+
+		        //red fields
+		        else if( this.getPosition() ==new Vector2(0*64, 4*64)   ||
+			        this.getPosition() == new Vector2(1*64, 10*64)      ||
+			        this.getPosition() == new Vector2(4*64, 12*64)      )
+		        {
+
+		        }
+
+		        //red poisonable river
+		        else if( this.getPosition() == new Vector2(3*64, 0*64)  ||
+				        this.getPosition() == new Vector2(4*64, 0*64)   ||
+				        this.getPosition() == new Vector2(5*64, 0*64)   ||
+				        this.getPosition() == new Vector2(3*64, 2*64)   ||
+				        this.getPosition() == new Vector2(4*64, 2*64)   ||
+				        this.getPosition() == new Vector2(5*64, 2*64)   )
+		        {
+
+		        }
+
+		        //red castle
+		        else if(this.getPosition() == new Vector2(1*64, 1*64)   ||
+			        this.getPosition() == new Vector2(2*64, 1*64)       ||
+			        this.getPosition() == new Vector2(1*64, 2*64)       ||
+			        this.getPosition() == new Vector2(2*64, 2*64)       )
+		        {
+
+		        }
+
+		        //blue houses
+		        else if( this.getPosition() == new Vector2(12*64, 1*64) || 
+			        this.getPosition() == new Vector2(17*64, 2*64)      ||
+			        this.getPosition() == new Vector2(17*64, 6*64)      ||
+			        this.getPosition() == new Vector2(19*64, 8*64)      )
+		        {
+
+		        }
+
+		        //blue livestock
+		        else if( this.getPosition() == new Vector2(14*64, 3*64) ||
+			        this.getPosition() == new Vector2(22*64, 5*64)      ) 
+		        {
+
+		        }
+
+		        //blue fields
+		        else if( this.getPosition() == new Vector2(23*64, 8*64) ||
+			        this.getPosition() == new Vector2(22*64, 2*64)      ||
+			        this.getPosition() == new Vector2(19*64, 1*64)      )
+		        {
+
+		        }
+
+		        //blue poisonable river
+		        else if( this.getPosition() == new Vector2(18*64, 9*64) ||
+				         this.getPosition() == new Vector2(19*64, 9*64) ||
+			 	         this.getPosition() == new Vector2(20*64, 9*64) ||
+			  	         this.getPosition() == new Vector2(18*64, 11*64)||
+			   	         this.getPosition() == new Vector2(20*64, 11*64) )
+		        {
+
+		        }
+
+		        //blue castle
+		        else if(this.getPosition() == new Vector2(21*64, 10*64) ||
+			        this.getPosition() == new Vector2(22*64, 10*64)     ||
+			        this.getPosition() == new Vector2(21*64, 11*64)     ||
+			        this.getPosition() == new Vector2(22*64, 11*64)      )
+		        {
+
+		        }
+
+		        else
+		        {
+
+		        }
+	        }
         }
     }
 }

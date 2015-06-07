@@ -634,8 +634,8 @@ namespace SwordAndScaleTake2
 			    thing.getPosition() == map[6,12].getPosition() ||
 			    thing.getPosition() == map[9,10].getPosition() )
 		    {
+                //make it not interactable so draw() will draw its appropriate overlay.
 			    thing.isInteractable = false;
-			    //make thing visibly interacted with.
                 redMorale.Morale--;
 		    }
 
@@ -643,8 +643,8 @@ namespace SwordAndScaleTake2
 		    else if( thing.getPosition() == map[5,8].getPosition() ||
 			    thing.getPosition() == map[1,6].getPosition() )
 		    {
+                //make it not interactable so draw() will draw its appropriate overlay.
 			    thing.isInteractable = false;
-			    //make thing visibly interacted with.
                 redMorale.Morale--;
 		    }
 
@@ -653,8 +653,8 @@ namespace SwordAndScaleTake2
 			    thing.getPosition() == map[1,10].getPosition() ||
 			    thing.getPosition() == map[4,12].getPosition() )
 		    {
+                //make it not interactable so draw() will draw its appropriate overlay.
 			    thing.isInteractable = false;
-			    //make thing visibly interacted with.
                 redMorale.Morale--;
 		    }
 
@@ -666,8 +666,8 @@ namespace SwordAndScaleTake2
 				    thing.getPosition() == map[4,2].getPosition() ||
 				    thing.getPosition() == map[5,2].getPosition() )
 		    {
+                //make it not interactable so draw() will draw its appropriate overlay.
 			    thing.isInteractable = false;
-			    //make thing visibly interacted with.
                 redMorale.Morale--;
 		    }
 
@@ -677,8 +677,8 @@ namespace SwordAndScaleTake2
 			    thing.getPosition() == map[1,2].getPosition() ||
 			    thing.getPosition() == map[2,2].getPosition() )
 		    {
+                //make it not interactable so draw() will draw its appropriate overlay.
 			    thing.isInteractable = false;
-			    //make thing visibly interacted with.
                 redMorale.Morale--;
 		    }
 
@@ -697,8 +697,8 @@ namespace SwordAndScaleTake2
 			    thing.getPosition() == map[17,6].getPosition() ||
 			    thing.getPosition() == map[19,8].getPosition() )
 		    {
+                //make it not interactable so draw() will draw its appropriate overlay.
 			    thing.isInteractable = false;
-			    //make thing visibly interacted with.
 			    blueMorale.Morale--;
 		    }
 
@@ -706,8 +706,8 @@ namespace SwordAndScaleTake2
 		    else if( thing.getPosition() == map[14,3].getPosition() ||
 			    thing.getPosition() == map[22,5].getPosition() ) 
 		    {
+                //make it not interactable so draw() will draw its appropriate overlay.
 			    thing.isInteractable = false;
-			    //make thing visibly interacted with.
                 blueMorale.Morale--;
 		    }
 
@@ -716,8 +716,8 @@ namespace SwordAndScaleTake2
 			    thing.getPosition() == map[22,2].getPosition() ||
 			    thing.getPosition() == map[19,1].getPosition() )
 		    {
+                //make it not interactable so draw() will draw its appropriate overlay.
 			    thing.isInteractable = false;
-			    //make thing visibly interacted with.
                 blueMorale.Morale--;
 		    }
 
@@ -728,8 +728,8 @@ namespace SwordAndScaleTake2
 			  	     thing.getPosition() == map[18,11].getPosition() ||
 			   	     thing.getPosition() == map[20,11].getPosition() )
 		    {
+                //make it not interactable so draw() will draw its appropriate overlay.
 			    thing.isInteractable = false;
-			    //make thing visibly interacted with.
                 blueMorale.Morale--;
 		    }
 
@@ -739,8 +739,8 @@ namespace SwordAndScaleTake2
 			    thing.getPosition() == map[21,11].getPosition() ||
 			    thing.getPosition() == map[22,11].getPosition() )
 		    {
+                //make it not interactable so draw() will draw its appropriate overlay.
 			    thing.isInteractable = false;
-			    //make thing visibly interacted with.
                 blueMorale.Morale--;
 		    }
 
