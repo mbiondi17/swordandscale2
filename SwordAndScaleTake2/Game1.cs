@@ -306,6 +306,11 @@ namespace SwordAndScaleTake2
                         DeactivateUnit();
                     }
                 }
+                else if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
+                    !CanAttackEnemy())
+                {
+                    isUnitAttacking = false;
+                }
             }
             else if (isUnitInteracting)
             {
@@ -487,18 +492,24 @@ namespace SwordAndScaleTake2
                     thing.getPosition() == map[6, 12].getPosition() ||
                     thing.getPosition() == map[9, 10].getPosition())
                 {
-                    //make it not interactable so draw() will draw its appropriate overlay.
-                    thing.isInteractable = false;
-                    redMorale.Morale--;
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        redMorale.Morale--;
+                    }
                 }
 
                 //red livestock
                 else if (thing.getPosition() == map[5, 8].getPosition() ||
                     thing.getPosition() == map[1, 6].getPosition())
                 {
-                    //make it not interactable so draw() will draw its appropriate overlay.
-                    thing.isInteractable = false;
-                    redMorale.Morale--;
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        redMorale.Morale--;
+                    }
                 }
 
                 //red fields
@@ -506,9 +517,12 @@ namespace SwordAndScaleTake2
                     thing.getPosition() == map[1, 10].getPosition() ||
                     thing.getPosition() == map[4, 12].getPosition())
                 {
-                    //make it not interactable so draw() will draw its appropriate overlay.
-                    thing.isInteractable = false;
-                    redMorale.Morale--;
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        redMorale.Morale--;
+                    }
                 }
 
                 //red poisonable river
@@ -519,9 +533,12 @@ namespace SwordAndScaleTake2
                         thing.getPosition() == map[4, 2].getPosition() ||
                         thing.getPosition() == map[5, 2].getPosition())
                 {
-                    //make it not interactable so draw() will draw its appropriate overlay.
-                    thing.isInteractable = false;
-                    redMorale.Morale--;
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        redMorale.Morale--;
+                    }
                 }
 
                 //red castle
@@ -530,9 +547,12 @@ namespace SwordAndScaleTake2
                     thing.getPosition() == map[1, 2].getPosition() ||
                     thing.getPosition() == map[2, 2].getPosition())
                 {
-                    //make it not interactable so draw() will draw its appropriate overlay.
-                    thing.isInteractable = false;
-                    redMorale.Morale--;
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        redMorale.Morale--;
+                    }
                 }
 
                 else
@@ -551,18 +571,24 @@ namespace SwordAndScaleTake2
                     thing.getPosition() == map[17, 6].getPosition() ||
                     thing.getPosition() == map[19, 8].getPosition())
                 {
-                    //make it not interactable so draw() will draw its appropriate overlay.
-                    thing.isInteractable = false;
-                    blueMorale.Morale--;
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        blueMorale.Morale--;
+                    }
                 }
 
                 //blue livestock
                 else if (thing.getPosition() == map[14, 3].getPosition() ||
                     thing.getPosition() == map[22, 5].getPosition())
                 {
-                    //make it not interactable so draw() will draw its appropriate overlay.
-                    thing.isInteractable = false;
-                    blueMorale.Morale--;
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        blueMorale.Morale--;
+                    }
                 }
 
                 //blue fields
@@ -570,9 +596,12 @@ namespace SwordAndScaleTake2
                     thing.getPosition() == map[22, 2].getPosition() ||
                     thing.getPosition() == map[19, 1].getPosition())
                 {
-                    //make it not interactable so draw() will draw its appropriate overlay.
-                    thing.isInteractable = false;
-                    blueMorale.Morale--;
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        blueMorale.Morale--;
+                    }
                 }
 
                 //blue poisonable river
@@ -582,9 +611,12 @@ namespace SwordAndScaleTake2
                          thing.getPosition() == map[18, 11].getPosition() ||
                          thing.getPosition() == map[20, 11].getPosition())
                 {
-                    //make it not interactable so draw() will draw its appropriate overlay.
-                    thing.isInteractable = false;
-                    blueMorale.Morale--;
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        blueMorale.Morale--;
+                    }
                 }
 
                 //blue castle
@@ -593,9 +625,12 @@ namespace SwordAndScaleTake2
                     thing.getPosition() == map[21, 11].getPosition() ||
                     thing.getPosition() == map[22, 11].getPosition())
                 {
-                    //make it not interactable so draw() will draw its appropriate overlay.
-                    thing.isInteractable = false;
-                    blueMorale.Morale--;
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        blueMorale.Morale--;
+                    }
                 }
 
                 else
