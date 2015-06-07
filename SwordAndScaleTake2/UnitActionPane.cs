@@ -45,7 +45,7 @@ namespace SwordAndScaleTake2
                 spriteBatch.DrawString(courierNew, "Attack"  , new Vector2(x + 5, y + 0),  Color.Black);
                 spriteBatch.DrawString(courierNew, "Move"    , new Vector2(x + 5, y + 32), Color.Black);
                 spriteBatch.DrawString(courierNew, "Interact", new Vector2(x + 5, y + 64), Color.Black);
-                spriteBatch.DrawString(courierNew, "End Turn", new Vector2(x + 5, y + 96), Color.Black);
+                spriteBatch.DrawString(courierNew, "Wait"    , new Vector2(x + 5, y + 96), Color.Black);
             }
         }
 
