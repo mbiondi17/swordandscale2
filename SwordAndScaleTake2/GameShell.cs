@@ -19,8 +19,6 @@ namespace SwordAndScaleTake2
         //All the different GUIs that will be in the game
         List<GameElement> mainMenu = new List<GameElement>();
         List<GameElement> generalChoice = new List<GameElement>();
-        List<GameElement> gameGUI = new List<GameElement>();
-        List<GameElement> unitInfo = new List<GameElement>();
 
         Game1 game;
         GamePreferences gamePrefs = new GamePreferences();
@@ -29,8 +27,8 @@ namespace SwordAndScaleTake2
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferHeight = 960;  // set this value to the desired Height of your window
-            graphics.PreferredBackBufferWidth = 1536;  // set this value to the desired width of your window
+            graphics.PreferredBackBufferHeight = 1024; // set this value to the desired Height of your window
+            graphics.PreferredBackBufferWidth  = 1536; // set this value to the desired width of your window
             graphics.ApplyChanges();
         }
 
@@ -46,7 +44,7 @@ namespace SwordAndScaleTake2
             mainMenu.Add(new GameElement("start"));
             mainMenu.Add(new GameElement("exit"));
 
-            generalChoice.Add(new GameElement("background-paper"));
+            generalChoice.Add(new GameElement("genselect"));
             generalChoice.Add(new GameElement("blueArcherGen"));
             generalChoice.Add(new GameElement("blueMageGen"));
             generalChoice.Add(new GameElement("bluePikeGen"));
@@ -68,9 +66,10 @@ namespace SwordAndScaleTake2
                 element.clickEvent += OnClick;
             }
 
-            mainMenu.Find(x => x.AssetName == "title").setPixelPosition(1000, 730);
-            mainMenu.Find(x => x.AssetName == "start").setPixelPosition(1000, 800);
-            mainMenu.Find(x => x.AssetName == "exit") .setPixelPosition(1000, 840);
+            mainMenu.Find(x => x.AssetName == "background").setPixelPosition( -50, 000);
+            mainMenu.Find(x => x.AssetName == "title")     .setPixelPosition(1000, 730);
+            mainMenu.Find(x => x.AssetName == "start")     .setPixelPosition(1000, 800);
+            mainMenu.Find(x => x.AssetName == "exit")      .setPixelPosition(1000, 840);
 
             // ------------Choosing a General------------
             foreach (GameElement element in generalChoice)
@@ -79,19 +78,12 @@ namespace SwordAndScaleTake2
                 element.clickEvent += OnClick;
             }
 
+            generalChoice.Find(x => x.AssetName == "genselect")     .setPixelPosition(-50, 000);
             generalChoice.Find(x => x.AssetName == "blueArcherGen") .setPixelPosition(500, 400);
             generalChoice.Find(x => x.AssetName == "blueMageGen")   .setPixelPosition(600, 400);
             generalChoice.Find(x => x.AssetName == "bluePikeGen")   .setPixelPosition(700, 400);
             generalChoice.Find(x => x.AssetName == "blueSwordGen")  .setPixelPosition(800, 400);
             generalChoice.Find(x => x.AssetName == "blueWarriorGen").setPixelPosition(900, 400);
-
-            // ------------Game GUI------------
-            foreach (GameElement element in gameGUI)
-            {
-                element.LoadContent(Content);
-                element.clickEvent += OnClick;
-            }
-
         }
         protected override void Update(GameTime gameTime)
         {
@@ -116,11 +108,6 @@ namespace SwordAndScaleTake2
                 case GameState.inGame:
                     if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                         gameState = GameState.mainMenu; //TODO: Make pauseMenu and link it here
-                    foreach (GameElement element in gameGUI)
-                    {
-                        element.Update();
-                    }
-
                     game.Update();
                     break;
                 default:
@@ -150,10 +137,6 @@ namespace SwordAndScaleTake2
                     }
                     break;
                 case GameState.inGame:
-                    foreach (GameElement elem in gameGUI)
-                    {
-                        elem.Draw(spriteBatch);
-                    }
                     break;
                 default:
                     break;
@@ -185,7 +168,7 @@ namespace SwordAndScaleTake2
             {
                 gamePrefs.chosenGeneral = button;
                 gameState = GameState.inGame;
-                game = new Game1();
+                game = new Game1(gamePrefs);
                 game.LoadContent(Content);
             }
             if (button == "exit")

@@ -17,7 +17,7 @@ namespace SwordAndScaleTake2
         int mvmt;
         int def;
         int mDef;
-        bool team;
+        public Teams team;
         bool dead;
         bool usable;
         bool hasMoved;
@@ -41,7 +41,7 @@ namespace SwordAndScaleTake2
                     this.def = 3;
                     this.mDef = 4;
                     this.mvmt = 5;
-                    this.team = true;
+                    this.team = Teams.Blue;
                     this.dead = false;
                     this.usable = true;
                     this.hasMoved = false;
@@ -55,7 +55,7 @@ namespace SwordAndScaleTake2
                     this.def = 2;
                     this.mDef = 5;
                     this.mvmt = 4;
-                    this.team = true;
+                    this.team = Teams.Blue;
                     this.dead = false;
                     this.usable = true;
                     this.hasMoved = false;
@@ -69,7 +69,7 @@ namespace SwordAndScaleTake2
                     this.def = 5;
                     this.mDef = 2;
                     this.mvmt = 3;
-                    this.team = true;
+                    this.team = Teams.Blue;
                     this.dead = false;
                     this.usable = true;
                     this.hasMoved = false;
@@ -83,7 +83,7 @@ namespace SwordAndScaleTake2
                     this.def = 2;
                     this.mDef = 4;
                     this.mvmt = 4;
-                    this.team = true;
+                    this.team = Teams.Blue;
                     this.dead = false;
                     this.usable = true;
                     this.hasMoved = false;
@@ -98,7 +98,7 @@ namespace SwordAndScaleTake2
                     this.def = 4;
                     this.mDef = 2;
                     this.mvmt = 3;
-                    this.team = true;
+                    this.team = Teams.Blue;
                     this.dead = false;
                     this.usable = true;
                     this.hasMoved = false;
@@ -108,7 +108,7 @@ namespace SwordAndScaleTake2
             }
         }
 
-        public Unit(string textureName, string type, int health, int str, int skill, int def, int mDef, int mvmt, bool team, Vector2 position) : base(textureName)
+        public Unit(string textureName, string type, int health, int str, int skill, int def, int mDef, int mvmt, Teams team, Vector2 position) : base(textureName)
         {
             this.type = type;
             this.health = health;
@@ -137,6 +137,11 @@ namespace SwordAndScaleTake2
             {
                 unitClickEvent(this, (int)Mouse.GetState().X, (int)Mouse.GetState().Y);
             }
+        }
+
+        public string getType()
+        {
+            return this.type;
         }
 
         public int getHealth()
@@ -169,7 +174,7 @@ namespace SwordAndScaleTake2
             return this.mDef;
         }
 
-        public bool getTeam()
+        public Teams getTeam()
         {
             return this.team;
         }
@@ -189,9 +194,19 @@ namespace SwordAndScaleTake2
             return this.hasActed;
         }
 
+        public bool getDead()
+        {
+            return this.dead;
+        }
+
         public Vector2 getPosition()
         {
             return this.position;
+        }
+
+        public void setType(string type)
+        {
+            this.type = type;
         }
 
         public void setHealth(int health)
@@ -214,51 +229,20 @@ namespace SwordAndScaleTake2
             this.hasActed = hasActed;
         }
 
+        public void setHasMoved(bool hasMoved)
+        {
+            this.hasMoved = hasMoved;
+        }
+
         public void setPosition(Vector2 position)
         {
             this.position = position;
             this.setPixelPosition(position);
         }
 
-        public void attack(Unit enemy)
+        public bool isBlue()
         {
-            Random rand = new Random();
-            int unitHit = rand.Next(1, 11);
-            int enemyHit = rand.Next(1, 11);
-
-            if (enemy.type != "mage" && enemy.type != "genMage")
-            {
-
-                if (unitHit <= this.skill)
-                {
-                    enemy.health -= (this.str - enemy.def);
-                }
-
-                if (enemy.health > 0)
-                {
-                    if (enemyHit <= enemy.skill)
-                    {
-                        this.health -= (enemy.str - this.def);
-                    }
-                }
-            }
-
-
-            if (enemy.type == "mage" || enemy.type == "genMage")
-            {
-                if (unitHit <= this.skill)
-                {
-                    enemy.health -= (this.str - enemy.mDef);
-                }
-
-                if (enemy.health > 0)
-                {
-                    if (enemyHit <= enemy.skill)
-                    {
-                        this.health -= (enemy.str - this.mDef);
-                    }
-                }
-            }
+            return team == Teams.Blue;
         }
     }
 }
