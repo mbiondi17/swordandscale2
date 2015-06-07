@@ -211,8 +211,8 @@ namespace SwordAndScaleTake2
                 //Update info panes
                 UpdateInfoPanes();
             }
-            //If the player isn't in the middle of moving a unit AND the cursor is over a unit (runs every update)
-            if (!isUnitMoving && !isUnitAttacking && !isUnitInteracting && hoveredUnit != null)
+            //If the player isn't in the middle of moving, attacking, or interacting AND the cursor is over a unit (runs every update)
+            if (!(isUnitMoving || isUnitAttacking || isUnitInteracting) && hoveredUnit != null)
             {
                 //If Spacebar is pressed AND Unit is on the activeTeam AND Unit isUsable
                 if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
@@ -277,6 +277,7 @@ namespace SwordAndScaleTake2
                 {
                     MoveUnit();
                     //When done
+                    DetectUnitHovered();
                     activeUnit.setHasMoved(true);
                     if (activeUnit.getHasActed())
                     {
@@ -296,18 +297,31 @@ namespace SwordAndScaleTake2
 
                     // enemies.Clear();
                     // attackable.Clear();
+                    DetectUnitHovered();
                     activeUnit.setHasActed(true);
 
                     if (activeUnit.getHasMoved())
                     {
-                    DeactivateUnit();
-                    UpdateInfoPanes();
+                        DeactivateUnit();
+                    }
                 }
-            }
             }
             else if (isUnitInteracting)
             {
                 //TODO
+                if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space))
+                {
+                    DetectUnitHovered();
+                    isUnitInteracting = false;
+                }
+            }
+            //If B is pressed, cancel action (does not deactivate unit or reset unit)
+            if (oldState.IsKeyUp(Keys.B) && pressedKey.IsKeyDown(Keys.B))
+            {
+                isUnitAttacking = false;
+                isUnitInteracting = false;
+                isUnitMoving = false;
+                clearHighlight();
             }
             //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
             if (oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
@@ -584,7 +598,7 @@ namespace SwordAndScaleTake2
 
                     map[(int)enemy.getPosition().X / 64, (int)enemy.getPosition().Y / 64].setRedOcc(false);
                 }
-        }
+            }
 
             if (activeUnit.getHealth() <= 0)
             {
@@ -885,10 +899,15 @@ namespace SwordAndScaleTake2
             if (!activeUnit.isBlue())
             {
                 map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].setRedOcc(true);
-            }
+            } 
+            clearHighlight();
+            isUnitMoving = false;
+        }
+
+        private void clearHighlight()
+        {
             path.Clear();
             moveable.Clear();
-            isUnitMoving = false;
         }
 
         private bool MoveCursor()
@@ -966,7 +985,7 @@ namespace SwordAndScaleTake2
                 //Move cursor to next unit
                 cursorPosition = nextUnit.getPosition();
                 DetectUnitHovered();
-            }
+                }
             }
             //If there are no more usable units
             else
@@ -974,6 +993,7 @@ namespace SwordAndScaleTake2
                 EndTurn();
             }
             activeUnit = null;
+            UpdateInfoPanes();
         }
 
         public Unit redGeneralChoice()
