@@ -13,7 +13,6 @@ namespace SwordAndScaleTake2
         bool redOccupied;
         bool owner;
         public bool isInteractable;
-        public void Draw();
         Vector2 position;
 
         public Terrain(int x, int y)
