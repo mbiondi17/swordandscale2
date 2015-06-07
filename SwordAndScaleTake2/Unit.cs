@@ -214,6 +214,11 @@ namespace SwordAndScaleTake2
             this.hasActed = hasActed;
         }
 
+        public void setHasMoved(bool hasMoved)
+        {
+            this.hasMoved = hasMoved;
+        }
+
         public void setPosition(Vector2 position)
         {
             this.position = position;
