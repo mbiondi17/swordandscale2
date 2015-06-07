@@ -50,7 +50,6 @@ namespace SwordAndScaleTake2
         Unit redArcher;
         Unit redPike;
         Unit generalR;
-        String randomGen;
         Vector2 swordBPosition;
         Vector2 warriorBPosition;
         Vector2 mageBPosition;
