@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -85,8 +86,8 @@ namespace SwordAndScaleTake2
         UnitActionPane unitActionPane = new UnitActionPane();
         bool methodCalled = false;
         GamePreferences gamePrefs;
-        MoralePane blueMorale = new MoralePane(10, "black");
-        MoralePane redMorale = new MoralePane(10, "black");
+        MoralePane blueMorale = new MoralePane(10, "blue");
+        MoralePane redMorale = new MoralePane(10, "red");
 
         public Game1(GamePreferences gamePrefs)
         {
@@ -162,7 +163,6 @@ namespace SwordAndScaleTake2
             castleRed = content.Load<Texture2D>("CastleRed");
             poison = content.Load<Texture2D>("poison");
 
-
             foreach (Unit unit in blueUnits)
             {
                 unit.LoadContent(content);
@@ -202,9 +202,13 @@ namespace SwordAndScaleTake2
                 unit.Update();
             }
 
+            //blueInfoPane.Update();
+            //redInfoPane.Update();
+            //unitActionPane.Update();
+
             pressedKey = Keyboard.GetState();
             //Move Cursor (returns true if a move occurred)
-            if (MoveCursor())
+            if (MoveCursor(oldState, pressedKey, ref cursorPosition))
             {
                 //Update hoveredUnit
                 DetectUnitHovered();
@@ -243,9 +247,8 @@ namespace SwordAndScaleTake2
                         //Hide UnitActionPane
                         unitActionPane.Hide();
                         //Interact
-                        //TODO: Interact(GameElement other) method call goes here
+                        interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
                         //When done
-                        //isUnitInteracting = true;
                         DeactivateUnit();
                     }
                     //If M is pressed
@@ -305,6 +308,11 @@ namespace SwordAndScaleTake2
                         DeactivateUnit();
                     }
                 }
+                else if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
+                    !CanAttackEnemy())
+                {
+                    isUnitAttacking = false;
+                }
             }
             else if (isUnitInteracting)
             {
@@ -335,10 +343,11 @@ namespace SwordAndScaleTake2
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(mapImage, new Rectangle(0, 0, 1536, 896), Color.White);
-            foreach (Terrain terr in map)
+           foreach (Terrain terr in map)
             {
                 terr.Draw(spriteBatch, fire, gate, castleRed, castleBlue, poison);
             }
+            
             if (path.Count > 0)
             {
                 foreach (PathSprite space in path)
@@ -444,7 +453,7 @@ namespace SwordAndScaleTake2
             map[19, 11].setImpassible(true);
             map[19, 12].setImpassible(true);
             map[19, 13].setImpassible(true);
-            map[18,9].setInteractable(true);
+            map[18, 9].setInteractable(true);
             map[19, 9].setInteractable(true);
             map[20, 9].setInteractable(true);
             map[18, 11].setInteractable(true);
@@ -481,6 +490,171 @@ namespace SwordAndScaleTake2
             map[22, 10].setInteractable(true);
             map[21, 11].setInteractable(true);
             map[22, 11].setInteractable(true);
+        }
+
+        //Interacting method!
+        //takes in activeUnit and the activeUnit's space (in map position form)
+        public void interact(Unit interacter, ref Terrain thing)
+        {
+
+            //if the interacter is blue, he can act on red interactable terrain		
+            if (interacter.team == Teams.Blue)
+            {
+
+                //red houses
+                if (thing.getPosition() == map[3, 4].getPosition() ||
+                    thing.getPosition() == map[1, 12].getPosition() ||
+                    thing.getPosition() == map[6, 12].getPosition() ||
+                    thing.getPosition() == map[9, 10].getPosition())
+                {
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        redMorale.Morale--;
+                    }
+                }
+
+                //red livestock
+                else if (thing.getPosition() == map[5, 8].getPosition() ||
+                    thing.getPosition() == map[1, 6].getPosition())
+                {
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        redMorale.Morale--;
+                    }
+                }
+
+                //red fields
+                else if (thing.getPosition() == map[0, 4].getPosition() ||
+                    thing.getPosition() == map[1, 10].getPosition() ||
+                    thing.getPosition() == map[4, 12].getPosition())
+                {
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        redMorale.Morale--;
+                    }
+                }
+
+                //red poisonable river
+                else if (thing.getPosition() == map[3, 0].getPosition() ||
+                        thing.getPosition() == map[4, 0].getPosition() ||
+                        thing.getPosition() == map[5, 0].getPosition() ||
+                        thing.getPosition() == map[3, 2].getPosition() ||
+                        thing.getPosition() == map[4, 2].getPosition() ||
+                        thing.getPosition() == map[5, 2].getPosition())
+                {
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        redMorale.Morale--;
+                    }
+                }
+
+                //red castle
+                else if (thing.getPosition() == map[1, 1].getPosition() ||
+                    thing.getPosition() == map[2, 1].getPosition() ||
+                    thing.getPosition() == map[1, 2].getPosition() ||
+                    thing.getPosition() == map[2, 2].getPosition())
+                {
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        redMorale.Morale--;
+                    }
+                }
+
+                else
+                {
+
+                }
+            }
+
+            //If the Unit is red, they can interact with Blue terrains.
+            else
+            {
+
+                //blue houses
+                if (thing.getPosition() == map[12, 1].getPosition() ||
+                    thing.getPosition() == map[17, 2].getPosition() ||
+                    thing.getPosition() == map[17, 6].getPosition() ||
+                    thing.getPosition() == map[19, 8].getPosition())
+                {
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        blueMorale.Morale--;
+                    }
+                }
+
+                //blue livestock
+                else if (thing.getPosition() == map[14, 3].getPosition() ||
+                    thing.getPosition() == map[22, 5].getPosition())
+                {
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        blueMorale.Morale--;
+                    }
+                }
+
+                //blue fields
+                else if (thing.getPosition() == map[23, 8].getPosition() ||
+                    thing.getPosition() == map[22, 2].getPosition() ||
+                    thing.getPosition() == map[19, 1].getPosition())
+                {
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        blueMorale.Morale--;
+                    }
+                }
+
+                //blue poisonable river
+                else if (thing.getPosition() == map[18, 9].getPosition() ||
+                         thing.getPosition() == map[19, 9].getPosition() ||
+                         thing.getPosition() == map[20, 9].getPosition() ||
+                         thing.getPosition() == map[18, 11].getPosition() ||
+                         thing.getPosition() == map[20, 11].getPosition())
+                {
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        blueMorale.Morale--;
+                    }
+                }
+
+                //blue castle
+                else if (thing.getPosition() == map[21, 10].getPosition() ||
+                    thing.getPosition() == map[22, 10].getPosition() ||
+                    thing.getPosition() == map[21, 11].getPosition() ||
+                    thing.getPosition() == map[22, 11].getPosition())
+                {
+                    if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        blueMorale.Morale--;
+                    }
+                }
+
+                else
+                {
+
+                }
+            }
+
+            //end interact method
         }
 
         public void CreateAttackingArea()
@@ -910,28 +1084,28 @@ namespace SwordAndScaleTake2
             moveable.Clear();
         }
 
-        private bool MoveCursor()
+        private bool MoveCursor(KeyboardState oldState, KeyboardState newState, ref Vector2 cursorPos)
         {
-            if (oldState.IsKeyUp(Keys.Left) && pressedKey.IsKeyDown(Keys.Left) && cursorPosition.X > 0)
+            if (oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left) && cursorPos.X > 0)
             {
-                cursorPosition.X -= 64;
+                cursorPos.X -= 64;
                 return true;
             }
 
-            if (oldState.IsKeyUp(Keys.Right) && pressedKey.IsKeyDown(Keys.Right) && cursorPosition.X < 23 * 64)
+            if (oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right) && cursorPos.X < 23 * 64)
             {
-                cursorPosition.X += 64;
+                cursorPos.X += 64;
                 return true;
             }
 
-            if (oldState.IsKeyUp(Keys.Down) && pressedKey.IsKeyDown(Keys.Down) && cursorPosition.Y < 13 * 64)
+            if (oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down) && cursorPos.Y < 13 * 64)
             {
-                cursorPosition.Y += 64;
+                cursorPos.Y += 64;
                 return true;
             }
-            if (oldState.IsKeyUp(Keys.Up) && pressedKey.IsKeyDown(Keys.Up) && cursorPosition.Y > 0)
+            if (oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up) && cursorPos.Y > 0)
             {
-                cursorPosition.Y -= 64;
+                cursorPos.Y -= 64;
                 return true;
             }
             return false;
@@ -996,36 +1170,32 @@ namespace SwordAndScaleTake2
             UpdateInfoPanes();
         }
 
-        public Unit redGeneralChoice()
+        private Unit randomGeneral()
         {
-            string compChoice = "";
+            Unit chosenGen = null;
             Random genNum = new Random();
             int compGen = genNum.Next(0, 5);
             if (compGen == 0)
             {
-                compChoice = "blueMageGen";
+                chosenGen = new Unit("redMageGen", "MageGen", 8, 15, 9, 2, 5, 3, Teams.Red, generalRPosition);
             }
             if (compGen == 1)
             {
-                compChoice = "blueArcherGen";
+                chosenGen = new Unit("redArcherGen", "ArcherGen", 15, 8, 9, 3, 4, 3, Teams.Red, generalRPosition); ;
             }
             if (compGen == 2)
             {
-                compChoice = "bluePikeGen";
+                chosenGen = new Unit("redPikeGen", "PikeGen", 15, 9, 7, 5, 2, 3, Teams.Red, generalRPosition);
             }
             if (compGen == 3)
             {
-                compChoice = "blueSwordGen";
+                chosenGen = new Unit("redSwordGen", "SwordGen", 15, 9, 9, 2, 4, 3, Teams.Red, generalRPosition);
             }
             if (compGen == 4)
             {
-                compChoice = "blueWarriorGen";
+                chosenGen = new Unit("redWarriorGen", "WarriorGen", 15, 9, 8, 4, 2, 3, Teams.Red, generalRPosition);
             }
-
-            Unit generalR = new Unit(compChoice);
-            generalR.setType("red" + compChoice.Substring(4));
-            generalR.setPosition(generalRPosition);
-            return generalR;
+            return chosenGen;
         }
 
         private void EndTurn()
