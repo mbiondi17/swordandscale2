@@ -253,6 +253,7 @@ namespace SwordAndScaleTake2
                     MoveUnit();
                     //When done
                     DeactivateUnit();
+                    UpdateInfoPanes();
                 }
             }
             //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
@@ -646,6 +647,17 @@ namespace SwordAndScaleTake2
         {
             //See if cursor is over any unit
             hoveredUnit = blueUnits.Concat(redUnits).FirstOrDefault(unit => unit.getPixelPosition() == cursorPosition);
+
+            //If the cursor is not over the unit, then hide the action pane
+            if (hoveredUnit == null)
+            {
+                unitActionPane.Hide();
+
+                if (!isUnitMoving)
+                {
+                    activeUnit = null;
+                }
+            }
         }
 
         private void UpdateInfoPanes()
@@ -663,6 +675,7 @@ namespace SwordAndScaleTake2
                 //Show Unit stats on its team's side
                 (activeTeam == Teams.Blue ? blueInfoPane : redInfoPane).setUnit(activeUnit);
             }
+
         }
 
         private void DeactivateUnit()
