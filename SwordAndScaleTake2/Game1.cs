@@ -280,21 +280,32 @@ namespace SwordAndScaleTake2
                 {
                     MoveUnit();
                     //When done
-                    DeactivateUnit();
-                    activeUnit.setHasActed(true);
+                    activeUnit.setHasMoved(true);
                     if (activeUnit.getHasActed() && activeUnit.getHasMoved())
                     {
                         DeactivateUnit();
                     }
                 }
             }
+            //If the player is attacking
             else if (isUnitAttacking)
             {
                 if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
                     CanAttackEnemy())
                 {
-                    //When done
-                    isUnitAttacking = false;
+                    //get enemy to attack and do so
+                    Unit theEnemy = unitToAttack();
+                    attack(ref theEnemy);
+
+                    // enemies.Clear();
+                    // attackable.Clear();
+                    DetectUnitHovered();
+                    activeUnit.setHasActed(true);
+
+                    if (activeUnit.getHasMoved())
+                    {
+                        DeactivateUnit();
+                    }
                 }
             }
             else if (isUnitInteracting)
