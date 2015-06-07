@@ -25,6 +25,7 @@ namespace SwordAndScaleTake2
         public MoralePane(int morale, string color)
         {
             this.morale = morale;
+            //used for coloring the text to differentiate the Morale displays!
             this.color = color;
         }
 
@@ -37,6 +38,7 @@ namespace SwordAndScaleTake2
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(background, new Rectangle(x, y, 192, 128), Color.White);
+            //Draw the Morale Panes depending on color field (Team color)
             if (color == "red")
             {
                 spriteBatch.DrawString(courierNew, "Morale: " + morale, new Vector2(x + 20, y + 42), Color.Red);
