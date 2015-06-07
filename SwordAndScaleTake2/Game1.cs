@@ -169,95 +169,84 @@ namespace SwordAndScaleTake2
                     unitInfo.Hide();
             }
 
-            pressedKey = Keyboard.GetState();
-            if (oldState.IsKeyUp(Keys.Enter) && pressedKey.IsKeyDown(Keys.Enter))
+            if (gameState == GameState.Waiting)
             {
-                Console.WriteLine(cursorPosition.X / 64 + "," + cursorPosition.Y / 64);
-            }
-
-            if (oldState.IsKeyUp(Keys.Left) && pressedKey.IsKeyDown(Keys.Left) && cursorPosition.X > 0)
-            {
-                cursorPosition.X -= 64;
-            }
-
-            if (oldState.IsKeyUp(Keys.Right) && pressedKey.IsKeyDown(Keys.Right) && cursorPosition.X < 23 * 64)
-            {
-                cursorPosition.X += 64;
-            }
-
-            if (oldState.IsKeyUp(Keys.Down) && pressedKey.IsKeyDown(Keys.Down) && cursorPosition.Y < 13 * 64)
-            {
-                cursorPosition.Y += 64;
-            }
-            if (oldState.IsKeyUp(Keys.Up) && pressedKey.IsKeyDown(Keys.Up) && cursorPosition.Y > 0)
-            {
-                cursorPosition.Y -= 64;
-            }
-            if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space))
-            {
-                if (turnState == TurnState.BlueTurn)
+                pressedKey = Keyboard.GetState();
+                if (oldState.IsKeyUp(Keys.Enter) && pressedKey.IsKeyDown(Keys.Enter))
                 {
-                    for (int v = 0; v < blueUnits.Count; v++)
-                    {
-                        if (blueUnits[v].getPosition().X == cursorPosition.X && blueUnits[v].getPosition().Y == cursorPosition.Y)
-                        {
-                            currentUnit = blueUnits[v];
-                            if (!currentUnit.getUsable())
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    Console.WriteLine(cursorPosition.X / 64 + "," + cursorPosition.Y / 64);
                 }
-                if (turnState == TurnState.RedTurn)
+
+                if (oldState.IsKeyUp(Keys.Left) && pressedKey.IsKeyDown(Keys.Left) && cursorPosition.X > 0)
                 {
-                    for (int k = 0; k < redUnits.Count; k++)
-                    {
-                        if (redUnits[k].getPosition().X == cursorPosition.X && redUnits[k].getPosition().Y == cursorPosition.Y)
-                        {
-                            currentUnit = redUnits[k];
-                            if (!currentUnit.getUsable())
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    cursorPosition.X -= 64;
                 }
-            }
 
+                if (oldState.IsKeyUp(Keys.Right) && pressedKey.IsKeyDown(Keys.Right) && cursorPosition.X < 23 * 64)
+                {
+                    cursorPosition.X += 64;
+                }
 
-            string input = "";
-            KeyboardState oldmenu = new KeyboardState();
-            KeyboardState menu = Keyboard.GetState();
-
-            if (oldmenu.IsKeyUp(Keys.A) && menu.IsKeyDown(Keys.A)) input = "A";
-            if (oldmenu.IsKeyUp(Keys.E) && menu.IsKeyDown(Keys.E)) input = "E";
-            if (oldmenu.IsKeyUp(Keys.I) && menu.IsKeyDown(Keys.I)) input = "I";
-            if (oldmenu.IsKeyUp(Keys.M) && menu.IsKeyDown(Keys.M)) input = "M";
-
-            oldmenu = menu;
-
-            switch (input)
-            {
-                case "A":
-                    gameState = GameState.Attacking;
-                    break;
-
-                case "E":
-                    gameState = GameState.End;
-                    break;
-
-                case "M":
+                if (oldState.IsKeyUp(Keys.Down) && pressedKey.IsKeyDown(Keys.Down) && cursorPosition.Y < 13 * 64)
+                {
+                    cursorPosition.Y += 64;
+                }
+                if (oldState.IsKeyUp(Keys.Up) && pressedKey.IsKeyDown(Keys.Up) && cursorPosition.Y > 0)
+                {
+                    cursorPosition.Y -= 64;
+                }
+                if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) && highlightCheck)
+                {
                     gameState = GameState.Moving;
-                    break;
-
-                case "I":
-                    gameState = GameState.Interacting;
-                    break;
+                }
+                if(oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space))
+                {
+                    if (turnState == TurnState.BlueTurn)
+                    {
+                        for (int v = 0; v < blueUnits.Count; v++)
+                        {
+                            if (blueUnits[v].getPosition().X == cursorPosition.X && blueUnits[v].getPosition().Y == cursorPosition.Y)
+                            {
+                                currentUnit = blueUnits[v];
+                                if (!currentUnit.getUsable())
+                                {
+                                    currentUnit = null;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (turnState == TurnState.RedTurn)
+                    {
+                        for (int k = 0; k < redUnits.Count; k++)
+                        {
+                            if (redUnits[k].getPosition().X == cursorPosition.X && redUnits[k].getPosition().Y == cursorPosition.Y)
+                            {
+                                currentUnit = redUnits[k];
+                                if (!currentUnit.getUsable())
+                                {
+                                    currentUnit = null;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
+            if(currentUnit != null)
+            {
+                if (!currentUnit.getHasMoved() && oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M))
+                {
+                    gameState = GameState.Moving;
+                }
 
-           
+                if(oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
+                {
+                    gameState = GameState.End;
+                }
+            }
+          
 
             if (gameState == GameState.End)
             {
@@ -267,7 +256,7 @@ namespace SwordAndScaleTake2
             }
 
 
-            if (gameState == GameState.Moving)
+            if (gameState == GameState.Moving && !highlightCheck)
             {
                 int currentMv = currentUnit.getMvmt();
                 for (int i = 1; i < currentUnit.getMvmt() + 1; i++)
@@ -356,11 +345,15 @@ namespace SwordAndScaleTake2
                         path.RemoveAt(i);
                     }
                 }
+                highlightCheck = true;
+                gameState = GameState.Waiting;
+
+            }
 
 
 
 
-                if (highlightCheck)
+                if (highlightCheck && gameState == GameState.Moving)
                 {
                     //moving
                     bool move = false;
@@ -414,15 +407,10 @@ namespace SwordAndScaleTake2
                         highlight = false;
 
                     }
-
+                    highlightCheck = false;
                     gameState = GameState.Waiting;
                 }
-            }
-
-            if (!highlightCheck)
-            {
-                highlightCheck = true;
-            }
+            
 
 
 
