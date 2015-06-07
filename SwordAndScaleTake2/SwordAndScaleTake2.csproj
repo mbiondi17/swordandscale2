@@ -52,6 +52,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Terrain.cs" />
     <Compile Include="Unit.cs" />
+    <Compile Include="UnitActionPane.cs" />
+    <Compile Include="MoralePane.cs" />
     <Compile Include="UnitInfoPane.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +75,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Burning.wav" />
+    <Content Include="Content\genselect.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Sounds\BackTrack.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
