@@ -74,8 +74,8 @@ namespace SwordAndScaleTake2
         UnitActionPane unitActionPane = new UnitActionPane();
         bool methodCalled = false;
         GamePreferences gamePrefs;
-        MoralePane blueMorale = new MoralePane(10);
-        MoralePane redMorale = new MoralePane(10);
+        MoralePane blueMorale = new MoralePane(10, "blue");
+        MoralePane redMorale = new MoralePane(10, "red");
 
         public Game1(GamePreferences gamePrefs)
         {
@@ -152,7 +152,7 @@ namespace SwordAndScaleTake2
 
             blueteam = content.Load<Texture2D>("blueteam");
             redteam = content.Load<Texture2D>("redteam");
-            //backgroundMusic = Content.Load<Song>("Sounds/BackTrack");
+            //backgroundMusic = BackTrack;
             //MediaPlayer.Play(backgroundMusic);
             //MediaPlayer.IsRepeating = true;
             //space.LoadContent();

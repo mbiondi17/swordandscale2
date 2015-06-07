@@ -14,6 +14,7 @@ namespace SwordAndScaleTake2
         SpriteFont courierNew; //doesn't support unicode
         int x, y;
         int morale;
+        string color;
 
         public int Morale
         {
@@ -21,9 +22,10 @@ namespace SwordAndScaleTake2
             set { morale = value; }
         }
 
-        public MoralePane(int morale)
+        public MoralePane(int morale, string color)
         {
             this.morale = morale;
+            this.color = color;
         }
 
         public void LoadContent(ContentManager content)
@@ -35,7 +37,14 @@ namespace SwordAndScaleTake2
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(background, new Rectangle(x, y, 192, 128), Color.White);
-            spriteBatch.DrawString(courierNew, "Morale: " + morale,   new Vector2(x + 20, y + 42), Color.Black);
+            if (color == "red")
+            {
+                spriteBatch.DrawString(courierNew, "Morale: " + morale, new Vector2(x + 20, y + 42), Color.Red);
+            }
+            else
+            {
+                spriteBatch.DrawString(courierNew, "Morale: " + morale, new Vector2(x + 20, y + 42), Color.Blue);
+            }
         }
 
         public void setPixelPosition(int x, int y)
