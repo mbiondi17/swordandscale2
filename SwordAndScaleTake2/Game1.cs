@@ -242,38 +242,33 @@ namespace SwordAndScaleTake2
                         //When done
                         DeactivateUnit();
                     }
-                }
-                //If I is pressed
-                else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
-                {
-                    //Hide UnitActionPane
-                    unitActionPane.Hide();
-                    //Interact
-                    interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
-                    //When done
-                    activeUnit.setHasActed(true);
-                    if (activeUnit.getHasActed() && activeUnit.getHasMoved())
+                    //If I is pressed
+                    else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
                     {
+                        //Hide UnitActionPane
+                        unitActionPane.Hide();
+                        //Interact
+                        interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
+                        isUnitInteracting = true;
+                    }
+                    //If M is pressed
+                    else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
+                    {
+                        //Hide UnitActionPane
+                        unitActionPane.Hide();
+                        //Move
+                        CreatePathingArea();
+                        isUnitMoving = true;
+                    }
+                    //If W is pressed
+                    else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
+                    {
+                        //Hide UnitActionPane
+                        unitActionPane.Hide();
+                        //Wait
+                        //When done
                         DeactivateUnit();
                     }
-                }
-                //If M is pressed
-                else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
-                {
-                    //Hide UnitActionPane
-                    unitActionPane.Hide();
-                    //Move
-                    CreatePathingArea();
-                    isUnitMoving = true;
-                }
-                //If W is pressed
-                else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
-                {
-                    //Hide UnitActionPane
-                    unitActionPane.Hide();
-                    //Wait
-                    //When done
-                    DeactivateUnit();
                 }
             }
             //If the player is moving a unit
@@ -286,10 +281,19 @@ namespace SwordAndScaleTake2
                     MoveUnit();
                     //When done
                     DeactivateUnit();
+                    activeUnit.setHasActed(true);
+                    if (activeUnit.getHasActed() && activeUnit.getHasMoved())
+                    {
+                        DeactivateUnit();
+                    }
                 }
-                else if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
-                    !CanAttackEnemy())
+            }
+            else if (isUnitAttacking)
+            {
+                if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
+                    CanAttackEnemy())
                 {
+                    //When done
                     isUnitAttacking = false;
                 }
             }
