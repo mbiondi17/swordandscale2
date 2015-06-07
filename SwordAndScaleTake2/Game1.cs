@@ -12,15 +12,15 @@ namespace SwordAndScaleTake2
     enum GameState
     {
         Moving,
-        RedTurn,
-        BlueTurn,
         Waiting,
-        Interacting
+        Interacting,
+        Attacking,
+        End
     }
     enum TurnState
     {
         RedTurn,
-        BlueTurn,
+        BlueTurn
     }
     public class Game1
     {
@@ -63,9 +63,9 @@ namespace SwordAndScaleTake2
         List<PathSprite> path = new List<PathSprite>();
         GameState gameState;
         TurnState turnState;
-        bool highlight = false;
         UnitInfoPane unitInfo;
-        bool methodCalled = false;
+        bool highlight = false;
+        bool highlightCheck = false;
 
         public Game1()
         {
@@ -112,8 +112,8 @@ namespace SwordAndScaleTake2
             redUnits.Add(redArcher);
             redUnits.Add(redPike);
             unitInfo = new UnitInfoPane();
-            gameState = GameState.BlueTurn;
             turnState = TurnState.BlueTurn;
+            gameState = GameState.Waiting;
             cursorPosition = swordBPosition;
             
         }
@@ -159,18 +159,20 @@ namespace SwordAndScaleTake2
                 unit.Update();
             }
             foreach (Unit unit in redUnits)
-        {
+            {
                 unit.Update();
             }
             unitInfo.Update();
             if (Keyboard.GetState().IsKeyDown(Keys.B))
+            {
                 if (unitInfo.IsVisible())
                     unitInfo.Hide();
+            }
 
             pressedKey = Keyboard.GetState();
             if (oldState.IsKeyUp(Keys.Enter) && pressedKey.IsKeyDown(Keys.Enter))
             {
-                Console.WriteLine(cursorPosition.X/64 +","+ cursorPosition.Y/64);
+                Console.WriteLine(cursorPosition.X / 64 + "," + cursorPosition.Y / 64);
             }
 
             if (oldState.IsKeyUp(Keys.Left) && pressedKey.IsKeyDown(Keys.Left) && cursorPosition.X > 0)
@@ -197,7 +199,7 @@ namespace SwordAndScaleTake2
                 {
                     for (int v = 0; v < blueUnits.Count; v++)
                     {
-                        if ((int)blueUnits[v].getPosition().X/64 == (int)(cursorPosition.X / 64) && (int)blueUnits[v].getPosition().Y/64 == (int)(cursorPosition.Y / 64))
+                        if (blueUnits[v].getPosition().X == cursorPosition.X && blueUnits[v].getPosition().Y == cursorPosition.Y)
                         {
                             currentUnit = blueUnits[v];
                             if (!currentUnit.getUsable())
@@ -205,14 +207,13 @@ namespace SwordAndScaleTake2
                                 break;
                             }
                         }
-                        gameState = GameState.Moving;
                     }
                 }
                 if (turnState == TurnState.RedTurn)
                 {
                     for (int k = 0; k < redUnits.Count; k++)
                     {
-                        if (redUnits[k].getPosition().X / 64 == (int)(cursorPosition.X / 64) && redUnits[k].getPosition().Y / 64 == (int)(cursorPosition.Y / 64))
+                        if (redUnits[k].getPosition().X == cursorPosition.X && redUnits[k].getPosition().Y == cursorPosition.Y)
                         {
                             currentUnit = redUnits[k];
                             if (!currentUnit.getUsable())
@@ -220,107 +221,160 @@ namespace SwordAndScaleTake2
                                 break;
                             }
                         }
-                        gameState = GameState.Moving;
+                    }
+                }
+            }
+
+
+            string input = "";
+            KeyboardState oldmenu = new KeyboardState();
+            KeyboardState menu = Keyboard.GetState();
+
+            if (oldmenu.IsKeyUp(Keys.A) && menu.IsKeyDown(Keys.A)) input = "A";
+            if (oldmenu.IsKeyUp(Keys.E) && menu.IsKeyDown(Keys.E)) input = "E";
+            if (oldmenu.IsKeyUp(Keys.I) && menu.IsKeyDown(Keys.I)) input = "I";
+            if (oldmenu.IsKeyUp(Keys.M) && menu.IsKeyDown(Keys.M)) input = "M";
+
+            oldmenu = menu;
+
+            switch (input)
+            {
+                case "A":
+                    gameState = GameState.Attacking;
+                    break;
+
+                case "E":
+                    gameState = GameState.End;
+                    break;
+
+                case "M":
+                    gameState = GameState.Moving;
+                    break;
+
+                case "I":
+                    gameState = GameState.Interacting;
+                    break;
+            }
+
+
+           
+
+            if (gameState == GameState.End)
+            {
+                currentUnit.setUsable(false);
+                Console.WriteLine("gameState is end!");
+                gameState = GameState.Waiting;
+            }
+
+
+            if (gameState == GameState.Moving)
+            {
+                int currentMv = currentUnit.getMvmt();
+                for (int i = 1; i < currentUnit.getMvmt() + 1; i++)
+                {
+                    if (cursorPosition.X + (64 * i) < 24 * 64)
+                    {
+                        Vector2 pathCor1 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y);
+                        PathSprite path1 = new PathSprite(pathCor1, this);
+                        path.Add(path1);
+                        moveable.Add(pathCor1);
+                    }
+                    if (cursorPosition.X - (64 * i) >= 0)
+                    {
+                        Vector2 pathCor2 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y);
+                        PathSprite path2 = new PathSprite(pathCor2, this);
+                        path.Add(path2);
+                        moveable.Add(pathCor2);
+                    }
+                    if (cursorPosition.Y + (64 * i) < 14 * 64)
+                    {
+                        Vector2 pathCor3 = new Vector2(cursorPosition.X, cursorPosition.Y + (64 * i));
+                        PathSprite path3 = new PathSprite(pathCor3, this);
+                        path.Add(path3);
+                        moveable.Add(pathCor3);
+                    }
+                    if (cursorPosition.Y - (64 * i) >= 0)
+                    {
+                        Vector2 pathCor4 = new Vector2(cursorPosition.X, cursorPosition.Y - (64 * i));
+                        PathSprite path4 = new PathSprite(pathCor4, this);
+                        path.Add(path4);
+                        moveable.Add(pathCor4);
+                    }
+
+                    for (int j = 1; j < currentMv; j++)
+                    {
+                        if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y + (64 * j) < 14 * 64)
+                        {
+                            Vector2 pathCor11 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y + (64 * j));
+                            PathSprite path11 = new PathSprite(pathCor11, this);
+                            path.Add(path11);
+                            moveable.Add(pathCor11);
+                        }
+                        if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y - (64 * j) >= 0)
+                        {
+                            Vector2 pathCor12 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y - (64 * j));
+                            PathSprite path12 = new PathSprite(pathCor12, this);
+                            path.Add(path12);
+                            moveable.Add(pathCor12);
+                        }
+                        if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y + (64 * j) < 14 * 64)
+                        {
+                            Vector2 pathCor21 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y + (64 * j));
+                            PathSprite path21 = new PathSprite(pathCor21, this);
+                            path.Add(path21);
+                            moveable.Add(pathCor21);
+                        }
+                        if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y - (64 * j) >= 0)
+                        {
+                            Vector2 pathCor22 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y - (64 * j));
+                            PathSprite path22 = new PathSprite(pathCor22, this);
+                            path.Add(path22);
+                            moveable.Add(pathCor22);
+                        }
+                    }
+                    currentMv--;
+                }
+                Console.WriteLine("End of Highlighting");
+                List<Vector2> moveNew = highlighter(moveable, currentUnit.getPosition());
+                Console.WriteLine("moveNew: " + moveNew.Count);
+                moveable = moveNew;
+
+                for (int i = path.Count - 1; i >= 0; i--)
+                {
+                    bool correct = false;
+                    PathSprite sprite = path[i];
+                    foreach (Vector2 item in moveable)
+                    {
+                        if (sprite.getPosition() == item)
+                        {
+                            correct = true;
+                            break;
+                        }
+                    }
+                    if (!correct)
+                    {
+                        path.RemoveAt(i);
                     }
                 }
 
-                if (gameState == GameState.Moving)
+
+
+
+                if (highlightCheck)
                 {
-                    int currentMv = currentUnit.getMvmt();
-                    highlight = true;
-                    for (int i = 1; i < currentUnit.getMvmt() + 1; i++)
-                    {
-                        if (cursorPosition.X + (64 * i) < 24 * 64)
-                        {
-                            Vector2 pathCor1 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y);
-                            PathSprite path1 = new PathSprite(pathCor1, this);
-                            path.Add(path1);
-                            moveable.Add(pathCor1);
-                        }
-                        if (cursorPosition.X - (64 * i) >= 0)
-                        {
-                            Vector2 pathCor2 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y);
-                            PathSprite path2 = new PathSprite(pathCor2, this);
-                            path.Add(path2);
-                            moveable.Add(pathCor2);
-                        }
-                        if (cursorPosition.Y + (64 * i) < 14 * 64)
-                        {
-                            Vector2 pathCor3 = new Vector2(cursorPosition.X, cursorPosition.Y + (64 * i));
-                            PathSprite path3 = new PathSprite(pathCor3, this);
-                            path.Add(path3);
-                            moveable.Add(pathCor3);
-                        }
-                        if (cursorPosition.Y - (64 * i) >= 0)
-                        {
-                            Vector2 pathCor4 = new Vector2(cursorPosition.X, cursorPosition.Y - (64 * i));
-                            PathSprite path4 = new PathSprite(pathCor4, this);
-                            path.Add(path4);
-                            moveable.Add(pathCor4);
-                        }
-
-                        for (int j = 1; j < currentMv; j++)
-                        {
-                            if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y + (64 * j) < 14 * 64)
-                            {
-                                Vector2 pathCor11 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y + (64 * j));
-                                PathSprite path11 = new PathSprite(pathCor11, this);
-                                path.Add(path11);
-                                moveable.Add(pathCor11);
-                            }
-                            if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y - (64 * j) >= 0)
-                            {
-                                Vector2 pathCor12 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y - (64 * j));
-                                PathSprite path12 = new PathSprite(pathCor12, this);
-                                path.Add(path12);
-                                moveable.Add(pathCor12);
-                            }
-                            if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y + (64 * j) < 14 * 64)
-                            {
-                                Vector2 pathCor21 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y + (64 * j));
-                                PathSprite path21 = new PathSprite(pathCor21, this);
-                                path.Add(path21);
-                                moveable.Add(pathCor21);
-                            }
-                            if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y - (64 * j) >= 0)
-                            {
-                                Vector2 pathCor22 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y - (64 * j));
-                                PathSprite path22 = new PathSprite(pathCor22, this);
-                                path.Add(path22);
-                                moveable.Add(pathCor22);
-                            }
-                        }
-                        currentMv--;
-                    }
-                    List<Vector2> moveNew = highlighter(moveable, currentUnit.getPosition());
-                    methodCalled = false;
-                    moveable = moveNew;
-
-                    for (int i = path.Count - 1; i >= 0; i--)
-                    {
-                        bool correct = false;
-                        PathSprite sprite = path[i];
-                        foreach (Vector2 item in moveable)
-                        {
-                            if (sprite.getPosition() == item)
-                            {
-                                correct = true;
-                                break;
-                            }
-                        }
-                        if (!correct)
-                        {
-                            path.RemoveAt(i);
-                        }
-                    }
+                    //moving
                     bool move = false;
                     foreach (Vector2 pos in moveable)
                     {
+                        Console.WriteLine("cursor pos: " + cursorPosition.X + ", " + cursorPosition.Y);
+                        Console.WriteLine("check: " + pos.X + ", " + pos.Y);
+
                         if (pos == cursorPosition)
                         {
                             move = true;
                         }
                     }
+                    Console.WriteLine("move bool" + move);
                     if (move)
                     {
                         if (currentUnit.getTeam())
@@ -341,85 +395,89 @@ namespace SwordAndScaleTake2
                             map[(int)currentUnit.getPosition().X / 64, (int)currentUnit.getPosition().Y / 64].setRedOcc(true);
                         }
                         currentUnit.setUsable(false);
+                        Console.WriteLine("current Unit location: " + currentUnit.getPosition().X + ", " + currentUnit.getPosition().Y);
                         path.Clear();
                         moveable.Clear();
 
                         //reset the gamestate to allow play to continue.
                         if (currentUnit.getTeam())
                         {
-                            gameState = GameState.BlueTurn;
+                            turnState = TurnState.BlueTurn;
                         }
                         else
                         {
-                            gameState = GameState.RedTurn;
+                            turnState = TurnState.RedTurn;
 
                         }
 
                         currentUnit = null;
                         highlight = false;
 
-                    }         
-                }
-                if (highlight)
-                {
-                    gameState = GameState.Moving;
+                    }
+
+                    gameState = GameState.Waiting;
                 }
             }
+
+            if (!highlightCheck)
+            {
+                highlightCheck = true;
+            }
+
+
 
             oldState = pressedKey;  // set the new state as the old state for next time 
             //Console.WriteLine(gameState);
 
             //begin turn logic
-                        //check if red turn is over. If so, set gameState to blue turn.
-                        if (gameState == GameState.BlueTurn)
-                        {
-                            bool blueTurnOver = true;
-                            foreach (Unit checkUnit in blueUnits)
-                            {
-                                if (checkUnit.getUsable())
-                                {
-                                    blueTurnOver = false;
-                                    break;
-                                }
-                            }
-                            if (blueTurnOver)
-                            {
-                                gameState = GameState.RedTurn;
-                                turnState = TurnState.RedTurn;
-                                cursorPosition = redSword.getPosition();
-                                foreach (Unit usable in redUnits)
-                                {
-                                    usable.setUsable(true);
-                                }
-                            }
-                        }
+            //check if red turn is over. If so, set gameState to blue turn.
+            if (turnState == TurnState.BlueTurn)
+            {
+                bool blueTurnOver = true;
+                foreach (Unit checkUnit in blueUnits)
+                {
+                    if (checkUnit.getUsable())
+                    {
+                        blueTurnOver = false;
+                        break;
+                    }
+                }
+                if (blueTurnOver)
+                {
+                    turnState = TurnState.RedTurn;
+                    cursorPosition = redSword.getPosition();
+                    foreach (Unit usable in redUnits)
+                    {
+                        usable.setUsable(true);
+                    }
+                }
+            }
 
-                        //check if the blue turn is over
-                        //if so, set GameState to red turn.
-                        if (gameState == GameState.RedTurn)
-                        {
-                            bool redTurnOver = true;
-                            foreach (Unit checkUnit in redUnits)
-                            {
-                                if (checkUnit.getUsable())
-                                {
-                                    redTurnOver = false;
-                                    break;
-                                }
-                            }
-                            if (redTurnOver)
-                            {
-                                gameState = GameState.BlueTurn;
-                                turnState = TurnState.BlueTurn;
-                                cursorPosition = blueSword.getPosition();
-                                foreach (Unit usable in blueUnits)
-                                {
-                                    usable.setUsable(true);
-                                }
-                            }
-                        }
-                    //end turn logic!
+            //check if the blue turn is over
+            //if so, set GameState to red turn.
+            if (turnState == TurnState.RedTurn)
+            {
+                bool redTurnOver = true;
+                foreach (Unit checkUnit in redUnits)
+                {
+                    if (checkUnit.getUsable())
+                    {
+                        redTurnOver = false;
+                        break;
+                    }
+                }
+                if (redTurnOver)
+                {
+                    turnState = TurnState.BlueTurn;
+                    cursorPosition = blueSword.getPosition();
+                    foreach (Unit usable in blueUnits)
+                    {
+                        usable.setUsable(true);
+                    }
+                }
+            }
         }
+                        
 
         public void Draw(SpriteBatch spriteBatch)
         {
@@ -580,6 +638,7 @@ namespace SwordAndScaleTake2
             }
 				}
 			}
+          /*
     for (int i = 0; i < contiguous.Count; i++)
     {
         Vector2 moveItem = contiguous[i];
@@ -589,7 +648,7 @@ namespace SwordAndScaleTake2
             contiguous = reHighlight(origin, moveItem, 2 ,contiguous);
         }
 	}
-
+          */
 	return contiguous;
 
 }
