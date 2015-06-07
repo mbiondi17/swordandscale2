@@ -17,7 +17,7 @@ namespace SwordAndScaleTake2
         int mvmt;
         int def;
         int mDef;
-        Teams team;
+        public Teams team;
         bool dead;
         bool usable;
         bool hasMoved;
@@ -28,8 +28,7 @@ namespace SwordAndScaleTake2
 
         public event UnitClicked unitClickEvent;
 
-        public Unit(string general)
-            : base(general)
+        public Unit(string general) : base(general)
         {
             Vector2 pos = new Vector2(22 * 64, 11 * 64);
             switch (general)
@@ -109,8 +108,7 @@ namespace SwordAndScaleTake2
             }
         }
 
-        public Unit(string textureName, string type, int health, int str, int skill, int def, int mDef, int mvmt, Teams team, Vector2 position)
-            : base(textureName)
+        public Unit(string textureName, string type, int health, int str, int skill, int def, int mDef, int mvmt, Teams team, Vector2 position) : base(textureName)
         {
             this.type = type;
             this.health = health;
@@ -139,11 +137,6 @@ namespace SwordAndScaleTake2
             {
                 unitClickEvent(this, (int)Mouse.GetState().X, (int)Mouse.GetState().Y);
             }
-        }
-
-        public string getType()
-        {
-            return this.type;
         }
 
         public int getHealth()
@@ -186,11 +179,6 @@ namespace SwordAndScaleTake2
             return this.usable;
         }
 
-        public bool getDead()
-        {
-            return this.dead;
-        }
-
         public bool getHasMoved()
         {
             return this.hasMoved;
@@ -206,19 +194,9 @@ namespace SwordAndScaleTake2
             return this.position;
         }
 
-        public void setType(string type)
-        {
-            this.type = type;
-        }
-
         public void setHealth(int health)
         {
             this.health = health;
-        }
-
-        public void setHasMoved(bool hasMoved)
-        {
-            this.hasMoved = hasMoved;
         }
 
         public void setDead(bool dead)
