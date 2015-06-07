@@ -243,38 +243,37 @@ namespace SwordAndScaleTake2
                         DeactivateUnit();
                     }
                 }
-                    //If I is pressed
-                    else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
+                //If I is pressed
+                else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
+                {
+                    //Hide UnitActionPane
+                    unitActionPane.Hide();
+                    //Interact
+                    interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
+                    //When done
+                    activeUnit.setHasActed(true);
+                    if (activeUnit.getHasActed() && activeUnit.getHasMoved())
                     {
-                        //Hide UnitActionPane
-                        unitActionPane.Hide();
-                        //Interact
-                        interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
-                        //When done
-                        activeUnit.setHasActed(true);
-                        if (activeUnit.getHasActed() && activeUnit.getHasMoved())
-                        {
-                        DeactivateUnit();
-                        }
-                    }
-                    //If M is pressed
-                    else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
-                    {
-                        //Hide UnitActionPane
-                        unitActionPane.Hide();
-                        //Move
-                        CreatePathingArea();
-                        isUnitMoving = true;
-                    }
-                    //If W is pressed
-                    else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
-                    {
-                        //Hide UnitActionPane
-                        unitActionPane.Hide();
-                        //Wait
-                        //When done
                         DeactivateUnit();
                     }
+                }
+                //If M is pressed
+                else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
+                {
+                    //Hide UnitActionPane
+                    unitActionPane.Hide();
+                    //Move
+                    CreatePathingArea();
+                    isUnitMoving = true;
+                }
+                //If W is pressed
+                else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
+                {
+                    //Hide UnitActionPane
+                    unitActionPane.Hide();
+                    //Wait
+                    //When done
+                    DeactivateUnit();
                 }
             }
             //If the player is moving a unit
@@ -287,7 +286,6 @@ namespace SwordAndScaleTake2
                     MoveUnit();
                     //When done
                     DeactivateUnit();
-                }
                 }
                 else if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
                     !CanAttackEnemy())
@@ -302,14 +300,15 @@ namespace SwordAndScaleTake2
                 {
                     DetectUnitHovered();
                     isUnitInteracting = false;
+                }
+                //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
+                if (oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
+                {
+                    EndTurn();
+                }
+                // set the new state as the old state for next time 
+                oldState = pressedKey;
             }
-            //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
-            if (oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
-            {
-                EndTurn();
-            }
-            // set the new state as the old state for next time 
-            oldState = pressedKey;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -1048,6 +1047,12 @@ namespace SwordAndScaleTake2
             }
             clearHighlight();
             isUnitMoving = false;
+        }
+
+        private void clearHighlight()
+        {
+            path.Clear();
+            moveable.Clear();
         }
 
 
