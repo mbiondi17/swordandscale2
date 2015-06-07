@@ -302,6 +302,14 @@ namespace SwordAndScaleTake2
                     isUnitInteracting = false;
                 }
             }
+            //If B is pressed, cancel action (does not deactivate unit or reset unit)
+            if (oldState.IsKeyUp(Keys.B) && pressedKey.IsKeyDown(Keys.B))
+            {
+                isUnitAttacking = false;
+                isUnitInteracting = false;
+                isUnitMoving = false;
+                clearHighlight();
+            }
             //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
             if (oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
             {
