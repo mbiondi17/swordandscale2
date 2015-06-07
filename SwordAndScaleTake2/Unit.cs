@@ -17,7 +17,7 @@ namespace SwordAndScaleTake2
         int mvmt;
         int def;
         int mDef;
-        bool team;
+        Teams team;
         bool dead;
         bool usable;
         bool hasMoved;
@@ -41,7 +41,7 @@ namespace SwordAndScaleTake2
                     this.def = 3;
                     this.mDef = 4;
                     this.mvmt = 5;
-                    this.team = true;
+                    this.team = Teams.Blue;
                     this.dead = false;
                     this.usable = true;
                     this.hasMoved = false;
@@ -55,7 +55,7 @@ namespace SwordAndScaleTake2
                     this.def = 2;
                     this.mDef = 5;
                     this.mvmt = 4;
-                    this.team = true;
+                    this.team = Teams.Blue;
                     this.dead = false;
                     this.usable = true;
                     this.hasMoved = false;
@@ -69,7 +69,7 @@ namespace SwordAndScaleTake2
                     this.def = 5;
                     this.mDef = 2;
                     this.mvmt = 3;
-                    this.team = true;
+                    this.team = Teams.Blue;
                     this.dead = false;
                     this.usable = true;
                     this.hasMoved = false;
@@ -83,7 +83,7 @@ namespace SwordAndScaleTake2
                     this.def = 2;
                     this.mDef = 4;
                     this.mvmt = 4;
-                    this.team = true;
+                    this.team = Teams.Blue;
                     this.dead = false;
                     this.usable = true;
                     this.hasMoved = false;
@@ -98,7 +98,7 @@ namespace SwordAndScaleTake2
                     this.def = 4;
                     this.mDef = 2;
                     this.mvmt = 3;
-                    this.team = true;
+                    this.team = Teams.Blue;
                     this.dead = false;
                     this.usable = true;
                     this.hasMoved = false;
@@ -108,7 +108,7 @@ namespace SwordAndScaleTake2
             }
         }
 
-        public Unit(string textureName, string type, int health, int str, int skill, int def, int mDef, int mvmt, bool team, Vector2 position) : base(textureName)
+        public Unit(string textureName, string type, int health, int str, int skill, int def, int mDef, int mvmt, Teams team, Vector2 position) : base(textureName)
         {
             this.type = type;
             this.health = health;
@@ -169,7 +169,7 @@ namespace SwordAndScaleTake2
             return this.mDef;
         }
 
-        public bool getTeam()
+        public Teams getTeam()
         {
             return this.team;
         }
@@ -259,6 +259,10 @@ namespace SwordAndScaleTake2
                     }
                 }
             }
+        }
+        public bool isBlue()
+        {
+            return team == Teams.Blue;
         }
     }
 }

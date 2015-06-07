@@ -14,12 +14,6 @@ namespace SwordAndScaleTake2
         SpriteFont courierNew; //doesn't support unicode
         Unit unit;
         int x, y;
-        bool visible;
-
-        public UnitInfoPane()
-        {
-
-        }
 
         public void LoadContent(ContentManager content)
         {
@@ -27,58 +21,36 @@ namespace SwordAndScaleTake2
             courierNew = content.Load<SpriteFont>("Courier New");
         }
 
-        public void UnloadContent()
-        {
-
-        }
-
-        public void Update()
-        {
-
-        }
-
         public void Draw(SpriteBatch spriteBatch)
         {
-            if(visible)
-            {
-                spriteBatch.Draw(background, new Rectangle(x, y, 320, 320), Color.White);
-                unit.DrawAtPixel(spriteBatch, x + 30, y + 5);
-                spriteBatch.DrawString(courierNew,                     unit.AssetName,   new Vector2(x + 124, y + 18), Color.Black);
-                spriteBatch.DrawString(courierNew, "Health: "        + unit.getHealth(), new Vector2(x + 30, y + 74), Color.Black);
-                spriteBatch.DrawString(courierNew, "Strength: "      + unit.getStr(),    new Vector2(x + 30, y + 114), Color.Black);
-                spriteBatch.DrawString(courierNew, "Skill: "         + unit.getSkill(),  new Vector2(x + 30, y + 154),  Color.Black);
-                spriteBatch.DrawString(courierNew, "Defense: "       + unit.getDef(),    new Vector2(x + 30, y + 194), Color.Black);
-                spriteBatch.DrawString(courierNew, "Magic Defense: " + unit.getMDef(),   new Vector2(x + 30, y + 234), Color.Black);
-                spriteBatch.DrawString(courierNew, "Movement: "      + unit.getMvmt(),   new Vector2(x + 30, y + 274), Color.Black);
+            spriteBatch.Draw(background, new Rectangle(x, y, 576, 128), Color.White);
+            if(unit != null)
+            { 
+                unit.DrawAtPixel(spriteBatch, x + 32, y + 32);
+                //spriteBatch.DrawString(courierNew,                     unit.AssetName,   new Vector2(x + 124, y + 18), Color.Black);
+                spriteBatch.DrawString(courierNew, "Health: "     + unit.getHealth(), new Vector2(x + 128, y + 10), Color.Black);
+                spriteBatch.DrawString(courierNew, "Strength: "   + unit.getStr(),    new Vector2(x + 128, y + 42), Color.Black);
+                spriteBatch.DrawString(courierNew, "Skill: "      + unit.getSkill(),  new Vector2(x + 128, y + 74), Color.Black);
+                spriteBatch.DrawString(courierNew, "Defense: "    + unit.getDef(),    new Vector2(x + 330, y + 10), Color.Black);
+                spriteBatch.DrawString(courierNew, "M. Defense: " + unit.getMDef(),   new Vector2(x + 330, y + 42), Color.Black);
+                spriteBatch.DrawString(courierNew, "Movement: "   + unit.getMvmt(),   new Vector2(x + 330, y + 74), Color.Black);
             }
         }
 
-        public void setPixelPosition(Unit unit, int x, int y)
+        public void setUnit(Unit unit)
         {
             this.unit = unit;
+        }
+
+        public void setPixelPosition(int x, int y)
+        {
             this.x = x;
             this.y = y;
         }
-        public void setPixelPosition(Unit unit, Vector2 vector)
+        public void setPixelPosition(Vector2 vector)
         {
-            this.unit = unit;
             this.x = (int)vector.X;
             this.y = (int)vector.Y;
-        }
-
-        public void Show()
-        {
-            visible = true;
-        }
-
-        public void Hide()
-        {
-            visible = false;
-        }
-
-        public bool IsVisible()
-        {
-            return visible;
         }
     }
 }

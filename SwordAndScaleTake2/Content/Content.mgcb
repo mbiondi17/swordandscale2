@@ -19,3 +19,9 @@
 /processorParam:TextureFormat=Compressed
 /build:Courier New.spritefont
 
+#begin Sounds/BackTrack.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/BackTrack.wav
+
