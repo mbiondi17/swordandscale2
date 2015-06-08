@@ -101,7 +101,6 @@ namespace SwordAndScaleTake2
             moveable = new List<Vector2>();
             activeUnit = null;
             hoveredUnit = null;
-            activeUnit = null;
             //Intailize the units!
             swordBPosition = new Vector2(64 * 19, 64 * 5);
             warriorBPosition = new Vector2(64 * 16, 64 * 1);
@@ -139,8 +138,8 @@ namespace SwordAndScaleTake2
             redUnits.Add(redArcher);
             redUnits.Add(redPike);
 
-            // redGeneral = redGeneralChoice();
-            // redUnits.Add(redGeneral);
+            redGeneral = redGeneralChoice();
+            redUnits.Add(redGeneral);
             //TODO blue general
 
             redMorale.setPixelPosition(0, 896);
@@ -281,7 +280,7 @@ namespace SwordAndScaleTake2
                     //When done
                     DetectUnitHovered();
                     activeUnit.setHasMoved(true);
-                    if (activeUnit.getHasActed() && activeUnit.getHasMoved())
+                    if (activeUnit.getHasActed())
                     {
                         DeactivateUnit();
                     }
@@ -324,6 +323,9 @@ namespace SwordAndScaleTake2
                 isUnitInteracting = false;
                 isUnitMoving = false;
                 clearHighlight();
+                cursorPosition = activeUnit.getPixelPosition();
+                DetectUnitHovered();
+                unitActionPane.Show();
             }
             //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
             if (oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
@@ -1248,7 +1250,7 @@ namespace SwordAndScaleTake2
             {
                 unitActionPane.Hide();
 
-                if (!isUnitMoving)
+                if (!(isUnitMoving || isUnitAttacking || isUnitInteracting))
                 {
                     activeUnit = null;
                 }
@@ -1286,7 +1288,7 @@ namespace SwordAndScaleTake2
                 //Move cursor to next unit
                 cursorPosition = nextUnit.getPosition();
                 DetectUnitHovered();
-            }
+                }
             }
             //If there are no more usable units
             else
@@ -1297,7 +1299,7 @@ namespace SwordAndScaleTake2
             UpdateInfoPanes();
         }
 
-        private Unit randomGeneral()
+        private Unit redGeneralChoice()
         {
             Unit chosenGen = null;
             Random genNum = new Random();
