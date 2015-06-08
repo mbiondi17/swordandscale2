@@ -238,9 +238,8 @@ namespace SwordAndScaleTake2
                         //Hide UnitActionPane
                         unitActionPane.Hide();
                         //Attack
-                        //TODO: Attack(Unit other) method call goes here
-                        //When done
-                        DeactivateUnit();
+                        CreateAttackingArea();
+                        isUnitAttacking = true;
                     }
                     //If I is pressed
                     else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
