@@ -98,6 +98,9 @@
     <Content Include="Content\castleRed.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Content\DarkWinds.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Content\fire.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -194,9 +197,9 @@
     <Content Include="Content\redWarriorGen.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Sounds\Audience_Applause.wav">
+    <None Include="Content\Clap.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="Content\start.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -223,7 +226,7 @@
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\Sounds\BackTrack.xnb">
+    <None Include="Content\BackTrack.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Content\Courier New.spritefont">

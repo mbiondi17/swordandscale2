@@ -187,7 +187,7 @@ namespace SwordAndScaleTake2
 			        this.getPosition() == new Vector2(21*64, 11*64)     ||
 			        this.getPosition() == new Vector2(22*64, 11*64)      )
 		        {
-                    spriteBatch.Draw(redCastle, new Vector2(21, 10), Color.White);
+                    spriteBatch.Draw(redCastle, new Vector2(21 * 64, 10 * 64), Color.White);
 		        }
 
 		        else
