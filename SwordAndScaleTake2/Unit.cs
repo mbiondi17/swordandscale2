@@ -47,6 +47,7 @@ namespace SwordAndScaleTake2
                     this.usable = true;
                     this.hasMoved = false;
                     this.hasActed = false;
+                    this.type = "ArcherGen";
                     break;
                 case "blueMageGen":
                     this.position = pos;
@@ -61,6 +62,7 @@ namespace SwordAndScaleTake2
                     this.usable = true;
                     this.hasMoved = false;
                     this.hasActed = false;
+                    this.type = "MageGen";
                     break;
                 case "bluePikeGen":
                     this.position = pos;
@@ -75,6 +77,7 @@ namespace SwordAndScaleTake2
                     this.usable = true;
                     this.hasMoved = false;
                     this.hasActed = false;
+                    this.type = "PikeGen";
                     break;
                 case "blueSwordGen":
                     this.position = pos;
@@ -89,6 +92,7 @@ namespace SwordAndScaleTake2
                     this.usable = true;
                     this.hasMoved = false;
                     this.hasActed = false;
+                    this.type = "SwordGen";
                     break;
                 case "blueWarriorGen":
                     Console.WriteLine("PICKED BLUE WARRIOR");
@@ -105,6 +109,7 @@ namespace SwordAndScaleTake2
                     this.hasMoved = false;
                     this.hasActed = false;
                     Console.WriteLine("Blue Pos Set");
+                    this.type = "WarriorGen";
                     break;
             }
         }
