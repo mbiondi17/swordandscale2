@@ -11,18 +11,6 @@ using System.Linq;
 
 namespace SwordAndScaleTake2
 {
-    enum GameState
-    {
-        Moving,
-        Attacking,
-        Interacting,
-        Waiting
-    }
-    enum TurnState
-    {
-        RedTurn,
-        BlueTurn
-    }
     public enum Teams
     {
         Red,
@@ -43,7 +31,7 @@ namespace SwordAndScaleTake2
         Texture2D mapImage;
         Texture2D blueteam;
         Texture2D redteam;
-        //Song backgroundMusic;
+        SoundEffect backgroundMusic;
         Unit blueMage;
         Unit blueSword;
         Unit blueWarrior;
@@ -177,10 +165,7 @@ namespace SwordAndScaleTake2
 
             blueteam = content.Load<Texture2D>("blueteam");
             redteam = content.Load<Texture2D>("redteam");
-            //backgroundMusic = Content.Load<Song>("Sounds/BackTrack");
-            //MediaPlayer.Play(backgroundMusic);
-            //MediaPlayer.IsRepeating = true;
-            //space.LoadContent();
+            backgroundMusic = Content.Load<SoundEffect>("Sounds/BackTrack");
 
             blueInfoPane.LoadContent(content);
             redInfoPane.LoadContent(content);
