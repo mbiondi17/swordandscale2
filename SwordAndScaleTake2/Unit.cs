@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -142,6 +143,11 @@ namespace SwordAndScaleTake2
             {
                 unitClickEvent(this, (int)Mouse.GetState().X, (int)Mouse.GetState().Y);
             }
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch, (usable ? Color.White : Color.Gray));
         }
 
         public string getType()

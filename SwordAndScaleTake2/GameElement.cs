@@ -54,9 +54,14 @@ namespace SwordAndScaleTake2
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(texture, rect, Color.White);
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Color color)
+        {
+            spriteBatch.Draw(texture, rect, color);
         }
 
         public void DrawAtPixel(SpriteBatch spriteBatch, int x, int y)
