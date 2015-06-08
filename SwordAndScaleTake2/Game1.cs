@@ -165,7 +165,10 @@ namespace SwordAndScaleTake2
 
             blueteam = content.Load<Texture2D>("blueteam");
             redteam = content.Load<Texture2D>("redteam");
-            backgroundMusic = Content.Load<SoundEffect>("Sounds/BackTrack");
+            backgroundMusic = content.Load<SoundEffect>("BackTrack");
+            SoundEffectInstance soundEffectInstance = backgroundMusic.CreateInstance();
+            soundEffectInstance.Play();
+            soundEffectInstance.IsLooped = true;
 
             blueInfoPane.LoadContent(content);
             redInfoPane.LoadContent(content);
