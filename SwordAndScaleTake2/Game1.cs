@@ -139,8 +139,8 @@ namespace SwordAndScaleTake2
             redUnits.Add(redArcher);
             redUnits.Add(redPike);
 
-            redGeneral = redGeneralChoice();
-            redUnits.Add(redGeneral);
+            // redGeneral = redGeneralChoice();
+            // redUnits.Add(redGeneral);
             //TODO blue general
 
             redMorale.setPixelPosition(0, 896);
@@ -1298,7 +1298,7 @@ namespace SwordAndScaleTake2
             UpdateInfoPanes();
         }
 
-        private Unit redGeneralChoice()
+        private Unit randomGeneral()
         {
             Unit chosenGen = null;
             Random genNum = new Random();
