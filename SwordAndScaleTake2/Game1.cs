@@ -101,7 +101,6 @@ namespace SwordAndScaleTake2
             moveable = new List<Vector2>();
             activeUnit = null;
             hoveredUnit = null;
-            activeUnit = null;
             //Intailize the units!
             swordBPosition = new Vector2(64 * 19, 64 * 5);
             warriorBPosition = new Vector2(64 * 16, 64 * 1);
@@ -139,8 +138,8 @@ namespace SwordAndScaleTake2
             redUnits.Add(redArcher);
             redUnits.Add(redPike);
 
-            // redGeneral = redGeneralChoice();
-            // redUnits.Add(redGeneral);
+            redGeneral = redGeneralChoice();
+            redUnits.Add(redGeneral);
             //TODO blue general
 
             redMorale.setPixelPosition(0, 896);
@@ -238,11 +237,9 @@ namespace SwordAndScaleTake2
                         //Hide UnitActionPane
                         unitActionPane.Hide();
                         //Attack
-                        //TODO: Attack(Unit other) method call goes here
-                        //When done
-                        DeactivateUnit();
+                        CreateAttackingArea();
+                        isUnitAttacking = true;
                     }
-
                     //If I is pressed
                     else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
                     {
@@ -250,48 +247,64 @@ namespace SwordAndScaleTake2
                         unitActionPane.Hide();
                         //Interact
                         interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
-                        //When done
-                        activeUnit.setHasActed(true);
-                        if (activeUnit.getHasActed() && activeUnit.getHasMoved())
-                        {
-                            DeactivateUnit();
-                        }
-                        //If M is pressed
-                        else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
-                        {
-                            //Hide UnitActionPane
-                            unitActionPane.Hide();
-                            //Move
-                            CreatePathingArea();
-                            isUnitMoving = true;
-                        }
-                        //If W is pressed
-                        else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
-                        {
-                            //Hide UnitActionPane
-                            unitActionPane.Hide();
-                            //Wait
-                            //When done
-                            DeactivateUnit();
-                        }
+                        isUnitInteracting = true;
                     }
-                }
-                //If the player is moving a unit
-                else if (isUnitMoving)
-                {
-                    //If spacebar is pressed AND unit can move to the cursor's location
-                    if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
-                        CanMoveUnit())
+                    //If M is pressed
+                    else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
                     {
-                        MoveUnit();
+                        //Hide UnitActionPane
+                        unitActionPane.Hide();
+                        //Move
+                        CreatePathingArea();
+                        isUnitMoving = true;
+                    }
+                    //If W is pressed
+                    else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
+                    {
+                        //Hide UnitActionPane
+                        unitActionPane.Hide();
+                        //Wait
                         //When done
                         DeactivateUnit();
                     }
                 }
-                else if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
-                    !CanAttackEnemy())
+            }
+            //If the player is moving a unit
+            else if (isUnitMoving)
+            {
+                //If spacebar is pressed AND unit can move to the cursor's location
+                if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
+                    CanMoveUnit())
                 {
-                    isUnitAttacking = false;
+                    MoveUnit();
+                    //When done
+                    DetectUnitHovered();
+                    activeUnit.setHasMoved(true);
+                    if (activeUnit.getHasActed())
+                    {
+                        DeactivateUnit();
+                    }
+                }
+            }
+            //If the player is attacking
+            else if (isUnitAttacking)
+            {
+                if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
+                    CanAttackEnemy())
+                {
+                    //get enemy to attack and do so
+                    Unit theEnemy = unitToAttack();
+                    attack(ref theEnemy);
+
+                    // enemies.Clear();
+                    // attackable.Clear();
+                    DetectUnitHovered();
+                    activeUnit.setHasActed(true);
+
+                    if (activeUnit.getHasMoved())
+                    {
+                        DeactivateUnit();
+                    }
                 }
             }
             else if (isUnitInteracting)
@@ -302,14 +315,25 @@ namespace SwordAndScaleTake2
                     DetectUnitHovered();
                     isUnitInteracting = false;
                 }
-                //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
-                if (oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
-                {
-                    EndTurn();
-                }
-                // set the new state as the old state for next time 
-                oldState = pressedKey;
             }
+            //If B is pressed, cancel action (does not deactivate unit or reset unit)
+            if (oldState.IsKeyUp(Keys.B) && pressedKey.IsKeyDown(Keys.B))
+            {
+                isUnitAttacking = false;
+                isUnitInteracting = false;
+                isUnitMoving = false;
+                clearHighlight();
+                cursorPosition = activeUnit.getPixelPosition();
+                DetectUnitHovered();
+                unitActionPane.Show();
+            }
+            //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
+            if (oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
+            {
+                EndTurn();
+            }
+            // set the new state as the old state for next time 
+            oldState = pressedKey;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -1050,11 +1074,13 @@ namespace SwordAndScaleTake2
             isUnitMoving = false;
         }
 
-        private void clearHighlight() 
-       { 
-           path.Clear(); 
-           moveable.Clear(); 
-       }
+        private void clearHighlight()
+        {
+            path.Clear();
+            moveable.Clear();
+        }
+
+
         //Interacting method!
         //takes in activeUnit and the activeUnit's space (in map position form)
         public void interact(Unit interacter, Terrain thing) {
@@ -1224,7 +1250,7 @@ namespace SwordAndScaleTake2
             {
                 unitActionPane.Hide();
 
-                if (!isUnitMoving)
+                if (!(isUnitMoving || isUnitAttacking || isUnitInteracting))
                 {
                     activeUnit = null;
                 }
@@ -1262,7 +1288,7 @@ namespace SwordAndScaleTake2
                 //Move cursor to next unit
                 cursorPosition = nextUnit.getPosition();
                 DetectUnitHovered();
-            }
+                }
             }
             //If there are no more usable units
             else
@@ -1273,7 +1299,7 @@ namespace SwordAndScaleTake2
             UpdateInfoPanes();
         }
 
-        private Unit randomGeneral()
+        private Unit redGeneralChoice()
         {
             Unit chosenGen = null;
             Random genNum = new Random();
