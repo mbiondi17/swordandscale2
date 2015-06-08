@@ -207,7 +207,7 @@ namespace SwordAndScaleTake2
 
             pressedKey = Keyboard.GetState();
             //Move Cursor (returns true if a move occurred)
-            if (MoveCursor(oldState, pressedKey, ref cursorPosition))
+            if (MoveCursor())
             {
                 //Update hoveredUnit
                 DetectUnitHovered();
@@ -1213,28 +1213,28 @@ namespace SwordAndScaleTake2
     //end interact method
     }
 
-        private bool MoveCursor(KeyboardState oldState, KeyboardState newState, ref Vector2 cursorPos)
+        private bool MoveCursor()
         {
-            if (oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left) && cursorPos.X > 0)
+            if (oldState.IsKeyUp(Keys.Left) && pressedKey.IsKeyDown(Keys.Left) && cursorPosition.X > 0)
             {
-                cursorPos.X -= 64;
+                cursorPosition.X -= 64;
                 return true;
             }
 
-            if (oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right) && cursorPos.X < 23 * 64)
+            if (oldState.IsKeyUp(Keys.Right) && pressedKey.IsKeyDown(Keys.Right) && cursorPosition.X < 23 * 64)
             {
-                cursorPos.X += 64;
+                cursorPosition.X += 64;
                 return true;
             }
 
-            if (oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down) && cursorPos.Y < 13 * 64)
+            if (oldState.IsKeyUp(Keys.Down) && pressedKey.IsKeyDown(Keys.Down) && cursorPosition.Y < 13 * 64)
             {
-                cursorPos.Y += 64;
+                cursorPosition.Y += 64;
                 return true;
             }
-            if (oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up) && cursorPos.Y > 0)
+            if (oldState.IsKeyUp(Keys.Up) && pressedKey.IsKeyDown(Keys.Up) && cursorPosition.Y > 0)
             {
-                cursorPos.Y -= 64;
+                cursorPosition.Y -= 64;
                 return true;
             }
             return false;
@@ -1283,7 +1283,7 @@ namespace SwordAndScaleTake2
             //If there is a next unit
             if (nextUnit != null)
             {
-                if (nextUnit.getUsable() && !nextUnit.getDead())
+                if (!nextUnit.getDead())
                 {
                 //Move cursor to next unit
                 cursorPosition = nextUnit.getPosition();
