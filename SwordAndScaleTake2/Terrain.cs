@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework.Audio;
 
 namespace SwordAndScaleTake2
 {
@@ -93,7 +94,7 @@ namespace SwordAndScaleTake2
         }
 
         
-        public void Draw(SpriteBatch spriteBatch, Texture2D fire, Texture2D gate, Texture2D redCastle, Texture2D blueCastle, Texture2D poison) 
+        public void Draw(SpriteBatch spriteBatch, Texture2D fire, Texture2D gate, Texture2D redCastle, Texture2D blueCastle, Texture2D poison, SoundEffect cow, SoundEffect burn, SoundEffect castle, SoundEffect river) 
         {
 
             if (!this.isInteractable)

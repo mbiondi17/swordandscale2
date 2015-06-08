@@ -32,6 +32,10 @@ namespace SwordAndScaleTake2
         Texture2D blueteam;
         Texture2D redteam;
         SoundEffect backgroundMusic;
+        SoundEffect river;
+        SoundEffect cow;
+        SoundEffect castle;
+        SoundEffect burn;
         Unit blueMage;
         Unit blueSword;
         Unit blueWarrior;
@@ -165,7 +169,11 @@ namespace SwordAndScaleTake2
 
             blueteam = content.Load<Texture2D>("blueteam");
             redteam = content.Load<Texture2D>("redteam");
-            backgroundMusic = content.Load<SoundEffect>("BackTrack");
+            backgroundMusic = content.Load<SoundEffect>("Sounds/BackTrack");
+            river = content.Load<SoundEffect>("poison");
+            castle = content.Load<SoundEffect>("fanfare");
+            burn = content.Load<SoundEffect>("Burning");
+            cow = content.Load<SoundEffect>("Animals");
             SoundEffectInstance soundEffectInstance = backgroundMusic.CreateInstance();
             soundEffectInstance.Play();
             soundEffectInstance.IsLooped = true;
@@ -330,7 +338,7 @@ namespace SwordAndScaleTake2
             spriteBatch.Draw(mapImage, new Rectangle(0, 0, 1536, 896), Color.White);
             foreach (Terrain terr in map)
             {
-                terr.Draw(spriteBatch, fire, gate, castleRed, castleBlue, poison);
+                terr.Draw(spriteBatch, fire, gate, castleRed, castleBlue, poison, cow, burn, castle, river);
             }
             
             if (path.Count > 0)
@@ -497,6 +505,7 @@ namespace SwordAndScaleTake2
                         //make it not interactable so draw() will draw its appropriate overlay.
                         thing.isInteractable = false;
                         redMorale.Morale--;
+                        burn.Play();
                     }
                 }
 
@@ -509,6 +518,7 @@ namespace SwordAndScaleTake2
                         //make it not interactable so draw() will draw its appropriate overlay.
                         thing.isInteractable = false;
                         redMorale.Morale--;
+                        cow.Play();
                     }
                 }
 
@@ -522,6 +532,7 @@ namespace SwordAndScaleTake2
                         //make it not interactable so draw() will draw its appropriate overlay.
                         thing.isInteractable = false;
                         redMorale.Morale--;
+                        burn.Play();
                     }
                 }
 
@@ -538,6 +549,7 @@ namespace SwordAndScaleTake2
                         //make it not interactable so draw() will draw its appropriate overlay.
                         thing.isInteractable = false;
                         redMorale.Morale--;
+                        river.Play();
                     }
                 }
 
@@ -552,6 +564,7 @@ namespace SwordAndScaleTake2
                         //make it not interactable so draw() will draw its appropriate overlay.
                         thing.isInteractable = false;
                         redMorale.Morale--;
+                        castle.Play();
                     }
                 }
 
@@ -576,6 +589,7 @@ namespace SwordAndScaleTake2
                         //make it not interactable so draw() will draw its appropriate overlay.
                         thing.isInteractable = false;
                         blueMorale.Morale--;
+                        burn.Play();
                     }
                 }
 
@@ -588,6 +602,7 @@ namespace SwordAndScaleTake2
                         //make it not interactable so draw() will draw its appropriate overlay.
                         thing.isInteractable = false;
                         blueMorale.Morale--;
+                        cow.Play();
                     }
                 }
 
@@ -601,6 +616,7 @@ namespace SwordAndScaleTake2
                         //make it not interactable so draw() will draw its appropriate overlay.
                         thing.isInteractable = false;
                         blueMorale.Morale--;
+                        burn.Play();
                     }
                 }
 
@@ -616,6 +632,7 @@ namespace SwordAndScaleTake2
                         //make it not interactable so draw() will draw its appropriate overlay.
                         thing.isInteractable = false;
                         blueMorale.Morale--;
+                        river.Play();
                     }
                 }
 
@@ -630,6 +647,7 @@ namespace SwordAndScaleTake2
                         //make it not interactable so draw() will draw its appropriate overlay.
                         thing.isInteractable = false;
                         blueMorale.Morale--;
+                        castle.Play();
                     }
                 }
 
