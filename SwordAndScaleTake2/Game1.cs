@@ -120,6 +120,7 @@ namespace SwordAndScaleTake2
             blueWarrior = new Unit("blueWarrior", "warrior", 10, 9, 6, 3, 2, 4, Teams.Blue, warriorBPosition);
             blueArcher = new Unit("blueArcher", "archer", 10, 6, 9, 2, 4, 6, Teams.Blue, archerBPosition);
             bluePike = new Unit("bluePike", "pike", 10, 7, 7, 4, 1, 4, Teams.Blue, pikeBPosition);
+            blueGeneral = new Unit(gamePrefs.chosenGeneral);
             redMage = new Unit("redMage", "mage", 10, 8, 7, 1, 4, 5, Teams.Red, mageRPosition);
             redSword = new Unit("redSword", "swordmaster", 10, 7, 9, 2, 3, 5, Teams.Red, swordRPosition);
             redWarrior = new Unit("redWarrior", "warrior", 10, 9, 6, 3, 2, 4, Teams.Red, warriorRPosition);
@@ -140,7 +141,7 @@ namespace SwordAndScaleTake2
 
             redGeneral = redGeneralChoice();
             redUnits.Add(redGeneral);
-            //TODO blue general
+            blueUnits.Add(blueGeneral);
 
             redMorale.setPixelPosition(0, 896);
             redInfoPane.setPixelPosition(192, 896);
