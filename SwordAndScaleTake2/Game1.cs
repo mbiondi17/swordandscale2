@@ -11,18 +11,6 @@ using System.Linq;
 
 namespace SwordAndScaleTake2
 {
-    enum GameState
-    {
-        Moving,
-        Attacking,
-        Interacting,
-        Waiting
-    }
-    enum TurnState
-    {
-        RedTurn,
-        BlueTurn
-    }
     public enum Teams
     {
         Red,
