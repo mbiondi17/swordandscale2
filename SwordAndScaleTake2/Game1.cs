@@ -243,7 +243,6 @@ namespace SwordAndScaleTake2
                         //Hide UnitActionPane
                         unitActionPane.Hide();
                         //Interact
-                        interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
                         isUnitInteracting = true;
                     }
                     //If M is pressed
@@ -302,6 +301,8 @@ namespace SwordAndScaleTake2
                     {
                         DeactivateUnit();
                     }
+
+                    isUnitAttacking = false;
                 }
             }
             else if (isUnitInteracting)
@@ -309,7 +310,10 @@ namespace SwordAndScaleTake2
                 //TODO
                 if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space))
                 {
+                    interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
+
                     DetectUnitHovered();
+                    activeUnit.setHasActed(true);
                     isUnitInteracting = false;
                 }
             }
@@ -320,9 +324,12 @@ namespace SwordAndScaleTake2
                 isUnitInteracting = false;
                 isUnitMoving = false;
                 clearHighlight();
-                cursorPosition = activeUnit.getPixelPosition();
-                DetectUnitHovered();
-                unitActionPane.Show();
+                if (activeUnit != null)
+                {
+                    cursorPosition = activeUnit.getPixelPosition();
+                    DetectUnitHovered();
+                    unitActionPane.Show();
+                }
             }
             //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
             if (oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
@@ -724,38 +731,80 @@ namespace SwordAndScaleTake2
             int unitHit = rand.Next(1, 11);
             int enemyHit = rand.Next(1, 11);
 
-            if (!enemy.getType().Equals("mage") && !enemy.getType().Contains("genMage") && !enemy.getType().Contains("MageGen"))
+            if (activeUnit.getType().Equals("mage") || activeUnit.getType().Contains("MageGen") || activeUnit.getType().Contains("genMage"))
             {
-
-                if (unitHit <= activeUnit.getSkill())
+                if (!enemy.getType().Equals("mage") && !enemy.getType().Contains("genMage") && !enemy.getType().Contains("MageGen"))
                 {
-                    Console.WriteLine("ATTACK");
-                    enemy.setHealth(enemy.getHealth() - (activeUnit.getStr() - enemy.getDef()));
+
+                    if (unitHit <= activeUnit.getSkill())
+                    {
+                        Console.WriteLine("ATTACK");
+                        enemy.setHealth(enemy.getHealth() - (activeUnit.getStr() - enemy.getMDef()));
+                    }
+
+                    if (enemy.getHealth() > 0)
+                    {
+                        if (enemyHit <= enemy.getSkill())
+                        {
+                            Console.WriteLine("COUNTERATTACK");
+                            activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getDef()));
+                        }
+                    }
                 }
 
-                if (enemy.getHealth() > 0)
+
+                if (enemy.getType().Equals("mage") || enemy.getType().Equals("genMage"))
                 {
-                    if (enemyHit <= enemy.getSkill())
+                    if (unitHit <= activeUnit.getSkill())
                     {
-                        Console.WriteLine("COUNTERATTACK");
-                        activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getDef()));
+                        enemy.setHealth(activeUnit.getHealth() - (activeUnit.getStr() - enemy.getMDef()));
+                    }
+
+                    if (enemy.getHealth() > 0)
+                    {
+                        if (enemyHit <= enemy.getSkill())
+                        {
+                            activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getMDef()));
+                        }
                     }
                 }
             }
 
-
-            if (enemy.getType().Equals("mage") || enemy.getType().Equals("genMage"))
+            if (!activeUnit.getType().Equals("mage") && !activeUnit.getType().Contains("genMage") && !activeUnit.getType().Contains("MageGen"))
             {
-                if (unitHit <= activeUnit.getSkill())
+                if (!enemy.getType().Equals("mage") && !enemy.getType().Contains("genMage") && !enemy.getType().Contains("MageGen"))
                 {
-                    enemy.setHealth(activeUnit.getHealth() - (activeUnit.getStr() - enemy.getMDef()));
+
+                    if (unitHit <= activeUnit.getSkill())
+                    {
+                        Console.WriteLine("ATTACK");
+                        enemy.setHealth(enemy.getHealth() - (activeUnit.getStr() - enemy.getDef()));
+                    }
+
+                    if (enemy.getHealth() > 0)
+                    {
+                        if (enemyHit <= enemy.getSkill())
+                        {
+                            Console.WriteLine("COUNTERATTACK");
+                            activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getDef()));
+                        }
+                    }
                 }
 
-                if (enemy.getHealth() > 0)
+
+                if (enemy.getType().Equals("mage") || enemy.getType().Equals("genMage"))
                 {
-                    if (enemyHit <= enemy.getSkill())
+                    if (unitHit <= activeUnit.getSkill())
                     {
-                        activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getMDef()));
+                        enemy.setHealth(activeUnit.getHealth() - (activeUnit.getStr() - enemy.getDef()));
+                    }
+
+                    if (enemy.getHealth() > 0)
+                    {
+                        if (enemyHit <= enemy.getSkill())
+                        {
+                            activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getMDef()));
+                        }
                     }
                 }
             }
@@ -1337,11 +1386,12 @@ namespace SwordAndScaleTake2
         private void EndTurn()
         {
             //Move cursor to other team's unit
-            cursorPosition = (activeTeam == Teams.Blue ? redUnits : blueUnits).First().getPosition();
+            cursorPosition = (activeTeam == Teams.Blue ? redUnits : blueUnits).First(x => !x.getDead()).getPosition();
             DetectUnitHovered();
             //Reset each unit in current team
             foreach (Unit unit in (activeTeam == Teams.Blue ? blueUnits : redUnits))
             {
+                if(!unit.getDead())
                 unit.setHasActed(false);
                 unit.setHasMoved(false);
                 unit.setUsable(true);
