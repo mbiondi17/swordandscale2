@@ -113,27 +113,27 @@ namespace SwordAndScaleTake2
             blueArcher = new Unit("blueArcher", "archer", 10, 6, 9, 2, 4, 6, Teams.Blue, archerBPosition);
             bluePike = new Unit("bluePike", "pike", 10, 7, 7, 4, 1, 4, Teams.Blue, pikeBPosition);
             blueGeneral = new Unit(gamePrefs.chosenGeneral);
+
             redMage = new Unit("redMage", "mage", 10, 8, 7, 1, 4, 5, Teams.Red, mageRPosition);
             redSword = new Unit("redSword", "swordmaster", 10, 7, 9, 2, 3, 5, Teams.Red, swordRPosition);
             redWarrior = new Unit("redWarrior", "warrior", 10, 9, 6, 3, 2, 4, Teams.Red, warriorRPosition);
             redArcher = new Unit("redArcher", "archer", 10, 6, 9, 2, 4, 6, Teams.Red, archerRPosition);
             redPike = new Unit("redPike", "pike", 10, 7, 7, 4, 1, 4, Teams.Red, pikeRPosition);
+            redGeneral = new Unit(gamePrefs.chosenGeneralRed);
 
             blueUnits.Add(blueMage);
             blueUnits.Add(blueSword);
             blueUnits.Add(blueWarrior);
             blueUnits.Add(blueArcher);
             blueUnits.Add(bluePike);
+            blueUnits.Add(blueGeneral);
 
             redUnits.Add(redMage);
             redUnits.Add(redSword);
             redUnits.Add(redWarrior);
             redUnits.Add(redArcher);
             redUnits.Add(redPike);
-
-            redGeneral = redGeneralChoice();
             redUnits.Add(redGeneral);
-            blueUnits.Add(blueGeneral);
 
             redMorale.setPixelPosition(0, 896);
             redInfoPane.setPixelPosition(192, 896);
@@ -1306,32 +1306,9 @@ namespace SwordAndScaleTake2
             UpdateInfoPanes();
         }
 
-        private Unit redGeneralChoice()
+        private void redGeneralChoice(String choice)
         {
-            Unit chosenGen = null;
-            Random genNum = new Random();
-            int compGen = genNum.Next(0, 5);
-            if (compGen == 0)
-            {
-                chosenGen = new Unit("redMageGen", "MageGen", 8, 15, 9, 2, 5, 3, Teams.Red, generalRPosition);
-            }
-            if (compGen == 1)
-            {
-                chosenGen = new Unit("redArcherGen", "ArcherGen", 15, 8, 9, 3, 4, 3, Teams.Red, generalRPosition); ;
-            }
-            if (compGen == 2)
-            {
-                chosenGen = new Unit("redPikeGen", "PikeGen", 15, 9, 7, 5, 2, 3, Teams.Red, generalRPosition);
-            }
-            if (compGen == 3)
-            {
-                chosenGen = new Unit("redSwordGen", "SwordGen", 15, 9, 9, 2, 4, 3, Teams.Red, generalRPosition);
-            }
-            if (compGen == 4)
-            {
-                chosenGen = new Unit("redWarriorGen", "WarriorGen", 15, 9, 8, 4, 2, 3, Teams.Red, generalRPosition);
-            }
-            return chosenGen;
+            
         }
 
         private void EndTurn()

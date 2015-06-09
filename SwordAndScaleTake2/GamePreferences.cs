@@ -10,5 +10,6 @@ namespace SwordAndScaleTake2
     public class GamePreferences
     {
         public String chosenGeneral;
+        public String chosenGeneralRed;
     }
 }
