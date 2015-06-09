@@ -259,7 +259,7 @@ namespace SwordAndScaleTake2
                         //Interact
                         interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
                             //When done
-                            if (activeUnit.getHasMoved())
+                            if (activeUnit.getHasMoved() && activeUnit.getHasActed())
                             {
                                 DeactivateUnit();
                             }
@@ -350,6 +350,7 @@ namespace SwordAndScaleTake2
                 isUnitInteracting = false;
                 isUnitMoving = false;
                 clearHighlight();
+                clearAttackable();
                 cursorPosition = activeUnit.getPixelPosition();
                 DetectUnitHovered();
                 unitActionPane.Show();
@@ -533,6 +534,7 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
+                        activeUnit.setHasActed(true);
                         thing.isInteractable = false;
                         redMorale.Morale--;
                         burn.Play();
@@ -546,6 +548,7 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
+                        activeUnit.setHasActed(true);
                         thing.isInteractable = false;
                         redMorale.Morale--;
                         cow.Play();
@@ -560,6 +563,7 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
+                        activeUnit.setHasActed(true);
                         thing.isInteractable = false;
                         redMorale.Morale--;
                         burn.Play();
@@ -577,6 +581,7 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
+                        activeUnit.setHasActed(true);
                         thing.isInteractable = false;
                         redMorale.Morale--;
                         river.Play();
@@ -592,6 +597,7 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
+                        activeUnit.setHasActed(true);
                         thing.isInteractable = false;
                         redMorale.Morale--;
                         castle.Play();
@@ -617,6 +623,7 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
+                        activeUnit.setHasActed(true);
                         thing.isInteractable = false;
                         blueMorale.Morale--;
                         burn.Play();
@@ -630,6 +637,7 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
+                        activeUnit.setHasActed(true);
                         thing.isInteractable = false;
                         blueMorale.Morale--;
                         cow.Play();
@@ -644,6 +652,7 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
+                        activeUnit.setHasActed(true);
                         thing.isInteractable = false;
                         blueMorale.Morale--;
                         burn.Play();
@@ -660,6 +669,7 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
+                        activeUnit.setHasActed(true);
                         thing.isInteractable = false;
                         blueMorale.Morale--;
                         river.Play();
@@ -675,6 +685,7 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
+                        activeUnit.setHasActed(true);
                         thing.isInteractable = false;
                         blueMorale.Morale--;
                         castle.Play();
@@ -851,9 +862,14 @@ namespace SwordAndScaleTake2
                 }
                 //morale
             }
-            attackable.Clear();
-            enemies.Clear();
+            clearAttackable();
             isUnitAttacking = false;
+        }
+
+        private void clearAttackable()
+        {
+            enemies.Clear();
+            attackable.Clear();
         }
 
         private void CreatePathingArea()
@@ -1311,7 +1327,7 @@ namespace SwordAndScaleTake2
             hoveredUnit = blueUnits.Concat(redUnits).FirstOrDefault(unit => unit.getPixelPosition() == cursorPosition);
 
             //If the cursor is not over the unit, then hide the action pane
-            if (hoveredUnit == null)
+            if (hoveredUnit == null && !hoveredUnit.getDead())
             {
                 unitActionPane.Hide();
 
