@@ -169,7 +169,7 @@ namespace SwordAndScaleTake2
 
             blueteam = content.Load<Texture2D>("blueteam");
             redteam = content.Load<Texture2D>("redteam");
-            backgroundMusic = content.Load<SoundEffect>("DarkWinds");
+            backgroundMusic = content.Load<SoundEffect>("sounds/DarkWinds");
             river = content.Load<SoundEffect>("poison");
             castle = content.Load<SoundEffect>("fanfare");
             burn = content.Load<SoundEffect>("Burning");
