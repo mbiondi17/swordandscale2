@@ -1327,7 +1327,7 @@ namespace SwordAndScaleTake2
             hoveredUnit = blueUnits.Concat(redUnits).FirstOrDefault(unit => unit.getPixelPosition() == cursorPosition);
 
             //If the cursor is not over the unit, then hide the action pane
-            if (hoveredUnit == null && !hoveredUnit.getDead())
+            if (hoveredUnit == null)
             {
                 unitActionPane.Hide();
 
