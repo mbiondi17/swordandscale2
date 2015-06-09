@@ -19,6 +19,7 @@ namespace SwordAndScaleTake2
         //All the different GUIs that will be in the game
         List<GameElement> mainMenu = new List<GameElement>();
         List<GameElement> generalChoice = new List<GameElement>();
+        GameElement pointer;
 
         Game1 game;
         GamePreferences gamePrefs = new GamePreferences();
@@ -39,6 +40,8 @@ namespace SwordAndScaleTake2
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            pointer = new GameElement("pointer");
+
             mainMenu.Add(new GameElement("background"));
             mainMenu.Add(new GameElement("title"));
             mainMenu.Add(new GameElement("start"));
@@ -58,6 +61,7 @@ namespace SwordAndScaleTake2
 
         protected override void LoadContent()
         {
+            pointer.LoadContent(Content);
 
             // ------------Main Menu------------
             foreach (GameElement element in mainMenu)
@@ -70,6 +74,8 @@ namespace SwordAndScaleTake2
             mainMenu.Find(x => x.AssetName == "title")     .setPixelPosition(1000, 730);
             mainMenu.Find(x => x.AssetName == "start")     .setPixelPosition(1000, 800);
             mainMenu.Find(x => x.AssetName == "exit")      .setPixelPosition(1000, 840);
+
+            pointer.setPixelPosition(mainMenu.Find(x => x.AssetName == "start").getPixelPosition() + new Vector2(-70, 5));
 
             // ------------Choosing a General------------
             foreach (GameElement element in generalChoice)
@@ -96,6 +102,7 @@ namespace SwordAndScaleTake2
                     {
                         element.Update();
                     }
+                    pointer.Update();
                     break;
                 case GameState.generalChoice:
                     if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -129,6 +136,7 @@ namespace SwordAndScaleTake2
                     {
                         elem.Draw(spriteBatch);
                     }
+                    pointer.Draw(spriteBatch);
                     break;
                 case GameState.generalChoice:
                     foreach (GameElement elem in generalChoice)
