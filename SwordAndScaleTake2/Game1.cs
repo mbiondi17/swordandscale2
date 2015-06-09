@@ -1411,7 +1411,7 @@ namespace SwordAndScaleTake2
         private void EndTurn()
         {
             //Move cursor to other team's unit
-            cursorPosition = (activeTeam == Teams.Blue ? redUnits : blueUnits).First().getPosition();
+            cursorPosition = (activeTeam == Teams.Blue ? redUnits : blueUnits).First(x => !x.getDead()).getPosition();
             DetectUnitHovered();
             //Reset each unit in current team
             foreach (Unit unit in (activeTeam == Teams.Blue ? blueUnits : redUnits))
