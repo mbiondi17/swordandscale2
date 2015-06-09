@@ -202,6 +202,12 @@ namespace SwordAndScaleTake2
             //redInfoPane.Update();
             //unitActionPane.Update();
 
+            if (redMorale.Morale <= 0 || blueMorale.Morale <= 0)
+            {
+                //Game1.Exit();
+                Console.WriteLine("GAME OVER");
+            }
+
             pressedKey = Keyboard.GetState();
             //Move Cursor (returns true if a move occurred)
             if (MoveCursor())
@@ -229,31 +235,47 @@ namespace SwordAndScaleTake2
                 if (activeUnit != null)
                 {
                     //If A is pressed
-                    if (oldState.IsKeyUp(Keys.A) && pressedKey.IsKeyDown(Keys.A) && !activeUnit.getHasActed())
+                    if (oldState.IsKeyUp(Keys.A) && pressedKey.IsKeyDown(Keys.A))
                     {
                         //Hide UnitActionPane
                         unitActionPane.Hide();
-                        //Attack
+                        if (!activeUnit.getHasActed())
+                        {
+                            //Prepare for Attack, highlight attackable enemies
                         CreateAttackingArea();
-                        isUnitAttacking = true;
+                            if (attackable.Count > 0)
+                            {
+                                isUnitAttacking = true;
+                            }
+                        }
                     }
                     //If I is pressed
-                    else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
+                    else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I))
                     {
                         //Hide UnitActionPane
                         unitActionPane.Hide();
+                        if (!activeUnit.getHasActed())
+                        {
                         //Interact
                         interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
-                        isUnitInteracting = true;
+                            //When done
+                            if (activeUnit.getHasMoved())
+                            {
+                                DeactivateUnit();
+                            }
+                        }
                     }
                     //If M is pressed
-                    else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
+                    else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M))
                     {
                         //Hide UnitActionPane
                         unitActionPane.Hide();
+                        if (!activeUnit.getHasMoved())
+                        {
                         //Move
                         CreatePathingArea();
                         isUnitMoving = true;
+                    }
                     }
                     //If W is pressed
                     else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
@@ -286,21 +308,29 @@ namespace SwordAndScaleTake2
             //If the player is attacking
             else if (isUnitAttacking)
             {
+                Unit theEnemy = unitToAttack();
                 if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
-                    CanAttackEnemy())
+                    CanAttackEnemy() && cursorPosition == theEnemy.getPosition())
                 {
                     //get enemy to attack and do so
-                    Unit theEnemy = unitToAttack();
-                    attack(ref theEnemy);
-
-                    // enemies.Clear();
-                    // attackable.Clear();
-                    DetectUnitHovered();
-                    activeUnit.setHasActed(true);
-
-                    if (activeUnit.getHasMoved())
+                    if (theEnemy != null)
                     {
-                        DeactivateUnit();
+                        attack(ref theEnemy);
+
+                        // enemies.Clear();
+                        // attackable.Clear();
+                        DetectUnitHovered();
+                        activeUnit.setHasActed(true);
+
+                        if (activeUnit.getHasMoved())
+                        {
+                            DeactivateUnit();
+                        }
+                    }
+                    else if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
+                        !CanAttackEnemy())
+                    {
+                        isUnitAttacking = false;
                     }
                 }
             }
@@ -336,7 +366,7 @@ namespace SwordAndScaleTake2
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(mapImage, new Rectangle(0, 0, 1536, 896), Color.White);
-            foreach (Terrain terr in map)
+           foreach (Terrain terr in map)
             {
                 terr.Draw(spriteBatch, fire, gate, castleRed, castleBlue, poison, cow, burn, castle, river);
             }
@@ -362,15 +392,15 @@ namespace SwordAndScaleTake2
             {
                 if (!unit.getDead())
                 {
-                unit.Draw(spriteBatch);
-            }
+                    unit.Draw(spriteBatch);
+                }
             }
             foreach (Unit unit in redUnits)
             {
                 if (!unit.getDead())
                 {
-                unit.Draw(spriteBatch);
-            }
+                    unit.Draw(spriteBatch);
+                }
             }
 
             if (activeTeam == Teams.Red)
@@ -692,7 +722,7 @@ namespace SwordAndScaleTake2
                 reachable.Add(new Vector2(activeX, activeY + 64));
             }
 
-            Console.WriteLine("reachable size: " + reachable.Count);
+            //Console.WriteLine("reachable size: " + reachable.Count);
 
             foreach (Vector2 pos in reachable)
             {
@@ -717,48 +747,76 @@ namespace SwordAndScaleTake2
             //Console.WriteLine("enemies size: " + enemies.Count);
         }
 
-
-        public void attack(ref Unit enemy)
+        private void physAttack(ref Unit unit, ref Unit enemy)
         {
             Random rand = new Random();
             int unitHit = rand.Next(1, 11);
-            int enemyHit = rand.Next(1, 11);
-
-            if (!enemy.getType().Equals("mage") && !enemy.getType().Contains("genMage") && !enemy.getType().Contains("MageGen"))
+            if (unitHit <= unit.getSkill())
             {
+                //Console.WriteLine("PHYSICAL ATTACK");
+                enemy.setHealth(enemy.getHealth() - (unit.getStr() - enemy.getDef()));
+            }
+        }
 
-                if (unitHit <= activeUnit.getSkill())
+        private void magAttack(ref Unit unit, ref Unit enemy)
+        {
+            Random rand = new Random();
+            int unitHit = rand.Next(1, 11);
+            if (unitHit <= unit.getSkill())
+            {
+                //Console.WriteLine("MAGIC ATTACK");
+                enemy.setHealth(unit.getHealth() - (unit.getStr() - enemy.getMDef()));
+            }
+
+        }
+
+        public void attack(ref Unit enemy)
+            {
+            int distance = (int) Math.Abs(enemy.getPosition().X - activeUnit.getPosition().X) + (int)Math.Abs(enemy.getPosition().Y - activeUnit.getPosition().Y);
+            bool enemyMage = enemy.getType().Contains("age");
+            bool activeMage = activeUnit.getType().Contains("age");
+            bool enemyArcher = enemy.getType().Contains("rch");
+            bool activeArcher = activeUnit.getType().Contains("rch");
+
+            if (!activeMage)
                 {
-                    Console.WriteLine("ATTACK");
-                    enemy.setHealth(enemy.getHealth() - (activeUnit.getStr() - enemy.getDef()));
-                }
+                physAttack(ref activeUnit, ref enemy);
 
                 if (enemy.getHealth() > 0)
                 {
-                    if (enemyHit <= enemy.getSkill())
+                    if (enemyArcher)
                     {
-                        Console.WriteLine("COUNTERATTACK");
-                        activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getDef()));
+                        physAttack(ref enemy, ref activeUnit);
+            }
+
+                    if (enemyMage && distance < 2)
+            {
+                        magAttack(ref enemy, ref activeUnit);
+                    }
+
+                    if(!enemyMage && distance < 2)
+                {
+                        physAttack(ref enemy, ref activeUnit);
+                    }
+                }
+                }
+            if (activeMage)
+            {
+                magAttack(ref activeUnit, ref enemy);
+
+                if (enemy.getHealth() > 0)
+                {
+                    if (enemyMage)
+                    {
+                        magAttack(ref enemy, ref activeUnit);
+                    }
+                    if (!enemyMage)
+                    {
+                        physAttack(ref enemy, ref activeUnit);
                     }
                 }
             }
 
-
-            if (enemy.getType().Equals("mage") || enemy.getType().Equals("genMage"))
-            {
-                if (unitHit <= activeUnit.getSkill())
-                {
-                    enemy.setHealth(activeUnit.getHealth() - (activeUnit.getStr() - enemy.getMDef()));
-                }
-
-                if (enemy.getHealth() > 0)
-                {
-                    if (enemyHit <= enemy.getSkill())
-                    {
-                        activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getMDef()));
-                    }
-                }
-            }
 
             if (enemy.getHealth() <= 0)
             {
@@ -1218,7 +1276,7 @@ namespace SwordAndScaleTake2
 	    }
 
     //end interact method
-    }
+        }
 
         private bool MoveCursor()
         {
@@ -1290,11 +1348,11 @@ namespace SwordAndScaleTake2
             //If there is a next unit
             if (nextUnit != null)
             {
-                if (!nextUnit.getDead())
+                if (nextUnit.getUsable() && !nextUnit.getDead())
                 {
-                //Move cursor to next unit
-                cursorPosition = nextUnit.getPosition();
-                DetectUnitHovered();
+                    //Move cursor to next unit
+                    cursorPosition = nextUnit.getPosition();
+                    DetectUnitHovered();
                 }
             }
             //If there are no more usable units
