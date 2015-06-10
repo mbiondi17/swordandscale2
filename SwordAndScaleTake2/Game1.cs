@@ -755,7 +755,12 @@ namespace SwordAndScaleTake2
                 enemies.Add(square);
             }
 
-            //Console.WriteLine("enemies size: " + enemies.Count);
+        /*    if (attackable.Count > 0)
+            {
+                cursorPosition = attackable[0].getPosition();
+            }
+         */
+
         }
 
         private void physAttack(ref Unit unit, ref Unit enemy)
