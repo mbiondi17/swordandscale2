@@ -1246,7 +1246,59 @@ namespace SwordAndScaleTake2
             }
             return false;
         }
+        private void PathFinder(Vector2 startPosition, Vector2 endPosition)
+        {
+            List<Vector2> openList = new List<Vector2>();
+            List<Vector2> closedList = new List<Vector2>();
+            openList.Add(startPosition);
+            while(openList.Count > 0)
+            {
+                //Select the most likely next step
+                Vector2 currentStep;
 
+                if (!openList.Contains(new Vector2(currentStep.X + 64, currentStep.Y)) 
+                    && !closedList.Contains(new Vector2(currentStep.X + 64, currentStep.Y))
+                    && isPassable(new Vector2(currentStep.X + 64, currentStep.Y)))
+                    {
+                        openList.Add(new Vector2(currentStep.X + 64, currentStep.Y));
+                    }
+
+                if (!openList.Contains(new Vector2(currentStep.X - 64, currentStep.Y))
+                    && !closedList.Contains(new Vector2(currentStep.X - 64, currentStep.Y))
+                    && isPassable(new Vector2(currentStep.X - 64, currentStep.Y)))
+                {
+                    openList.Add(new Vector2(currentStep.X - 64, currentStep.Y));
+                }
+
+                if (!openList.Contains(new Vector2(currentStep.X, currentStep.Y + 64))
+                    && !closedList.Contains(new Vector2(currentStep.X, currentStep.Y +64))
+                    && isPassable(new Vector2(currentStep.X, currentStep.Y + 64)))
+                {
+                    openList.Add(new Vector2(currentStep.X ,currentStep.Y + 64));
+                }
+
+                if (!openList.Contains(new Vector2(currentStep.X, currentStep.Y - 64))
+                    && !closedList.Contains(new Vector2(currentStep.X, currentStep.Y - 64))
+                    && isPassable(new Vector2(currentStep.X, currentStep.Y - 64)))
+                {
+                    openList.Add(new Vector2(currentStep.X, currentStep.Y - 64));
+                }
+                    //if neighbor not in open or closed
+                    //Calculate Path Cost of the Neighbor
+                    //if cost < known cost
+            }
+        }
+        private bool isPassable(Vector2 Position)
+        {
+            if(map[(int)(Position.X)/64, (int)Position.Y/64].getImpassible()
+               || map[(int)(Position.X) / 64, (int)Position.Y / 64].getBlueOcc()
+               || map[(int)(Position.X) / 64, (int)Position.Y / 64].getRedOcc())
+            {
+                return false;
+            }
+
+            return true;
+        }
         private void DetectUnitHovered()
         {
             //See if cursor is over any unit
@@ -1304,11 +1356,6 @@ namespace SwordAndScaleTake2
             }
             activeUnit = null;
             UpdateInfoPanes();
-        }
-
-        private void redGeneralChoice(String choice)
-        {
-            
         }
 
         private void EndTurn()
