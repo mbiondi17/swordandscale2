@@ -169,7 +169,7 @@ namespace SwordAndScaleTake2
 
             blueteam = content.Load<Texture2D>("blueteam");
             redteam = content.Load<Texture2D>("redteam");
-            backgroundMusic = content.Load<SoundEffect>("DarkWinds");
+            backgroundMusic = content.Load<SoundEffect>("sounds/DarkWinds");
             river = content.Load<SoundEffect>("poison");
             castle = content.Load<SoundEffect>("fanfare");
             burn = content.Load<SoundEffect>("Burning");
@@ -202,11 +202,12 @@ namespace SwordAndScaleTake2
             //redInfoPane.Update();
             //unitActionPane.Update();
 
-            if (redMorale.Morale <= 0 || blueMorale.Morale <= 0)
+      /*      if (redMorale.Morale <= 0 || blueMorale.Morale <= 0)
             {
                 //Game1.Exit();
                 Console.WriteLine("GAME OVER");
             }
+       */
 
             pressedKey = Keyboard.GetState();
             //Move Cursor (returns true if a move occurred)
@@ -235,27 +236,27 @@ namespace SwordAndScaleTake2
                 if (activeUnit != null)
                 {
                     //If A is pressed
-                    if (oldState.IsKeyUp(Keys.A) && pressedKey.IsKeyDown(Keys.A))
+                    if (oldState.IsKeyUp(Keys.A) && pressedKey.IsKeyDown(Keys.A) && !activeUnit.getHasActed())
                     {
                         //Hide UnitActionPane
                         unitActionPane.Hide();
-                        if (!activeUnit.getHasActed())
-                        {
-                            //Prepare for Attack, highlight attackable enemies
+                        //Attack
                         CreateAttackingArea();
-                            if (attackable.Count > 0)
-                            {
-                                isUnitAttacking = true;
-                            }
+                        if (attackable.Count > 0)
+                        {
+                            isUnitAttacking = true;
                         }
+                       
                     }
                     //If I is pressed
-                    else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I))
+                    else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
                     {
+                        if (map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y /64].isInteractable)
+                        {
+                            
                         //Hide UnitActionPane
                         unitActionPane.Hide();
-                        if (!activeUnit.getHasActed())
-                        {
+                        }
                         //Interact
                         interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
                             //When done
@@ -266,16 +267,13 @@ namespace SwordAndScaleTake2
                         }
                     }
                     //If M is pressed
-                    else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M))
+                    else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
                     {
                         //Hide UnitActionPane
                         unitActionPane.Hide();
-                        if (!activeUnit.getHasMoved())
-                        {
                         //Move
                         CreatePathingArea();
                         isUnitMoving = true;
-                    }
                     }
                     //If W is pressed
                     else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
@@ -315,34 +313,22 @@ namespace SwordAndScaleTake2
                     //get enemy to attack and do so
                     if (theEnemy != null)
                     {
-                        attack(ref theEnemy);
+                    attack(ref theEnemy);
 
-                        // enemies.Clear();
-                        // attackable.Clear();
-                        DetectUnitHovered();
-                        activeUnit.setHasActed(true);
-
-                        if (activeUnit.getHasMoved())
-                        {
-                            DeactivateUnit();
-                        }
-                    }
-                    else if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
-                        !CanAttackEnemy())
-                    {
-                        isUnitAttacking = false;
-                    }
-                }
-            }
-            else if (isUnitInteracting)
-            {
-                //TODO
-                if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space))
-                {
+                    // enemies.Clear();
+                    // attackable.Clear();
                     DetectUnitHovered();
-                    isUnitInteracting = false;
+                    activeUnit.setHasActed(true);
+
+                    if (activeUnit.getHasMoved())
+                    {
+                        DeactivateUnit();
+                    }
+
+                    isUnitAttacking = false;
                 }
             }
+
             //If B is pressed, cancel action (does not deactivate unit or reset unit)
             if (oldState.IsKeyUp(Keys.B) && pressedKey.IsKeyDown(Keys.B))
             {
@@ -350,10 +336,12 @@ namespace SwordAndScaleTake2
                 isUnitInteracting = false;
                 isUnitMoving = false;
                 clearHighlight();
-                clearAttackable();
-                cursorPosition = activeUnit.getPixelPosition();
-                DetectUnitHovered();
-                unitActionPane.Show();
+                if (activeUnit != null)
+                {
+                    cursorPosition = activeUnit.getPixelPosition();
+                    DetectUnitHovered();
+                    unitActionPane.Show();
+                }
             }
             //If E is pressed, end turn (deactivateUnit has it's own end of turn checks)
             if (oldState.IsKeyUp(Keys.E) && pressedKey.IsKeyDown(Keys.E))
@@ -367,7 +355,7 @@ namespace SwordAndScaleTake2
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(mapImage, new Rectangle(0, 0, 1536, 896), Color.White);
-           foreach (Terrain terr in map)
+            foreach (Terrain terr in map)
             {
                 terr.Draw(spriteBatch, fire, gate, castleRed, castleBlue, poison, cow, burn, castle, river);
             }
@@ -393,15 +381,15 @@ namespace SwordAndScaleTake2
             {
                 if (!unit.getDead())
                 {
-                    unit.Draw(spriteBatch);
-                }
+                unit.Draw(spriteBatch);
+            }
             }
             foreach (Unit unit in redUnits)
             {
                 if (!unit.getDead())
                 {
-                    unit.Draw(spriteBatch);
-                }
+                unit.Draw(spriteBatch);
+            }
             }
 
             if (activeTeam == Teams.Red)
@@ -758,7 +746,7 @@ namespace SwordAndScaleTake2
         /*    if (attackable.Count > 0)
             {
                 cursorPosition = attackable[0].getPosition();
-            }
+        }
          */
 
         }
@@ -795,7 +783,7 @@ namespace SwordAndScaleTake2
             bool activeArcher = activeUnit.getType().Contains("rch");
 
             if (!activeMage)
-                {
+            {
                 physAttack(ref activeUnit, ref enemy);
 
                 if (enemy.getHealth() > 0)
@@ -803,19 +791,19 @@ namespace SwordAndScaleTake2
                     if (enemyArcher)
                     {
                         physAttack(ref enemy, ref activeUnit);
-            }
+                    }
 
                     if (enemyMage && distance < 2)
-            {
+                    {
                         magAttack(ref enemy, ref activeUnit);
                     }
 
                     if(!enemyMage && distance < 2)
-                {
+                    {
                         physAttack(ref enemy, ref activeUnit);
                     }
                 }
-                }
+            }
             if (activeMage)
             {
                 magAttack(ref activeUnit, ref enemy);
@@ -831,6 +819,7 @@ namespace SwordAndScaleTake2
                         physAttack(ref enemy, ref activeUnit);
                     }
                 }
+            }
             }
 
 
@@ -1297,7 +1286,7 @@ namespace SwordAndScaleTake2
 	    }
 
     //end interact method
-        }
+    }
 
         private bool MoveCursor()
         {
@@ -1371,9 +1360,9 @@ namespace SwordAndScaleTake2
             {
                 if (nextUnit.getUsable() && !nextUnit.getDead())
                 {
-                    //Move cursor to next unit
-                    cursorPosition = nextUnit.getPosition();
-                    DetectUnitHovered();
+                //Move cursor to next unit
+                cursorPosition = nextUnit.getPosition();
+                DetectUnitHovered();
                 }
             }
             //If there are no more usable units
@@ -1421,6 +1410,7 @@ namespace SwordAndScaleTake2
             //Reset each unit in current team
             foreach (Unit unit in (activeTeam == Teams.Blue ? blueUnits : redUnits))
             {
+                if(!unit.getDead())
                 unit.setHasActed(false);
                 unit.setHasMoved(false);
                 unit.setUsable(true);
