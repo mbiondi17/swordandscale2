@@ -240,10 +240,13 @@ namespace SwordAndScaleTake2
                     //If I is pressed
                     else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
                     {
-                        //Hide UnitActionPane
-                        unitActionPane.Hide();
-                        //Interact
-                        isUnitInteracting = true;
+                        if (map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].isInteractable)
+                        {
+                            //Hide UnitActionPane
+                            unitActionPane.Hide();
+                            //Interact
+                            isUnitInteracting = true;
+                        }
                     }
                     //If M is pressed
                     else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
@@ -308,14 +311,11 @@ namespace SwordAndScaleTake2
             else if (isUnitInteracting)
             {
                 //TODO
-                if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space))
-                {
                     interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
 
                     DetectUnitHovered();
                     activeUnit.setHasActed(true);
                     isUnitInteracting = false;
-                }
             }
             //If B is pressed, cancel action (does not deactivate unit or reset unit)
             if (oldState.IsKeyUp(Keys.B) && pressedKey.IsKeyDown(Keys.B))
