@@ -1546,7 +1546,7 @@ namespace SwordAndScaleTake2
             int compGen = genNum.Next(0, 5);
             if (compGen == 0)
             {
-                chosenGen = new Unit("redMageGen", "MageGen", 8, 15, 9, 2, 5, 3, Teams.Red, generalRPosition);
+                chosenGen = new Unit("redMageGen", "MageGen", 15, 8, 9, 2, 5, 3, Teams.Red, generalRPosition);
             }
             if (compGen == 1)
             {

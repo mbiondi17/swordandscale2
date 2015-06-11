@@ -95,7 +95,6 @@ namespace SwordAndScaleTake2
                     this.type = "SwordGen";
                     break;
                 case "blueWarriorGen":
-                    Console.WriteLine("PICKED BLUE WARRIOR");
                     this.position = pos;
                     this.health = 15;
                     this.str = 9;
@@ -108,7 +107,6 @@ namespace SwordAndScaleTake2
                     this.usable = true;
                     this.hasMoved = false;
                     this.hasActed = false;
-                    Console.WriteLine("Blue Pos Set");
                     this.type = "WarriorGen";
                     break;
             }
