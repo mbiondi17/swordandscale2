@@ -78,7 +78,7 @@ namespace SwordAndScaleTake2
         UnitInfoPane blueInfoPane = new UnitInfoPane();
         UnitInfoPane redInfoPane = new UnitInfoPane();
         UnitActionPane unitActionPane = new UnitActionPane();
-        combatNotificationPane notification = new combatNotificationPane();
+        CombatNotificationPane notification = new CombatNotificationPane();
         bool methodCalled = false;
         GamePreferences gamePrefs;
         MoralePane blueMorale = new MoralePane(10, "blue");
@@ -142,7 +142,6 @@ namespace SwordAndScaleTake2
             redInfoPane.setPixelPosition(192, 896);
             blueInfoPane.setPixelPosition(768, 896);
             blueMorale.setPixelPosition(1344, 896);
-            notification.setPixelPosition(0, 0);
             activeTeam = Teams.Blue;
             cursorPosition = swordBPosition;
             hoveredUnit = blueSword;
@@ -208,6 +207,7 @@ namespace SwordAndScaleTake2
             //blueInfoPane.Update();
             //redInfoPane.Update();
             //unitActionPane.Update();
+            notification.Update();
 
             pressedKey = Keyboard.GetState();
             //Move Cursor (returns true if a move occurred)
@@ -750,14 +750,14 @@ namespace SwordAndScaleTake2
                         enemy.setHealth(enemy.getHealth() - (activeUnit.getStr() - enemy.getMDef()));
 
                         string toDisplay = "Attack Hits for " + (activeUnit.getStr() - enemy.getMDef()) + " Damage!";
-                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, hit);
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, hit);
                     }
                     
                     //if the attack misses
                     else 
                     {
                         string toDisplay = "Attack Misses!";
-                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, miss);
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, miss);
                     }
 
                     //if the enemy is not dead (able to counter)
@@ -768,15 +768,14 @@ namespace SwordAndScaleTake2
                         {
                             activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getDef()));
                             string toDisplay = "Counterattack Hits for " + (enemy.getStr() - activeUnit.getDef()) + "Damage!";
-                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, hit);
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, hit);
                         }
 
                         //if the counterattack misses
                         else
                         {
                             string toDisplay = "Counterattack misses!";
-                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, miss);
-                           
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, miss);                           
                         }
                     }
                 }
@@ -789,14 +788,14 @@ namespace SwordAndScaleTake2
                     {
                         enemy.setHealth(activeUnit.getHealth() - (activeUnit.getStr() - enemy.getMDef()));
                         string toDisplay = "Attack Hits for " + (activeUnit.getStr() - enemy.getMDef()) + " Damage!";
-                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, hit);
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, hit);
                     }
 
                     //if attack misses
                     else
                     {
                         string toDisplay = "Attack misses!";
-                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, miss);
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, miss);
                     }
 
                     //if enemy is able to counter
@@ -807,14 +806,14 @@ namespace SwordAndScaleTake2
                         {
                             activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getMDef()));
                             string toDisplay = "Counterattack Hits for" + (enemy.getStr() - activeUnit.getMDef()) + "Damage!";
-                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, hit);
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, hit);
                         }
 
                         //if counterattack misses
                         else
                         {
                             string toDisplay = "Counterattack misses!";
-                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, miss);
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, miss);
                         }
                     }
                 }
@@ -830,14 +829,14 @@ namespace SwordAndScaleTake2
                     {
                         enemy.setHealth(enemy.getHealth() - (activeUnit.getStr() - enemy.getDef()));
                         string toDisplay = "Attack Hits for" + (activeUnit.getStr() - enemy.getDef()) + "Damage!";
-                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, hit);
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, hit);
                     }
                         
                     //Attack Misses
                     else
                     {
                         string toDisplay = "Attack Misses!";
-                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, miss);
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, miss);
                     }
 
                     //if enemy can counter
@@ -848,14 +847,14 @@ namespace SwordAndScaleTake2
                         {
                             activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getDef()));
                             string toDisplay = "Counterattack Hits for" + (enemy.getStr() - activeUnit.getDef()) + "Damage!";
-                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, hit);
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, hit);
                         }
 
                         //counterattack misses
                         else 
                         {
                             string toDisplay = "Counterattack Misses!";
-                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, miss);
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, miss);
                         }
                     }
                 }
@@ -868,14 +867,14 @@ namespace SwordAndScaleTake2
                     {
                         enemy.setHealth(activeUnit.getHealth() - (activeUnit.getStr() - enemy.getDef()));
                         string toDisplay = "Attack Hits for" + (activeUnit.getStr() - enemy.getDef()) + "Damage!";
-                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, hit);
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, hit);
                     }
 
                     //attack misses
                     else
                     {
                         string toDisplay = "Attack Misses!";
-                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, miss);
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, miss);
                     }
 
                     //if enemy can counter
@@ -886,14 +885,14 @@ namespace SwordAndScaleTake2
                         {
                             activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getMDef()));
                             string toDisplay = "Counterattack Hits for" + (enemy.getStr() - activeUnit.getMDef()) + "Damage!";
-                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, hit);
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, hit);
                         }
 
                         //counterattack misses
                         else 
                         {
                             string toDisplay = "Counterattack Misses!";
-                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, miss);
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, miss);
                         }
                     }
                 }
@@ -935,13 +934,6 @@ namespace SwordAndScaleTake2
             attackable.Clear();
             enemies.Clear();
             isUnitAttacking = false;
-        }
-
-        public void feedBack(float x, float y, string toDisplay, SoundEffect toPlay)
-        {
-            combatNotificationPane notification = new combatNotificationPane(x, y, toDisplay, 60);
-            notification.Show();
-            toPlay.Play();
         }
 
 

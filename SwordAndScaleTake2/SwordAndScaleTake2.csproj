@@ -53,7 +53,7 @@
     <Compile Include="Terrain.cs" />
     <Compile Include="UnitActionPane.cs" />
     <Compile Include="Unit.cs" />
-    <Compile Include="combatNotificationPane.cs" />
+    <Compile Include="CombatNotificationPane.cs" />
     <Compile Include="MoralePane.cs" />
     <Compile Include="UnitInfoPane.cs" />
   </ItemGroup>
