@@ -36,6 +36,11 @@ namespace SwordAndScaleTake2
             return position;
         }
 
+        public bool Equals(PathSprite n)
+        {
+            return this.getPosition() == n.getPosition();
+        }
+
         public void LoadContent(ContentManager content)
         {
             //blue = content.Load<Texture2D>("blanks");

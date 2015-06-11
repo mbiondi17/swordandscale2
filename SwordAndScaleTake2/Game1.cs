@@ -68,7 +68,11 @@ namespace SwordAndScaleTake2
         List<Vector2> moveable = new List<Vector2>();
         List<Unit> attackable = new List<Unit>();
         List<PathSprite> path = new List<PathSprite>();
+        List<PathSprite> pathPath = new List<PathSprite>();
+        List<Vector2> pathMoveable = new List<Vector2>();
+
         List<PathSprite> enemies = new List<PathSprite>();
+
         Teams activeTeam;
         bool isUnitMoving = false;
         bool isUnitAttacking = false;
@@ -272,7 +276,8 @@ namespace SwordAndScaleTake2
                         //Hide UnitActionPane
                         unitActionPane.Hide();
                         //Move
-                        CreatePathingArea();
+//                        CreatePathingArea();
+                        GetPotentialMoves();
                         isUnitMoving = true;
                     }
                     //If W is pressed
@@ -340,6 +345,7 @@ namespace SwordAndScaleTake2
                     isUnitMoving = false;
                     clearHighlight();
                     clearAttackable();
+                    clearPath();
                     if (activeUnit != null)
                     {
                         cursorPosition = activeUnit.getPixelPosition();
@@ -368,6 +374,14 @@ namespace SwordAndScaleTake2
             if (path.Count > 0)
             {
                 foreach (PathSprite space in path)
+                {
+                    space.Draw(spriteBatch, blank);
+                }
+            }
+
+            if (pathPath.Count > 0)
+            {
+                foreach (PathSprite space in pathPath)
                 {
                     space.Draw(spriteBatch, blank);
                 }
@@ -754,27 +768,29 @@ namespace SwordAndScaleTake2
             }
         }
 
-        private void physAttack(ref Unit unit, ref Unit enemy)
+        private int physAttack(Unit unit, Unit enemy)
         {
             Random rand = new Random();
             int unitHit = rand.Next(1, 11);
+
             if (unitHit <= unit.getSkill())
             {
                 //Console.WriteLine("PHYSICAL ATTACK");
-                enemy.setHealth(enemy.getHealth() - (unit.getStr() - enemy.getDef()));
+                return enemy.getHealth() - (unit.getStr() - enemy.getDef());
             }
+            return enemy.getHealth();
         }
 
-        private void magAttack(ref Unit unit, ref Unit enemy)
+        private int magAttack(Unit unit, Unit enemy)
         {
             Random rand = new Random();
             int unitHit = rand.Next(1, 11);
             if (unitHit <= unit.getSkill())
             {
                 //Console.WriteLine("MAGIC ATTACK");
-                enemy.setHealth(unit.getHealth() - (unit.getStr() - enemy.getMDef()));
+                return unit.getHealth() - (unit.getStr() - enemy.getMDef());
             }
-
+            return enemy.getHealth();
         }
 
         public void attack(ref Unit enemy)
@@ -787,39 +803,39 @@ namespace SwordAndScaleTake2
 
             if (!activeMage)
             {
-                physAttack(ref activeUnit, ref enemy);
+                enemy.setHealth(physAttack(activeUnit, enemy));
 
                 if (enemy.getHealth() > 0)
                 {
                     if (enemyArcher)
                     {
-                        physAttack(ref enemy, ref activeUnit);
+                        activeUnit.setHealth(physAttack(enemy, activeUnit));
                     }
 
                     if (enemyMage && distance < 2)
                     {
-                        magAttack(ref enemy, ref activeUnit);
+                        activeUnit.setHealth(magAttack(enemy, activeUnit));
                     }
 
                     if (!enemyMage && distance < 2)
                     {
-                        physAttack(ref enemy, ref activeUnit);
+                        activeUnit.setHealth(physAttack(enemy, activeUnit));
                     }
                 }
             }
-            if (activeMage)
+            else if (activeMage)
             {
-                magAttack(ref activeUnit, ref enemy);
+                enemy.setHealth(magAttack(activeUnit, enemy));
 
                 if (enemy.getHealth() > 0)
                 {
                     if (enemyMage)
                     {
-                        magAttack(ref enemy, ref activeUnit);
+                        activeUnit.setHealth(magAttack(enemy, activeUnit));
                     }
                     if (!enemyMage)
                     {
-                        physAttack(ref enemy, ref activeUnit);
+                        activeUnit.setHealth(physAttack(enemy, activeUnit));
                     }
                 }
             }
@@ -1118,7 +1134,8 @@ namespace SwordAndScaleTake2
 
         private bool CanMoveUnit()
         {
-            foreach (Vector2 pos in moveable)
+            //foreach (Vector2 pos in moveable)
+            foreach (Vector2 pos in pathMoveable)
             {
                 if (pos == cursorPosition)
                 {
@@ -1148,6 +1165,7 @@ namespace SwordAndScaleTake2
                 map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].setRedOcc(true);
             }
             clearHighlight();
+            clearPath();
             isUnitMoving = false;
         }
 
@@ -1155,6 +1173,12 @@ namespace SwordAndScaleTake2
         {
             path.Clear();
             moveable.Clear();
+        }
+
+        private void clearPath()
+        {
+            pathPath.Clear();
+            pathMoveable.Clear();
         }
 
 
@@ -1292,6 +1316,137 @@ namespace SwordAndScaleTake2
             //end interact method
         }
 
+        public void GetPotentialMoves()
+        {
+            int increment = 1;
+            int mvmt = activeUnit.getMvmt();
+            for (int i = 0; i <= mvmt; i++)
+            {
+                for (int x = (int)(activeUnit.getPosition().X / 64) - i; x <= (int)(activeUnit.getPosition().X / 64) + i; x+= increment)
+                {
+                    for (int y = (int)(activeUnit.getPosition().Y / 64) - (mvmt - i); y <= (int)(activeUnit.getPosition().Y / 64) + (mvmt - i); y++)
+                    {
+                        pathMoveable.Add(new Vector2(x * 64, y * 64));
+                    }
+                }
+            }
+
+            pathMoveable.RemoveAll(x => x == activeUnit.getPosition());
+            pathMoveable.RemoveAll(x => x.X / 64 >= 24 || x.X / 64 < 0 || x.Y / 64 >= 14 || x.Y / 64 < 0);
+            pathMoveable.RemoveAll(x => map[(int)x.X / 64, (int)x.Y / 64].getImpassible());
+            pathMoveable.RemoveAll(x => map[(int)x.X / 64, (int)x.Y / 64].getRedOcc());
+            pathMoveable.RemoveAll(x => map[(int)x.X / 64, (int)x.Y / 64].getBlueOcc());
+            ReachablePaths();
+        }
+
+        private void ReachablePaths()
+        {
+            List<PathSquare> openOptions = new List<PathSquare>();
+            List<Vector2> tmp = new List<Vector2>();
+            foreach (Vector2 pos in pathMoveable)
+            {
+                Console.WriteLine(!tmp.Contains(pos));
+                if (!tmp.Contains(pos))
+                {
+                    openOptions = pathfinder(activeUnit.getPosition(), pos);
+                    if (openOptions.Count > 0 && openOptions.Count <= activeUnit.getMvmt() + 1 && (openOptions[0].x == pos.X / 64 && openOptions[0].y == pos.Y / 64))
+                    {
+                        tmp.Add(pos);
+                    }
+                }
+            }
+
+            foreach (Vector2 good in tmp)
+            {
+                pathPath.Add(new PathSprite(good, this));
+            }
+        }
+
+        private List<PathSquare> pathfinder(Vector2 curPos, Vector2 endPos)
+        {
+            int curX = (int)curPos.X / 64;
+            int curY = (int)curPos.Y / 64;
+            int endX = (int)endPos.X / 64;
+            int endY = (int)endPos.Y / 64;
+
+            int distance = Math.Abs(curX - endX) + Math.Abs(curY - endY);
+            PathSquare start = new PathSquare(curX, curY, 0, distance, null);
+            PathSquare end = new PathSquare(endX, endY, distance, 0, null);
+            Heap open = new Heap();
+            List<PathSquare> closed = new List<PathSquare>();
+            List<PathSquare> moves = new List<PathSquare>();
+
+            PathSquare current = start;
+            PathSquare next = null; //change for uncertainty
+            open.push(current);//push start square onto heap
+
+            while (open.peek() != null)  //while there are still squares to look in
+            {
+                current = open.pop();  //take the best option off the heap
+                //Console.WriteLine("score :" + current.getScore());
+                //Console.WriteLine(current.x + ", " + current.y + " : " + end.x + ", " + end.y);
+                if (current.equals(end))
+                {
+                    break;  //if you found the end, you're done
+                }
+
+                //consider hardcoding with -1 0, 1 0, 0 -1, 0 1
+
+                for (int i = -1; i < 2; i++)
+                {
+                    for (int j = -1; j < 2; j++)  //look at all adjacent grids
+                    {
+                        int ptr = current.x;
+                        int ptc = current.y;
+
+                        if (!(i == 0 && j == 0) && (i == 0 || j == 0) &&
+                                (i + ptr >= 0) && (i + ptr < 24) &&
+                                (j + ptc >= 0) && (j + ptc < 14)) //get rid of grid you're on and diagonal ones
+                        {
+                            //Console.WriteLine("made it: " + i + ", " + j);
+
+                            next = new PathSquare(ptr + i, ptc + j, 0, 0, current);  //make a new square
+                            next.fs = current.fs + 1; // that's one further from the start
+                            next.tf = Math.Abs(next.x - end.x) + Math.Abs(next.y - end.y);  //admissable heuristic for distance from end
+
+                            //change for uncertainty
+                            //TODO if next is occupied, continue
+
+                            if ((map[next.x, next.y].getBlueOcc() && activeUnit.getTeam() == Teams.Red) || (map[next.x, next.y].getRedOcc() && activeUnit.getTeam() == Teams.Blue) || map[next.x, next.y].getImpassible())
+                            {
+                                continue; //don't traverse spaces occupied by the wrong team (will have to be changed for team enum thing)
+                            }
+
+                            if (open.contains(next) || closed.Contains(next))
+                            {
+                                //if it's already on the list to look at or we've already found a shorter route, ignore it
+                            }
+
+                            else
+                            {
+                                //Console.WriteLine("will add");
+                                open.push(next);  //otherwise, put the next one on the heap to look at
+                                //Console.WriteLine("added\n");
+                            }
+                        }
+                    }
+                }
+                closed.Add(current);  //finished using the current square
+            }
+            moves.Add(current);
+            PathSquare tmp;
+            while (current.last != null)
+            {
+                tmp = current.last;
+                moves.Add(tmp);  //get the path, backwards
+                //Console.WriteLine(tmp.x);
+                //Console.WriteLine(tmp.y);
+                current = current.last;
+            }
+            //Console.WriteLine("MOVES: " + moves.Count);
+            return moves;  //return the backwards path
+        }
+
         private bool MoveCursor()
         {
             if (oldState.IsKeyUp(Keys.Left) && pressedKey.IsKeyDown(Keys.Left) && cursorPosition.X > 0)
@@ -1421,6 +1576,13 @@ namespace SwordAndScaleTake2
             }
             //Other team's turn
             activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
+
+            isUnitAttacking = false;
+            isUnitInteracting = false;
+            isUnitMoving = false;
+            clearHighlight();
+            clearAttackable();
+            clearPath();
         }
     }
 }
