@@ -1246,47 +1246,75 @@ namespace SwordAndScaleTake2
             }
             return false;
         }
-        private void PathFinder(Vector2 startPosition, Vector2 endPosition)
+        private List<Square> PathFinder(Vector2 startPosition, Vector2 endPosition)
         {
-            List<Vector2> openList = new List<Vector2>();
-            List<Vector2> closedList = new List<Vector2>();
-            openList.Add(startPosition);
-            while(openList.Count > 0)
+            List<Square> openList = new List<Square>();
+            List<Square> closedList = new List<Square>();
+            Square start = new Square(true, startPosition);
+            Square end = new Square(false, endPosition);
+            int endX = (int)endPosition.X/64;
+            int endY = (int)endPosition.Y/64;
+            start.setCost(0);
+            openList.Add(start);
+            Square currentStep = start;
+            while(openList.Count > 0 || !closedList.Contains(end))
             {
+                int costCurrent;
+                int previousCost = 99;
                 //Select the most likely next step
-                Vector2 currentStep;
-
-                if (!openList.Contains(new Vector2(currentStep.X + 64, currentStep.Y)) 
-                    && !closedList.Contains(new Vector2(currentStep.X + 64, currentStep.Y))
-                    && isPassable(new Vector2(currentStep.X + 64, currentStep.Y)))
+                foreach(Square Step in openList)
+                {
+                    costCurrent = currentStep.getCost();
+                    if(costCurrent < previousCost)
                     {
-                        openList.Add(new Vector2(currentStep.X + 64, currentStep.Y));
+                        currentStep = Step;
+                    }
+                    previousCost = costCurrent;
+                }
+                openList.Remove(currentStep);
+                closedList.Add(currentStep);
+                //if neighbor not in open or closed
+                //Calculate Path Cost of the Neighbor
+                Square currentNeighborX = new Square(new Vector2(currentStep.getPosition().X + 64, currentStep.getPosition().Y), currentStep.getPosition());
+                Square currentNeighborY = new Square(new Vector2(currentStep.getPosition().X, currentStep.getPosition().Y + 64), currentStep.getPosition());
+                Square currentNeighborX2 = new Square(new Vector2(currentStep.getPosition().X - 64, currentStep.getPosition().Y), currentStep.getPosition());
+                Square currentNeighborY2 = new Square(new Vector2(currentStep.getPosition().X, currentStep.getPosition().Y - 64), currentStep.getPosition());
+                List<Square> neighbors = new List<Square>();
+                neighbors.Add(currentNeighborX);
+                neighbors.Add(currentNeighborY);
+                neighbors.Add(currentNeighborX2);
+                neighbors.Add(currentNeighborY2);
+                foreach (Square current in neighbors)
+                {
+                    int currentx = (int)current.getPosition().X/64;
+                    int currenty = (int)current.getPosition().Y/64;
+                    int dx = endX - currentx;
+                    int dy = endY - currenty;
+                    current.setCost(dx + dy);
+
+                    if(closedList.Contains(current) || !isPassable(new Vector2(current.getPosition().X,current.getPosition().Y)))
+                    {
+                        //do nothing
                     }
 
-                if (!openList.Contains(new Vector2(currentStep.X - 64, currentStep.Y))
-                    && !closedList.Contains(new Vector2(currentStep.X - 64, currentStep.Y))
-                    && isPassable(new Vector2(currentStep.X - 64, currentStep.Y)))
-                {
-                    openList.Add(new Vector2(currentStep.X - 64, currentStep.Y));
+                    else if(openList.Contains(current))
+                    {
+                        Square compare = openList.Find(x => x.getPosition() == current.getPosition());
+                        int compareCost = compare.getCost();
+                        int currentCost = current.getCost();
+                        if(currentCost < compareCost)
+                        {
+                            openList.Remove(compare);
+                            openList.Add(current);
+                        }
+                    }
+                    else
+                    {
+                        openList.Add(current);
+                    }
                 }
-
-                if (!openList.Contains(new Vector2(currentStep.X, currentStep.Y + 64))
-                    && !closedList.Contains(new Vector2(currentStep.X, currentStep.Y +64))
-                    && isPassable(new Vector2(currentStep.X, currentStep.Y + 64)))
-                {
-                    openList.Add(new Vector2(currentStep.X ,currentStep.Y + 64));
-                }
-
-                if (!openList.Contains(new Vector2(currentStep.X, currentStep.Y - 64))
-                    && !closedList.Contains(new Vector2(currentStep.X, currentStep.Y - 64))
-                    && isPassable(new Vector2(currentStep.X, currentStep.Y - 64)))
-                {
-                    openList.Add(new Vector2(currentStep.X, currentStep.Y - 64));
-                }
-                    //if neighbor not in open or closed
-                    //Calculate Path Cost of the Neighbor
-                    //if cost < known cost
             }
+            return closedList;
         }
         private bool isPassable(Vector2 Position)
         {
@@ -1297,6 +1325,14 @@ namespace SwordAndScaleTake2
                 return false;
             }
 
+            return true;
+        }
+        private bool inBounds(Vector2 Position)
+        {
+            if(Position.X < 0 || Position.X > 23*64)
+                return false;
+            if (Position.Y < 0 || Position.Y > 13*64)
+                return false;
             return true;
         }
         private void DetectUnitHovered()
