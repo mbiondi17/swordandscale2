@@ -219,59 +219,92 @@ namespace SwordAndScaleTake2
                 UpdateInfoPanes();
             }
             //If the player isn't in the middle of moving, attacking, or interacting AND the cursor is over a unit (runs every update)
-            if (!(isUnitMoving || isUnitAttacking || isUnitInteracting) && hoveredUnit != null)
+            if (!(isUnitMoving || isUnitAttacking || isUnitInteracting))
             {
-                //If Spacebar is pressed AND Unit is on the activeTeam AND Unit isUsable
-                if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
-                    hoveredUnit.getTeam() == activeTeam &&
-                    hoveredUnit.getUsable() && !hoveredUnit.getDead())
+                if (oldState.IsKeyUp(Keys.N) && pressedKey.IsKeyDown(Keys.N))
                 {
-                    //Select that unit
-                    activeUnit = hoveredUnit;
-                    //Show UnitActionPane
-                    unitActionPane.setPixelPosition(hoveredUnit, cursorPosition + new Vector2(64, 0));
-                    unitActionPane.Show();
-                }
-                //If a unit is active (runs every update)
-                if (activeUnit != null)
-                {
-                    //If A is pressed
-                    if (oldState.IsKeyUp(Keys.A) && pressedKey.IsKeyDown(Keys.A) && !activeUnit.getHasActed())
+                    List<Unit> teamsList = (activeTeam == Teams.Blue ? blueUnits : redUnits);
+
+                    Console.WriteLine(activeTeam);
+
+                    Unit nextUnit = teamsList.Find(x => (x.getUsable() && (teamsList.IndexOf(x) > (teamsList.IndexOf(hoveredUnit)))));
+                    //if there is a next unit
+                    if (nextUnit != null)
                     {
-                        //Hide UnitActionPane
-                        unitActionPane.Hide();
-                        //Attack
-                        CreateAttackingArea();
-                        isUnitAttacking = true;
+                        if (!nextUnit.getDead())
+                        {
+                            //move cursor to next unit
+                            cursorPosition = nextUnit.getPosition();
+                            DetectUnitHovered();
+                        }
                     }
-                    //If I is pressed
-                    else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
+
+                    else
                     {
-                        if (map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].isInteractable)
+                        cursorPosition = teamsList.FirstOrDefault().getPosition();
+                        DetectUnitHovered();
+                    }
+                }
+
+                if (hoveredUnit != null)
+                {
+                    //If Spacebar is pressed AND Unit is on the activeTeam AND Unit isUsable
+                    if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
+                        hoveredUnit.getTeam() == activeTeam &&
+                        hoveredUnit.getUsable() && !hoveredUnit.getDead())
+                    {
+                        //Select that unit
+                        activeUnit = hoveredUnit;
+                        //Show UnitActionPane
+                        unitActionPane.setPixelPosition(hoveredUnit, cursorPosition + new Vector2(64, 0));
+                        unitActionPane.Show();
+                        Console.WriteLine("Here!!");
+                    }
+
+
+
+
+                    //If a unit is active (runs every update)
+                    if (activeUnit != null)
+                    {
+                        //If A is pressed
+                        if (oldState.IsKeyUp(Keys.A) && pressedKey.IsKeyDown(Keys.A) && !activeUnit.getHasActed())
                         {
                             //Hide UnitActionPane
                             unitActionPane.Hide();
-                            //Interact
-                            isUnitInteracting = true;
+                            //Attack
+                            CreateAttackingArea();
+                            isUnitAttacking = true;
                         }
-                    }
-                    //If M is pressed
-                    else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
-                    {
-                        //Hide UnitActionPane
-                        unitActionPane.Hide();
-                        //Move
-                        CreatePathingArea();
-                        isUnitMoving = true;
-                    }
-                    //If W is pressed
-                    else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
-                    {
-                        //Hide UnitActionPane
-                        unitActionPane.Hide();
-                        //Wait
-                        //When done
-                        DeactivateUnit();
+                        //If I is pressed
+                        else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
+                        {
+                            if (map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].isInteractable)
+                            {
+                                //Hide UnitActionPane
+                                unitActionPane.Hide();
+                                //Interact
+                                isUnitInteracting = true;
+                            }
+                        }
+                        //If M is pressed
+                        else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
+                        {
+                            //Hide UnitActionPane
+                            unitActionPane.Hide();
+                            //Move
+                            CreatePathingArea();
+                            isUnitMoving = true;
+                        }
+                        //If W is pressed
+                        else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
+                        {
+                            //Hide UnitActionPane
+                            unitActionPane.Hide();
+                            //Wait
+                            //When done
+                            DeactivateUnit();
+                        }
                     }
                 }
             }
@@ -318,11 +351,11 @@ namespace SwordAndScaleTake2
             else if (isUnitInteracting)
             {
                 //TODO
-                    interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
+                interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
 
-                    DetectUnitHovered();
-                    activeUnit.setHasActed(true);
-                    isUnitInteracting = false;
+                DetectUnitHovered();
+                activeUnit.setHasActed(true);
+                isUnitInteracting = false;
             }
             //If B is pressed, cancel action (does not deactivate unit or reset unit)
             if (oldState.IsKeyUp(Keys.B) && pressedKey.IsKeyDown(Keys.B))
