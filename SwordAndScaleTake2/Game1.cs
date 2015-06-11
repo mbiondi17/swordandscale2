@@ -788,7 +788,7 @@ namespace SwordAndScaleTake2
             if (unitHit <= unit.getSkill())
             {
                 //Console.WriteLine("MAGIC ATTACK");
-                return unit.getHealth() - (unit.getStr() - enemy.getMDef());
+                return enemy.getHealth() - (unit.getStr() - enemy.getMDef());
             }
             return enemy.getHealth();
         }
