@@ -1081,83 +1081,9 @@ namespace SwordAndScaleTake2
                     }
                 }
             }
-            for (int i = 0; i < contiguous.Count; i++)
-            {
-                Vector2 moveItem = contiguous[i];
-                if (moveItem.X == 17 * 64 && moveItem.Y == 10 * 64 && !methodCalled)
-                {
-                    methodCalled = true;
-                    contiguous = reHighlight(origin, moveItem, 2, contiguous);
-                }
-            }
 
             return contiguous;
 
-        }
-
-
-
-        public List<Vector2> reHighlight(Vector2 playerOrigin, Vector2 origin, int Mvmt, List<Vector2> moveable)
-        {
-            List<Vector2> bridge = new List<Vector2>();
-            for (int i = 1; i < Mvmt + 1; i++)
-            {
-                if (cursorPosition.X + (64 * i) < 24 * 64)
-                {
-                    Vector2 pathCor1 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y);
-                    moveable.Add(pathCor1);
-                }
-                if (cursorPosition.X - (64 * i) >= 0)
-                {
-                    Vector2 pathCor2 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y);
-                    moveable.Add(pathCor2);
-                }
-                if (cursorPosition.Y + (64 * i) < 14 * 64)
-                {
-                    Vector2 pathCor3 = new Vector2(cursorPosition.X, cursorPosition.Y + (64 * i));
-                    moveable.Add(pathCor3);
-                }
-                if (cursorPosition.Y - (64 * i) >= 0)
-                {
-                    Vector2 pathCor4 = new Vector2(cursorPosition.X, cursorPosition.Y - (64 * i));
-                    moveable.Add(pathCor4);
-                }
-
-                for (int j = 1; j < Mvmt; j++)
-                {
-                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y + (64 * j) < 14 * 64)
-                    {
-                        Vector2 pathCor11 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y + (64 * j));
-                        PathSprite path11 = new PathSprite(pathCor11, this);
-                        path.Add(path11);
-                        moveable.Add(pathCor11);
-                    }
-                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y - (64 * j) >= 0)
-                    {
-                        Vector2 pathCor12 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y - (64 * j));
-                        PathSprite path12 = new PathSprite(pathCor12, this);
-                        path.Add(path12);
-                        moveable.Add(pathCor12);
-                    }
-                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y + (64 * j) < 14 * 64)
-                    {
-                        Vector2 pathCor21 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y + (64 * j));
-                        PathSprite path21 = new PathSprite(pathCor21, this);
-                        path.Add(path21);
-                        moveable.Add(pathCor21);
-                    }
-                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y - (64 * j) >= 0)
-                    {
-                        Vector2 pathCor22 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y - (64 * j));
-                        PathSprite path22 = new PathSprite(pathCor22, this);
-                        path.Add(path22);
-                        moveable.Add(pathCor22);
-                    }
-                }
-                Mvmt--;
-            }
-            bridge = highlighter(moveable, origin);
-            return bridge;
         }
 
         public Unit unitToAttack()
