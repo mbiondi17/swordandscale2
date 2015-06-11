@@ -36,6 +36,8 @@ namespace SwordAndScaleTake2
         SoundEffect cow;
         SoundEffect castle;
         SoundEffect burn;
+        SoundEffect miss;
+        SoundEffect hit;
         Unit blueMage;
         Unit blueSword;
         Unit blueWarrior;
@@ -76,6 +78,7 @@ namespace SwordAndScaleTake2
         UnitInfoPane blueInfoPane = new UnitInfoPane();
         UnitInfoPane redInfoPane = new UnitInfoPane();
         UnitActionPane unitActionPane = new UnitActionPane();
+        combatNotificationPane notification = new combatNotificationPane();
         bool methodCalled = false;
         GamePreferences gamePrefs;
         MoralePane blueMorale = new MoralePane(10, "blue");
@@ -139,6 +142,7 @@ namespace SwordAndScaleTake2
             redInfoPane.setPixelPosition(192, 896);
             blueInfoPane.setPixelPosition(768, 896);
             blueMorale.setPixelPosition(1344, 896);
+            notification.setPixelPosition(0, 0);
             activeTeam = Teams.Blue;
             cursorPosition = swordBPosition;
             hoveredUnit = blueSword;
@@ -174,6 +178,8 @@ namespace SwordAndScaleTake2
             castle = content.Load<SoundEffect>("fanfare");
             burn = content.Load<SoundEffect>("Burning");
             cow = content.Load<SoundEffect>("Animals");
+            hit = content.Load<SoundEffect>("hit sound");
+            miss = content.Load<SoundEffect>("miss sound");
             SoundEffectInstance soundEffectInstance = backgroundMusic.CreateInstance();
             soundEffectInstance.Play();
             soundEffectInstance.IsLooped = true;
@@ -184,6 +190,7 @@ namespace SwordAndScaleTake2
             unitActionPane.LoadContent(content);
             blueMorale.LoadContent(content);
             redMorale.LoadContent(content);
+            notification.LoadContent(content);
         }
 
         public void UnloadContent()
@@ -393,6 +400,7 @@ namespace SwordAndScaleTake2
             unitActionPane.Draw(spriteBatch);
             blueMorale.Draw(spriteBatch);
             redMorale.Draw(spriteBatch);
+            notification.Draw(spriteBatch);
         }
 
         public void UnitClicked(Unit unit, int x, int y)
@@ -733,38 +741,80 @@ namespace SwordAndScaleTake2
 
             if (activeUnit.getType().Equals("mage") || activeUnit.getType().Contains("MageGen") || activeUnit.getType().Contains("genMage"))
             {
+                //Mage attacking non-Mage
                 if (!enemy.getType().Equals("mage") && !enemy.getType().Contains("genMage") && !enemy.getType().Contains("MageGen"))
                 {
-
+                    //if the attack hits
                     if (unitHit <= activeUnit.getSkill())
                     {
-                        Console.WriteLine("ATTACK");
                         enemy.setHealth(enemy.getHealth() - (activeUnit.getStr() - enemy.getMDef()));
+
+                        string toDisplay = "Attack Hits for " + (activeUnit.getStr() - enemy.getMDef()) + " Damage!";
+                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, hit);
+                    }
+                    
+                    //if the attack misses
+                    else 
+                    {
+                        string toDisplay = "Attack Misses!";
+                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, miss);
                     }
 
+                    //if the enemy is not dead (able to counter)
                     if (enemy.getHealth() > 0)
                     {
+                        //if the counterattack hits
                         if (enemyHit <= enemy.getSkill())
                         {
-                            Console.WriteLine("COUNTERATTACK");
                             activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getDef()));
+                            string toDisplay = "Counterattack Hits for " + (enemy.getStr() - activeUnit.getDef()) + "Damage!";
+                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, hit);
+                        }
+
+                        //if the counterattack misses
+                        else
+                        {
+                            string toDisplay = "Counterattack misses!";
+                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, miss);
+                           
                         }
                     }
                 }
 
-
+                //Mage attacking mage
                 if (enemy.getType().Equals("mage") || enemy.getType().Equals("genMage"))
                 {
+                    //if attack hits
                     if (unitHit <= activeUnit.getSkill())
                     {
                         enemy.setHealth(activeUnit.getHealth() - (activeUnit.getStr() - enemy.getMDef()));
+                        string toDisplay = "Attack Hits for " + (activeUnit.getStr() - enemy.getMDef()) + " Damage!";
+                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, hit);
                     }
 
+                    //if attack misses
+                    else
+                    {
+                        string toDisplay = "Attack misses!";
+                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, miss);
+                    }
+
+                    //if enemy is able to counter
                     if (enemy.getHealth() > 0)
                     {
+                        //if the counterattack hits
                         if (enemyHit <= enemy.getSkill())
                         {
                             activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getMDef()));
+                            string toDisplay = "Counterattack Hits for" + (enemy.getStr() - activeUnit.getMDef()) + "Damage!";
+                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, hit);
+                        }
+
+                        //if counterattack misses
+                        else
+                        {
+                            string toDisplay = "Counterattack misses!";
+                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, miss);
                         }
                     }
                 }
@@ -772,38 +822,78 @@ namespace SwordAndScaleTake2
 
             if (!activeUnit.getType().Equals("mage") && !activeUnit.getType().Contains("genMage") && !activeUnit.getType().Contains("MageGen"))
             {
+                //Non-Mage attacking non-Mage
                 if (!enemy.getType().Equals("mage") && !enemy.getType().Contains("genMage") && !enemy.getType().Contains("MageGen"))
                 {
-
+                    //Attack hits
                     if (unitHit <= activeUnit.getSkill())
                     {
-                        Console.WriteLine("ATTACK");
                         enemy.setHealth(enemy.getHealth() - (activeUnit.getStr() - enemy.getDef()));
+                        string toDisplay = "Attack Hits for" + (activeUnit.getStr() - enemy.getDef()) + "Damage!";
+                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, hit);
+                    }
+                        
+                    //Attack Misses
+                    else
+                    {
+                        string toDisplay = "Attack Misses!";
+                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, miss);
                     }
 
+                    //if enemy can counter
                     if (enemy.getHealth() > 0)
                     {
+                        //if counterattack hits
                         if (enemyHit <= enemy.getSkill())
                         {
-                            Console.WriteLine("COUNTERATTACK");
                             activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getDef()));
+                            string toDisplay = "Counterattack Hits for" + (enemy.getStr() - activeUnit.getDef()) + "Damage!";
+                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, hit);
+                        }
+
+                        //counterattack misses
+                        else 
+                        {
+                            string toDisplay = "Counterattack Misses!";
+                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, miss);
                         }
                     }
                 }
 
-
+                //Non-Mage fighting Mage
                 if (enemy.getType().Equals("mage") || enemy.getType().Equals("genMage"))
                 {
+                    //attack hits
                     if (unitHit <= activeUnit.getSkill())
                     {
                         enemy.setHealth(activeUnit.getHealth() - (activeUnit.getStr() - enemy.getDef()));
+                        string toDisplay = "Attack Hits for" + (activeUnit.getStr() - enemy.getDef()) + "Damage!";
+                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, hit);
                     }
 
+                    //attack misses
+                    else
+                    {
+                        string toDisplay = "Attack Misses!";
+                        feedBack(activeUnit.getPosition().X, activeUnit.getPosition().Y, toDisplay, miss);
+                    }
+
+                    //if enemy can counter
                     if (enemy.getHealth() > 0)
                     {
+                        //if counterattack hits
                         if (enemyHit <= enemy.getSkill())
                         {
                             activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getMDef()));
+                            string toDisplay = "Counterattack Hits for" + (enemy.getStr() - activeUnit.getMDef()) + "Damage!";
+                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, hit);
+                        }
+
+                        //counterattack misses
+                        else 
+                        {
+                            string toDisplay = "Counterattack Misses!";
+                            feedBack(enemy.getPosition().X, enemy.getPosition().Y, toDisplay, miss);
                         }
                     }
                 }
@@ -846,6 +936,14 @@ namespace SwordAndScaleTake2
             enemies.Clear();
             isUnitAttacking = false;
         }
+
+        public void feedBack(float x, float y, string toDisplay, SoundEffect toPlay)
+        {
+            combatNotificationPane notification = new combatNotificationPane(x, y, toDisplay, 60);
+            notification.Show();
+            toPlay.Play();
+        }
+
 
         private void CreatePathingArea()
         {
@@ -1391,10 +1489,12 @@ namespace SwordAndScaleTake2
             //Reset each unit in current team
             foreach (Unit unit in (activeTeam == Teams.Blue ? blueUnits : redUnits))
             {
-                if(!unit.getDead())
-                unit.setHasActed(false);
-                unit.setHasMoved(false);
-                unit.setUsable(true);
+                if (!unit.getDead())
+                {
+                    unit.setHasActed(false);
+                    unit.setHasMoved(false);
+                    unit.setUsable(true);
+                }
             }
             //Other team's turn
             activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
