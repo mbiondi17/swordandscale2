@@ -1134,6 +1134,11 @@ namespace SwordAndScaleTake2
 
         private bool CanMoveUnit()
         {
+            if (Math.Abs(cursorPosition.X / 64 - activeUnit.getPosition().X / 64) + Math.Abs(cursorPosition.Y / 64 - activeUnit.getPosition().Y/64) > activeUnit.getMvmt())
+            {
+                return false;
+            }
+
             //foreach (Vector2 pos in moveable)
             foreach (Vector2 pos in pathMoveable)
             {
@@ -1329,6 +1334,7 @@ namespace SwordAndScaleTake2
                         pathMoveable.Add(new Vector2(x * 64, y * 64));
                     }
                 }
+                increment = (i + 1) * 2;
             }
 
             pathMoveable.RemoveAll(x => x == activeUnit.getPosition());
@@ -1355,8 +1361,8 @@ namespace SwordAndScaleTake2
                     }
                 }
             }
-
-            foreach (Vector2 good in tmp)
+            pathMoveable = tmp;
+            foreach (Vector2 good in pathMoveable)
             {
                 pathPath.Add(new PathSprite(good, this));
             }
