@@ -1546,11 +1546,11 @@ namespace SwordAndScaleTake2
             int compGen = genNum.Next(0, 5);
             if (compGen == 0)
             {
-                chosenGen = new Unit("redMageGen", "MageGen", 15, 8, 9, 2, 5, 3, Teams.Red, generalRPosition);
+                chosenGen = new Unit("redMageGen", "MageGen", 15, 8, 9, 2, 5, 4, Teams.Red, generalRPosition);
             }
             if (compGen == 1)
             {
-                chosenGen = new Unit("redArcherGen", "ArcherGen", 15, 8, 9, 3, 4, 3, Teams.Red, generalRPosition); ;
+                chosenGen = new Unit("redArcherGen", "ArcherGen", 15, 8, 9, 3, 4, 5, Teams.Red, generalRPosition); ;
             }
             if (compGen == 2)
             {
@@ -1558,7 +1558,7 @@ namespace SwordAndScaleTake2
             }
             if (compGen == 3)
             {
-                chosenGen = new Unit("redSwordGen", "SwordGen", 15, 9, 9, 2, 4, 3, Teams.Red, generalRPosition);
+                chosenGen = new Unit("redSwordGen", "SwordGen", 15, 9, 9, 2, 4, 4, Teams.Red, generalRPosition);
             }
             if (compGen == 4)
             {

@@ -23,7 +23,11 @@ namespace SwordAndScaleTake2
 
             public PathSquare peek()
             {
-                return this.heap[0];
+                if (this.heap.Count > 0)
+                {
+                    return this.heap[0];
+                }
+                else return null;
             }
 
             public PathSquare pop()
