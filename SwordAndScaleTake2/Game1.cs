@@ -800,73 +800,138 @@ namespace SwordAndScaleTake2
         private void CreatePathingArea()
         {
             int currentMv = activeUnit.getMvmt();
+            bool right = true;
+            bool left = true;
+            bool up = true;
+            bool down = true;
+           
             for (int i = 1; i < activeUnit.getMvmt() + 1; i++)
             {
-                if (cursorPosition.X + (64 * i) < 24 * 64)
+                if (cursorPosition.X + (64 * i) < 24 * 64 && right)
                 {
                     Vector2 pathCor1 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y);
                     PathSprite path1 = new PathSprite(pathCor1, this);
-                    path.Add(path1);
-                    moveable.Add(pathCor1);
+                    if (!map[(int)pathCor1.X / 64, (int)pathCor1.Y / 64].getImpassible())
+                    {
+                        path.Add(path1);
+                        moveable.Add(pathCor1);
+                    }
+                    else
+                    {
+                        right = false;
+                    }
                 }
-                if (cursorPosition.X - (64 * i) >= 0)
+                if (cursorPosition.X - (64 * i) >= 0 && left)
                 {
                     Vector2 pathCor2 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y);
                     PathSprite path2 = new PathSprite(pathCor2, this);
-                    path.Add(path2);
-                    moveable.Add(pathCor2);
+                    if (!map[(int)pathCor2.X / 64, (int)pathCor2.Y / 64].getImpassible())
+                    {
+                        path.Add(path2);
+                        moveable.Add(pathCor2);
+                    }
+                    else
+                    {
+                        left = false;
+                    }
                 }
-                if (cursorPosition.Y + (64 * i) < 14 * 64)
+                if (cursorPosition.Y + (64 * i) < 14 * 64 && down)
                 {
                     Vector2 pathCor3 = new Vector2(cursorPosition.X, cursorPosition.Y + (64 * i));
                     PathSprite path3 = new PathSprite(pathCor3, this);
+                    if(!map[(int)pathCor3.X/64, (int)pathCor3.Y/64].getImpassible()) 
+                    {
                     path.Add(path3);
                     moveable.Add(pathCor3);
+                    }
+                    else
+                    {
+                        down = false;
+                    }
                 }
-                if (cursorPosition.Y - (64 * i) >= 0)
+                if (cursorPosition.Y - (64 * i) >= 0 && up)
                 {
                     Vector2 pathCor4 = new Vector2(cursorPosition.X, cursorPosition.Y - (64 * i));
                     PathSprite path4 = new PathSprite(pathCor4, this);
-                    path.Add(path4);
-                    moveable.Add(pathCor4);
+                    if (!map[(int)pathCor4.X / 64, (int)pathCor4.Y / 64].getImpassible())
+                    {
+                        path.Add(path4);
+                        moveable.Add(pathCor4);
+                    }
+                    else
+                    {
+                        up = false;
+                    }
                 }
+                bool corner1 = true;
+                bool corner2 = true;
+                bool corner3 = true;
+                bool corner4 = true;
 
                 for (int j = 1; j < currentMv; j++)
                 {
-                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y + (64 * j) < 14 * 64)
+                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y + (64 * j) < 14 * 64 && corner1)
                     {
                         Vector2 pathCor11 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y + (64 * j));
                         PathSprite path11 = new PathSprite(pathCor11, this);
-                        path.Add(path11);
-                        moveable.Add(pathCor11);
+                        if (!map[(int)pathCor11.X / 64, (int)pathCor11.Y / 64].getImpassible())
+                        {
+                            path.Add(path11);
+                            moveable.Add(pathCor11);
+                        }
+                        else
+                        {
+                            corner1 = false;
+                        }
                     }
-                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y - (64 * j) >= 0)
+                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y - (64 * j) >= 0 && corner2)
                     {
                         Vector2 pathCor12 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y - (64 * j));
                         PathSprite path12 = new PathSprite(pathCor12, this);
-                        path.Add(path12);
-                        moveable.Add(pathCor12);
+                        if (!map[(int)pathCor12.X / 64, (int)pathCor12.Y / 64].getImpassible())
+                        {
+                            path.Add(path12);
+                            moveable.Add(pathCor12);
+                        }
+                        else
+                        {
+                            corner2 = false;
+                        }
                     }
-                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y + (64 * j) < 14 * 64)
+                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y + (64 * j) < 14 * 64 && corner3)
                     {
                         Vector2 pathCor21 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y + (64 * j));
                         PathSprite path21 = new PathSprite(pathCor21, this);
-                        path.Add(path21);
-                        moveable.Add(pathCor21);
+                        if (!map[(int)pathCor21.X / 64, (int)pathCor21.Y / 64].getImpassible())
+                        {
+                            path.Add(path21);
+                            moveable.Add(pathCor21);
+                        }
+                        else
+                        {
+                            corner3 = false;
+                        }
                     }
-                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y - (64 * j) >= 0)
+                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y - (64 * j) >= 0 && corner4)
                     {
                         Vector2 pathCor22 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y - (64 * j));
                         PathSprite path22 = new PathSprite(pathCor22, this);
-                        path.Add(path22);
-                        moveable.Add(pathCor22);
+                        if (!map[(int)pathCor22.X / 64, (int)pathCor22.Y / 64].getImpassible())
+                        {
+                            path.Add(path22);
+                            moveable.Add(pathCor22);
+                        }
+                        else
+                        {
+                            corner4 = false;
+                        }
                     }
                 }
                 currentMv--;
             }
-           // List<Vector2> moveNew = highlighter(moveable, activeUnit.getPosition());
-            List<Vector2> moveNew = PathFind(cursorPosition, moveable);
-            moveable = moveNew;
+             List<Vector2> moveNew = highlighter(moveable, activeUnit.getPosition());
+            //List<Vector2> moveNew = PathFind(cursorPosition, moveable, activeUnit.getMvmt());
+             moveable = moveNew;
 
             for (int i = path.Count - 1; i >= 0; i--)
             {
@@ -1170,7 +1235,7 @@ namespace SwordAndScaleTake2
             }
             return false;
         }
-        private List<Vector2> PathFinder(Vector2 startPosition, Vector2 endPosition)
+        private List<Vector2> PathFinder(Vector2 startPosition, Vector2 endPosition, int mvmt)
         {
             List<Square> openList = new List<Square>();
             List<Square> closedList = new List<Square>();
@@ -1215,13 +1280,14 @@ namespace SwordAndScaleTake2
                 {
                     int currentx = (int)current.getPosition().X/64;
                     int currenty = (int)current.getPosition().Y/64;
-                    int dx = endX - currentx;
-                    int dy = endY - currenty;
+                    int dx = Math.Abs(endX - currentx);
+                    int dy = Math.Abs(endY - currenty);
                     current.setCost(dx + dy);
 
                     if(closedList.Contains(current)
                         || !inBounds(new Vector2(current.getPosition().X, current.getPosition().Y))
-                        || !isPassable(new Vector2(current.getPosition().X,current.getPosition().Y)))
+                        || !isPassable(new Vector2(current.getPosition().X,current.getPosition().Y))
+                        || current.getCost() > mvmt)
                     {
                         //do nothing
                     }
@@ -1245,7 +1311,6 @@ namespace SwordAndScaleTake2
             }
             List<Vector2> optimalPathway = new List<Vector2>();
             Square backTrack = closedList.Find(y => y.getPosition() == endPosition);
-            Console.WriteLine(backTrack.getPosition());
             while(!backTrack.isStart())
             {
                 optimalPathway.Add(backTrack.getPosition());
@@ -1253,17 +1318,18 @@ namespace SwordAndScaleTake2
             }
             return optimalPathway;
         }
-        public List<Vector2> PathFind(Vector2 currentPosition, List<Vector2> moveable)
+        public List<Vector2> PathFind(Vector2 currentPosition, List<Vector2> moveable, int mvmt)
         {
             List<Vector2> newMoveable = new List<Vector2>();
             foreach (Vector2 spaces in moveable)
             {
-                List<Vector2> optimalPath = PathFinder(currentPosition, spaces);
+                List<Vector2> optimalPath = PathFinder(currentPosition, spaces, mvmt);
                 foreach(Vector2 spot in optimalPath)
                 {
                     if(!newMoveable.Contains(spot))
                     {
                         newMoveable.Add(spot);
+                        Console.WriteLine(spot.X / 64 + "," + spot.Y / 64);
                     }
                 }
             }
