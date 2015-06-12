@@ -23,7 +23,7 @@ namespace SwordAndScaleTake2
         public Square(bool isStart, Vector2 parentPosition)
         {
             this.position = parentPosition;
-            this.parentPosition = position;
+            this.parentPosition = parentPosition;
             Start = true;
         }
 
