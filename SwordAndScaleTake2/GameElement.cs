@@ -15,6 +15,8 @@ namespace SwordAndScaleTake2
         //going to need a texture
         private Texture2D texture;
 
+        MouseState previousState;
+
         //for the area
         private Rectangle rect;
 
@@ -48,10 +50,13 @@ namespace SwordAndScaleTake2
 
         public virtual void Update()
         {
-            if (containsPixel(Mouse.GetState().X, Mouse.GetState().Y) && Mouse.GetState().LeftButton == ButtonState.Pressed)
+            MouseState currentState = Mouse.GetState();
+
+            if (containsPixel(Mouse.GetState().X, Mouse.GetState().Y) && currentState.LeftButton == ButtonState.Pressed && previousState.LeftButton == ButtonState.Released)
             {
                 clickEvent(assetName);
             }
+            previousState = currentState;
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
