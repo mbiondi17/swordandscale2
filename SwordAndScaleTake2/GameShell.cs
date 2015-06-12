@@ -100,11 +100,11 @@ namespace SwordAndScaleTake2
                 element.clickEvent += OnClick;
             }
             generalChoiceRed.Find(x => x.AssetName == "genselect").setPixelPosition(-50, 000);
-            generalChoiceRed.Find(x => x.AssetName == "redArcherGen").setPixelPosition(500, 400);
-            generalChoiceRed.Find(x => x.AssetName == "redMageGen").setPixelPosition(600, 400);
-            generalChoiceRed.Find(x => x.AssetName == "redPikeGen").setPixelPosition(700, 400);
-            generalChoiceRed.Find(x => x.AssetName == "redSwordGen").setPixelPosition(800, 400);
-            generalChoiceRed.Find(x => x.AssetName == "redWarriorGen").setPixelPosition(900, 400);
+            generalChoiceRed.Find(x => x.AssetName == "redArcherGen").setPixelPosition(500, 300);
+            generalChoiceRed.Find(x => x.AssetName == "redMageGen").setPixelPosition(600, 300);
+            generalChoiceRed.Find(x => x.AssetName == "redPikeGen").setPixelPosition(700, 300);
+            generalChoiceRed.Find(x => x.AssetName == "redSwordGen").setPixelPosition(800, 300);
+            generalChoiceRed.Find(x => x.AssetName == "redWarriorGen").setPixelPosition(900, 300);
         }
         protected override void Update(GameTime gameTime)
         {
