@@ -978,9 +978,8 @@ namespace SwordAndScaleTake2
                 }
                 currentMv--;
             }
-             //List<Vector2> moveNew = highlighter(moveable, activeUnit.getPosition());
-            List<Vector2> moveNew = PathFind(cursorPosition, moveable, activeUnit.getMvmt());
-             //moveable = moveNew;
+             List<Vector2> moveNew = highlighter(moveable, activeUnit.getPosition());
+             moveable = moveNew;
 
             for (int i = path.Count - 1; i >= 0; i--)
             {
