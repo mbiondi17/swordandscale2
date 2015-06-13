@@ -86,6 +86,7 @@ namespace SwordAndScaleTake2
         GameInfo gameInf;
         MoralePane blueMorale = new MoralePane(10, "blue");
         MoralePane redMorale = new MoralePane(10, "red");
+        int i = 0; //literally just so the endgame fanfare doesn't play on every frame.
 
         public Game1(GameInfo gameInf)
         {
@@ -458,12 +459,16 @@ namespace SwordAndScaleTake2
             if (gameInf.hasRedWon)
             {
                 RedWin.Draw(spriteBatch);
+                if(i == 0)
                 castle.Play();
+                i++;
             }
             else if (gameInf.hasBlueWon)
             {
                 BlueWin.Draw(spriteBatch);
+                if(i == 0)
                 castle.Play();
+                i++;
             }
         }
 

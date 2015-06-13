@@ -108,6 +108,7 @@ namespace SwordAndScaleTake2
                 case GameState.inGame:
                     if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                         gameState = GameState.mainMenu; //TODO: Make pauseMenu and link it here
+                    if (gameInf.hasRedWon || gameInf.hasBlueWon) break;
                     game.Update();
                     break;
                 default:
@@ -147,10 +148,6 @@ namespace SwordAndScaleTake2
             if (gameState == GameState.inGame)
             {
                 game.Draw(spriteBatch);
-                if (gameInf.hasRedWon || gameInf.hasBlueWon)
-                {
-                    Exit();
-                }
             }
 
             spriteBatch.End();
