@@ -52,8 +52,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Terrain.cs" />
-    <Compile Include="Unit.cs" />
     <Compile Include="UnitActionPane.cs" />
+    <Compile Include="Unit.cs" />
+    <Compile Include="CombatNotificationPane.cs" />
     <Compile Include="MoralePane.cs" />
     <Compile Include="UnitInfoPane.cs" />
   </ItemGroup>
@@ -141,6 +142,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\fanfare.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\miss sound.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\hit sound.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Content\poison.png">

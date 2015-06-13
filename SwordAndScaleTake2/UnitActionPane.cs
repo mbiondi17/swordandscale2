@@ -39,13 +39,13 @@ namespace SwordAndScaleTake2
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if(visible)
+            if (visible)
             {
                 spriteBatch.Draw(background, new Rectangle(x, y, 124, 124), Color.White);
-                spriteBatch.DrawString(courierNew, "Attack"  , new Vector2(x + 5, y + 0),  Color.Black);
-                spriteBatch.DrawString(courierNew, "Move"    , new Vector2(x + 5, y + 32), Color.Black);
+                spriteBatch.DrawString(courierNew, "Attack", new Vector2(x + 5, y + 0), Color.Black);
+                spriteBatch.DrawString(courierNew, "Move", new Vector2(x + 5, y + 32), Color.Black);
                 spriteBatch.DrawString(courierNew, "Interact", new Vector2(x + 5, y + 64), Color.Black);
-                spriteBatch.DrawString(courierNew, "Wait"    , new Vector2(x + 5, y + 96), Color.Black);
+                spriteBatch.DrawString(courierNew, "Wait", new Vector2(x + 5, y + 96), Color.Black);
             }
         }
 
@@ -78,3 +78,4 @@ namespace SwordAndScaleTake2
         }
     }
 }
+

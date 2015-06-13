@@ -36,6 +36,8 @@ namespace SwordAndScaleTake2
         SoundEffect cow;
         SoundEffect castle;
         SoundEffect burn;
+        SoundEffect miss;
+        SoundEffect hit;
         Unit blueMage;
         Unit blueSword;
         Unit blueWarrior;
@@ -76,6 +78,8 @@ namespace SwordAndScaleTake2
         UnitInfoPane blueInfoPane = new UnitInfoPane();
         UnitInfoPane redInfoPane = new UnitInfoPane();
         UnitActionPane unitActionPane = new UnitActionPane();
+        CombatNotificationPane notification = new CombatNotificationPane();
+        bool methodCalled = false;
         GamePreferences gamePrefs;
         MoralePane blueMorale = new MoralePane(10, "blue");
         MoralePane redMorale = new MoralePane(10, "red");
@@ -174,6 +178,8 @@ namespace SwordAndScaleTake2
             castle = content.Load<SoundEffect>("fanfare");
             burn = content.Load<SoundEffect>("Burning");
             cow = content.Load<SoundEffect>("Animals");
+            hit = content.Load<SoundEffect>("hit sound");
+            miss = content.Load<SoundEffect>("miss sound");
             SoundEffectInstance soundEffectInstance = backgroundMusic.CreateInstance();
             soundEffectInstance.Play();
             soundEffectInstance.IsLooped = true;
@@ -184,6 +190,7 @@ namespace SwordAndScaleTake2
             unitActionPane.LoadContent(content);
             blueMorale.LoadContent(content);
             redMorale.LoadContent(content);
+            notification.LoadContent(content);
             turnPane.LoadContent(content);
             turnPane.AddToQueue(14 * 64, 6 * 64, "Blue" + "        " + "Turn!", 300, Color.Blue, castle);
         }
@@ -203,6 +210,7 @@ namespace SwordAndScaleTake2
             //blueInfoPane.Update();
             //redInfoPane.Update();
             //unitActionPane.Update();
+            notification.Update();
             turnPane.Update();
             pressedKey = Keyboard.GetState();
             //Move Cursor (returns true if a move occurred)
@@ -242,10 +250,13 @@ namespace SwordAndScaleTake2
                     //If I is pressed
                     else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
                     {
+                        if (map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].isInteractable)
+                        {
                         //Hide UnitActionPane
                         unitActionPane.Hide();
                         //Interact
                         isUnitInteracting = true;
+                    }
                     }
                     //If M is pressed
                     else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
@@ -310,15 +321,12 @@ namespace SwordAndScaleTake2
             else if (isUnitInteracting)
             {
                 //TODO
-                if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space))
-                {
                     interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
 
                     DetectUnitHovered();
                     activeUnit.setHasActed(true);
                     isUnitInteracting = false;
                 }
-            }
             //If B is pressed, cancel action (does not deactivate unit or reset unit)
             if (oldState.IsKeyUp(Keys.B) && pressedKey.IsKeyDown(Keys.B))
             {
@@ -395,6 +403,7 @@ namespace SwordAndScaleTake2
             unitActionPane.Draw(spriteBatch);
             blueMorale.Draw(spriteBatch);
             redMorale.Draw(spriteBatch);
+            notification.Draw(spriteBatch);
             turnPane.Draw(spriteBatch);
         }
 
@@ -736,38 +745,79 @@ namespace SwordAndScaleTake2
 
             if (activeUnit.getType().Equals("mage") || activeUnit.getType().Contains("MageGen") || activeUnit.getType().Contains("genMage"))
             {
+                //Mage attacking non-Mage
                 if (!enemy.getType().Equals("mage") && !enemy.getType().Contains("genMage") && !enemy.getType().Contains("MageGen"))
                 {
-
+                    //if the attack hits
                     if (unitHit <= activeUnit.getSkill())
                     {
-                        Console.WriteLine("ATTACK");
                         enemy.setHealth(enemy.getHealth() - (activeUnit.getStr() - enemy.getMDef()));
+
+                        string toDisplay = "Attack Hits for " + (activeUnit.getStr() - enemy.getMDef()) + " Damage!";
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, hit);
                     }
 
+                    //if the attack misses
+                    else 
+                    {
+                        string toDisplay = "Attack Misses!";
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, miss);
+                    }
+
+                    //if the enemy is not dead (able to counter)
                     if (enemy.getHealth() > 0)
                     {
+                        //if the counterattack hits
                         if (enemyHit <= enemy.getSkill())
                         {
-                            Console.WriteLine("COUNTERATTACK");
                             activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getDef()));
+                            string toDisplay = "Counterattack Hits for " + (enemy.getStr() - activeUnit.getDef()) + "Damage!";
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, hit);
+                        }
+
+                        //if the counterattack misses
+                        else
+                        {
+                            string toDisplay = "Counterattack misses!";
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, miss);                           
                         }
                     }
                 }
 
-
+                //Mage attacking mage
                 if (enemy.getType().Equals("mage") || enemy.getType().Equals("genMage"))
                 {
+                    //if attack hits
                     if (unitHit <= activeUnit.getSkill())
                     {
                         enemy.setHealth(activeUnit.getHealth() - (activeUnit.getStr() - enemy.getMDef()));
+                        string toDisplay = "Attack Hits for " + (activeUnit.getStr() - enemy.getMDef()) + " Damage!";
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, hit);
                     }
 
+                    //if attack misses
+                    else
+                    {
+                        string toDisplay = "Attack misses!";
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, miss);
+                    }
+
+                    //if enemy is able to counter
                     if (enemy.getHealth() > 0)
                     {
+                        //if the counterattack hits
                         if (enemyHit <= enemy.getSkill())
                         {
                             activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getMDef()));
+                            string toDisplay = "Counterattack Hits for" + (enemy.getStr() - activeUnit.getMDef()) + "Damage!";
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, hit);
+                        }
+
+                        //if counterattack misses
+                        else
+                        {
+                            string toDisplay = "Counterattack misses!";
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, miss);
                         }
                     }
                 }
@@ -775,38 +825,78 @@ namespace SwordAndScaleTake2
 
             if (!activeUnit.getType().Equals("mage") && !activeUnit.getType().Contains("genMage") && !activeUnit.getType().Contains("MageGen"))
             {
+                //Non-Mage attacking non-Mage
             if (!enemy.getType().Equals("mage") && !enemy.getType().Contains("genMage") && !enemy.getType().Contains("MageGen"))
             {
-
+                    //Attack hits
                 if (unitHit <= activeUnit.getSkill())
                 {
-                    Console.WriteLine("ATTACK");
                     enemy.setHealth(enemy.getHealth() - (activeUnit.getStr() - enemy.getDef()));
+                        string toDisplay = "Attack Hits for" + (activeUnit.getStr() - enemy.getDef()) + "Damage!";
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, hit);
                 }
 
+                    //Attack Misses
+                    else
+                    {
+                        string toDisplay = "Attack Misses!";
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, miss);
+                    }
+
+                    //if enemy can counter
                 if (enemy.getHealth() > 0)
                 {
+                        //if counterattack hits
                     if (enemyHit <= enemy.getSkill())
                     {
-                        Console.WriteLine("COUNTERATTACK");
                         activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getDef()));
+                            string toDisplay = "Counterattack Hits for" + (enemy.getStr() - activeUnit.getDef()) + "Damage!";
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, hit);
+                        }
+
+                        //counterattack misses
+                        else 
+                        {
+                            string toDisplay = "Counterattack Misses!";
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, miss);
                     }
                 }
             }
 
-
+                //Non-Mage fighting Mage
             if (enemy.getType().Equals("mage") || enemy.getType().Equals("genMage"))
             {
+                    //attack hits
                 if (unitHit <= activeUnit.getSkill())
                 {
                         enemy.setHealth(activeUnit.getHealth() - (activeUnit.getStr() - enemy.getDef()));
+                        string toDisplay = "Attack Hits for" + (activeUnit.getStr() - enemy.getDef()) + "Damage!";
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, hit);
                 }
 
+                    //attack misses
+                    else
+                    {
+                        string toDisplay = "Attack Misses!";
+                        notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, miss);
+                    }
+
+                    //if enemy can counter
                 if (enemy.getHealth() > 0)
                 {
+                        //if counterattack hits
                     if (enemyHit <= enemy.getSkill())
                     {
                         activeUnit.setHealth(activeUnit.getHealth() - (enemy.getStr() - activeUnit.getMDef()));
+                            string toDisplay = "Counterattack Hits for" + (enemy.getStr() - activeUnit.getMDef()) + "Damage!";
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, hit);
+                        }
+
+                        //counterattack misses
+                        else 
+                        {
+                            string toDisplay = "Counterattack Misses!";
+                            notification.AddToQueue(enemy.getPosition(), toDisplay, 100, miss);
                     }
                 }
             }
@@ -1356,10 +1446,12 @@ namespace SwordAndScaleTake2
             //Reset each unit in current team
             foreach (Unit unit in (activeTeam == Teams.Blue ? blueUnits : redUnits))
             {
-                if(!unit.getDead())
+                if (!unit.getDead())
+                {
                 unit.setHasActed(false);
                 unit.setHasMoved(false);
                 unit.setUsable(true);
+            }
             }
             //Other team's turn
             activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
