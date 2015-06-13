@@ -207,6 +207,17 @@ namespace SwordAndScaleTake2
                 button == "blueWarriorGen")
             {
                 gameInf.chosenGeneral = button;
+                gameState = GameState.generalChoiceRed;
+                //game = new Game1(gamePrefs);
+                //game.LoadContent(Content);
+            }
+            if (button == "redArcherGen" ||
+                button == "redMageGen" ||
+                button == "redPikeGen" ||
+                button == "redSwordGen" ||
+                button == "redWarriorGen")
+            {
+                gameInf.chosenGeneralRed = button;
                 gameState = GameState.inGame;
                 game = new Game1(gameInf);
                 game.LoadContent(Content);
