@@ -34,6 +34,7 @@ namespace SwordAndScaleTake2
         SoundEffect backgroundMusic;
         SoundEffect river;
         SoundEffect cow;
+        SoundEffect baaaa;
         SoundEffect castle;
         SoundEffect burn;
         SoundEffect miss;
@@ -79,17 +80,20 @@ namespace SwordAndScaleTake2
         UnitInfoPane redInfoPane = new UnitInfoPane();
         UnitActionPane unitActionPane = new UnitActionPane();
         CombatNotificationPane notification = new CombatNotificationPane();
+        WinPaneRed RedWin = new WinPaneRed();
+        WinPaneBlue BlueWin = new WinPaneBlue();
         bool methodCalled = false;
-        GamePreferences gamePrefs;
+        GameInfo gameInf;
         MoralePane blueMorale = new MoralePane(10, "blue");
         MoralePane redMorale = new MoralePane(10, "red");
+        int i = 0; //only used for not infinitely playing the end game fanfare.
 
-        public Game1(GamePreferences gamePrefs)
+        public Game1(GameInfo gameInf)
         {
             //exampleUnit = new Unit("blueArcher", "archer", 6, 9, 2, 4, 6, true);
             //exampleUnitList.Add(exampleUnit);
             //unitInfo = new UnitInfoPane();
-            this.gamePrefs = gamePrefs;
+            this.gameInf = gameInf;
             loadMap();
             blueUnits = new List<Unit>();
             redUnits = new List<Unit>();
@@ -115,7 +119,7 @@ namespace SwordAndScaleTake2
             blueWarrior = new Unit("blueWarrior", "warrior", 10, 9, 6, 3, 2, 4, Teams.Blue, warriorBPosition);
             blueArcher = new Unit("blueArcher", "archer", 10, 6, 9, 2, 4, 6, Teams.Blue, archerBPosition);
             bluePike = new Unit("bluePike", "pike", 10, 7, 7, 4, 1, 4, Teams.Blue, pikeBPosition);
-            blueGeneral = new Unit(gamePrefs.chosenGeneral);
+            blueGeneral = new Unit(gameInf.chosenGeneral);
             redMage = new Unit("redMage", "mage", 10, 8, 7, 1, 4, 5, Teams.Red, mageRPosition);
             redSword = new Unit("redSword", "swordmaster", 10, 7, 9, 2, 3, 5, Teams.Red, swordRPosition);
             redWarrior = new Unit("redWarrior", "warrior", 10, 9, 6, 3, 2, 4, Teams.Red, warriorRPosition);
@@ -177,6 +181,7 @@ namespace SwordAndScaleTake2
             castle = content.Load<SoundEffect>("fanfare");
             burn = content.Load<SoundEffect>("Burning");
             cow = content.Load<SoundEffect>("Animals");
+            baaaa = content.Load<SoundEffect>("baaaa");
             hit = content.Load<SoundEffect>("hit sound");
             miss = content.Load<SoundEffect>("miss sound");
             SoundEffectInstance soundEffectInstance = backgroundMusic.CreateInstance();
@@ -190,11 +195,13 @@ namespace SwordAndScaleTake2
             blueMorale.LoadContent(content);
             redMorale.LoadContent(content);
             notification.LoadContent(content);
+            RedWin.LoadContent(content);
+            BlueWin.LoadContent(content);
         }
 
         public void UnloadContent()
         {
-
+            
         }
 
         public void Update()
@@ -218,60 +225,97 @@ namespace SwordAndScaleTake2
                 //Update info panes
                 UpdateInfoPanes();
             }
+            
             //If the player isn't in the middle of moving, attacking, or interacting AND the cursor is over a unit (runs every update)
-            if (!(isUnitMoving || isUnitAttacking || isUnitInteracting) && hoveredUnit != null)
+            if (!(isUnitMoving || isUnitAttacking || isUnitInteracting))
             {
-                //If Spacebar is pressed AND Unit is on the activeTeam AND Unit isUsable
-                if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
-                    hoveredUnit.getTeam() == activeTeam &&
-                    hoveredUnit.getUsable() && !hoveredUnit.getDead())
+
+                //The N key cycles among usable units
+                if (oldState.IsKeyUp(Keys.N) && pressedKey.IsKeyDown(Keys.N))
                 {
-                    //Select that unit
-                    activeUnit = hoveredUnit;
-                    //Show UnitActionPane
-                    unitActionPane.setPixelPosition(hoveredUnit, cursorPosition + new Vector2(64, 0));
-                    unitActionPane.Show();
-                }
-                //If a unit is active (runs every update)
-                if (activeUnit != null)
-                {
-                    //If A is pressed
-                    if (oldState.IsKeyUp(Keys.A) && pressedKey.IsKeyDown(Keys.A) && !activeUnit.getHasActed())
+                    List<Unit> teamsList = (activeTeam == Teams.Blue ? blueUnits : redUnits);
+
+                    Console.WriteLine(activeTeam);
+
+                    Unit nextUnit = teamsList.Find(x => (x.getUsable() && (teamsList.IndexOf(x) > (teamsList.IndexOf(hoveredUnit)))));
+                    //if there is a next unit
+                    if (nextUnit != null)
                     {
-                        //Hide UnitActionPane
-                        unitActionPane.Hide();
-                        //Attack
-                        CreateAttackingArea();
-                        isUnitAttacking = true;
+                        if (!nextUnit.getDead())
+                        {
+                            //move cursor to next unit
+                            cursorPosition = nextUnit.getPosition();
+                            DetectUnitHovered();
+                        }
                     }
-                    //If I is pressed
-                    else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
+
+                    else
                     {
-                        if (map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].isInteractable)
+                        //cursorPosition = teamsList.FirstOrDefault().getPosition();
+                        cursorPosition = teamsList.Find(x => x.getUsable()).getPosition();
+                        DetectUnitHovered();
+                    }
+                }
+
+                if (hoveredUnit != null)
+                {
+                    //If Spacebar is pressed AND Unit is on the activeTeam AND Unit isUsable
+                    if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
+                        hoveredUnit.getTeam() == activeTeam &&
+                        hoveredUnit.getUsable() && !hoveredUnit.getDead())
+                    {
+                        //Select that unit
+                        activeUnit = hoveredUnit;
+                        //Show UnitActionPane
+                        unitActionPane.setPixelPosition(hoveredUnit, cursorPosition + new Vector2(64, 0));
+                        unitActionPane.Show();
+                        Console.WriteLine("Here!!");
+                    }
+
+
+
+
+                    //If a unit is active (runs every update)
+                    if (activeUnit != null)
+                    {
+                        //If A is pressed
+                        if (oldState.IsKeyUp(Keys.A) && pressedKey.IsKeyDown(Keys.A) && !activeUnit.getHasActed())
                         {
                             //Hide UnitActionPane
                             unitActionPane.Hide();
-                            //Interact
-                            isUnitInteracting = true;
+                            //Attack
+                            CreateAttackingArea();
+                            isUnitAttacking = true;
                         }
-                    }
-                    //If M is pressed
-                    else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
-                    {
-                        //Hide UnitActionPane
-                        unitActionPane.Hide();
-                        //Move
-                        CreatePathingArea();
-                        isUnitMoving = true;
-                    }
-                    //If W is pressed
-                    else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
-                    {
-                        //Hide UnitActionPane
-                        unitActionPane.Hide();
-                        //Wait
-                        //When done
-                        DeactivateUnit();
+                        //If I is pressed
+                        else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
+                        {
+                            if (map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].isInteractable)
+                            {
+                                //Hide UnitActionPane
+                                unitActionPane.Hide();
+                                //Interact
+                                isUnitInteracting = true;
+                            }
+                        }
+                        //If M is pressed
+                        else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
+                        {
+                            //Hide UnitActionPane
+                            unitActionPane.Hide();
+                            //Move
+                            CreatePathingArea();
+                            isUnitMoving = true;
+                        }
+                        //If W is pressed
+                        else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
+                        {
+                            //Hide UnitActionPane
+                            unitActionPane.Hide();
+                            //Wait
+                            //When done
+                            DeactivateUnit();
+                        }
                     }
                 }
             }
@@ -318,11 +362,11 @@ namespace SwordAndScaleTake2
             else if (isUnitInteracting)
             {
                 //TODO
-                    interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
+                interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
 
-                    DetectUnitHovered();
-                    activeUnit.setHasActed(true);
-                    isUnitInteracting = false;
+                DetectUnitHovered();
+                activeUnit.setHasActed(true);
+                isUnitInteracting = false;
             }
             //If B is pressed, cancel action (does not deactivate unit or reset unit)
             if (oldState.IsKeyUp(Keys.B) && pressedKey.IsKeyDown(Keys.B))
@@ -345,6 +389,16 @@ namespace SwordAndScaleTake2
             }
             // set the new state as the old state for next time 
             oldState = pressedKey;
+
+            if (redMorale.Morale <= 0 || redUnits.Count == 0)
+            {
+                gameInf.hasBlueWon = true;
+            }
+
+            if (blueMorale.Morale <= 0 || blueUnits.Count == 0)
+            {
+                gameInf.hasRedWon = true;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -401,6 +455,21 @@ namespace SwordAndScaleTake2
             blueMorale.Draw(spriteBatch);
             redMorale.Draw(spriteBatch);
             notification.Draw(spriteBatch);
+
+            if (gameInf.hasRedWon)
+            {
+                RedWin.Draw(spriteBatch);
+                if(i == 0)
+                castle.Play();
+                i++;
+            }
+            else if (gameInf.hasBlueWon)
+            {
+                BlueWin.Draw(spriteBatch);
+                if(i == 0)
+                castle.Play();
+                i++;
+            }
         }
 
         public void UnitClicked(Unit unit, int x, int y)
@@ -524,9 +593,19 @@ namespace SwordAndScaleTake2
                     }
                 }
 
-                //red livestock
-                else if (thing.getPosition() == map[5, 8].getPosition() ||
-                    thing.getPosition() == map[1, 6].getPosition())
+                //red sheep
+                else if (thing.getPosition() == map[5, 8].getPosition()) 
+                {
+                        if (thing.isInteractable)
+                    {
+                        //make it not interactable so draw() will draw its appropriate overlay.
+                        thing.isInteractable = false;
+                        redMorale.Morale--;
+                        baaaa.Play();
+                    }
+                }
+                //red cow
+                else if(thing.getPosition() == map[1, 6].getPosition())
                 {
                     if (thing.isInteractable)
                     {
@@ -562,7 +641,13 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
-                        thing.isInteractable = false;
+                        map[3, 0].isInteractable = false;
+                        map[4, 0].isInteractable = false;
+                        map[5, 0].isInteractable = false;
+                        map[3, 2].isInteractable = false;
+                        map[4, 2].isInteractable = false;
+                        map[5, 2].isInteractable = false;
+
                         redMorale.Morale--;
                         river.Play();
                     }
@@ -608,9 +693,20 @@ namespace SwordAndScaleTake2
                     }
                 }
 
-                //blue livestock
-                else if (thing.getPosition() == map[14, 3].getPosition() ||
-                    thing.getPosition() == map[22, 5].getPosition())
+                //blue sheep
+                else if (thing.getPosition() == map[14, 3].getPosition())
+                     {
+                        if (thing.isInteractable)
+                        {
+                            //make it not interactable so draw() will draw its appropriate overlay.
+                            thing.isInteractable = false;
+                            blueMorale.Morale--;
+                            baaaa.Play();
+                        }
+                    }
+                
+                //blue cow
+                else if(thing.getPosition() == map[22, 5].getPosition())
                 {
                     if (thing.isInteractable)
                     {
@@ -645,7 +741,12 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
-                        thing.isInteractable = false;
+                        map[18, 9].isInteractable = false;
+                        map[19, 9].isInteractable = false;
+                        map[20, 9].isInteractable = false;
+                        map[18, 11].isInteractable = false;
+                        map[20, 11].isInteractable = false;
+
                         blueMorale.Morale--;
                         river.Play();
                     }
@@ -1352,18 +1453,18 @@ namespace SwordAndScaleTake2
             activeUnit.setUsable(false);
             //Get next usable unit
             Unit nextUnit = (activeTeam == Teams.Blue ? blueUnits : redUnits).FirstOrDefault(next => next.getUsable());
-            //If there is a next unit
-            if (nextUnit != null)
-            {
-                if (!nextUnit.getDead())
-                {
-                //Move cursor to next unit
-                cursorPosition = nextUnit.getPosition();
-                DetectUnitHovered();
-                }
-            }
+            ////If there is a next unit
+            //if (nextUnit != null)
+            //{
+            //    if (!nextUnit.getDead())
+            //    {
+            //    //Move cursor to next unit
+            //    cursorPosition = nextUnit.getPosition();
+            //    DetectUnitHovered();
+            //    }
+            //}
             //If there are no more usable units
-            else
+            if (nextUnit == null)
             {
                 EndTurn();
             }
@@ -1402,20 +1503,31 @@ namespace SwordAndScaleTake2
         private void EndTurn()
         {
             //Move cursor to other team's unit
-            cursorPosition = (activeTeam == Teams.Blue ? redUnits : blueUnits).First(x => !x.getDead()).getPosition();
-            DetectUnitHovered();
-            //Reset each unit in current team
-            foreach (Unit unit in (activeTeam == Teams.Blue ? blueUnits : redUnits))
+
+            //check if there are live units on the other team
+            bool gameOver = true;
+            foreach(Unit unit in (activeTeam == Teams.Blue ? redUnits : blueUnits))
             {
-                if (!unit.getDead())
-                {
-                    unit.setHasActed(false);
-                    unit.setHasMoved(false);
-                    unit.setUsable(true);
-                }
+                if (!unit.getDead()) gameOver = false;
             }
-            //Other team's turn
-            activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
+
+            if (!gameOver)
+            {
+                cursorPosition = (activeTeam == Teams.Blue ? redUnits : blueUnits).First(x => !x.getDead()).getPosition();
+                DetectUnitHovered();
+                //Reset each unit in current team
+                foreach (Unit unit in (activeTeam == Teams.Blue ? blueUnits : redUnits))
+                {
+                    if (!unit.getDead())
+                    {
+                        unit.setHasActed(false);
+                        unit.setHasMoved(false);
+                        unit.setUsable(true);
+                    }
+                }
+                //Other team's turn
+                activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
+            }
         }
     }
 }

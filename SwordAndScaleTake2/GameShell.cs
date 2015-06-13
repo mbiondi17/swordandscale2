@@ -21,7 +21,7 @@ namespace SwordAndScaleTake2
         List<GameElement> generalChoice = new List<GameElement>();
 
         Game1 game;
-        GamePreferences gamePrefs = new GamePreferences();
+        GameInfo gameInf = new GameInfo();
 
         public GameShell()
         {
@@ -108,6 +108,7 @@ namespace SwordAndScaleTake2
                 case GameState.inGame:
                     if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                         gameState = GameState.mainMenu; //TODO: Make pauseMenu and link it here
+                    if (gameInf.hasRedWon || gameInf.hasBlueWon) break;
                     game.Update();
                     break;
                 default:
@@ -115,6 +116,8 @@ namespace SwordAndScaleTake2
             }
 
             base.Update(gameTime);
+
+            
         }
 
         protected override void Draw(GameTime gameTime)
@@ -143,7 +146,9 @@ namespace SwordAndScaleTake2
             }
 
             if (gameState == GameState.inGame)
+            {
                 game.Draw(spriteBatch);
+            }
 
             spriteBatch.End();
             base.Draw(gameTime);
@@ -166,9 +171,9 @@ namespace SwordAndScaleTake2
                 button == "blueSwordGen" || 
                 button == "blueWarriorGen")
             {
-                gamePrefs.chosenGeneral = button;
+                gameInf.chosenGeneral = button;
                 gameState = GameState.inGame;
-                game = new Game1(gamePrefs);
+                game = new Game1(gameInf);
                 game.LoadContent(Content);
             }
             if (button == "exit")

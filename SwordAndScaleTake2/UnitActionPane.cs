@@ -41,11 +41,42 @@ namespace SwordAndScaleTake2
         {
             if (visible)
             {
-                spriteBatch.Draw(background, new Rectangle(x, y, 124, 124), Color.White);
-                spriteBatch.DrawString(courierNew, "Attack", new Vector2(x + 5, y + 0), Color.Black);
-                spriteBatch.DrawString(courierNew, "Move", new Vector2(x + 5, y + 32), Color.Black);
-                spriteBatch.DrawString(courierNew, "Interact", new Vector2(x + 5, y + 64), Color.Black);
-                spriteBatch.DrawString(courierNew, "Wait", new Vector2(x + 5, y + 96), Color.Black);
+
+                if (!unit.getHasMoved() && !unit.getHasActed())
+                {
+                    spriteBatch.Draw(background, new Rectangle(x, y, 124, 124), Color.White);
+                    spriteBatch.DrawString(courierNew, "Attack", new Vector2(x + 5, y + 0), Color.Black);
+                    spriteBatch.DrawString(courierNew, "Move", new Vector2(x + 5, y + 32), Color.Black);
+                    spriteBatch.DrawString(courierNew, "Interact", new Vector2(x + 5, y + 64), Color.Black);
+                    spriteBatch.DrawString(courierNew, "Wait", new Vector2(x + 5, y + 96), Color.Black);
+                }
+
+                else if (!unit.getHasMoved() && unit.getHasActed())
+                {
+                    spriteBatch.Draw(background, new Rectangle(x, y, 124, 124), Color.White);
+                    spriteBatch.DrawString(courierNew, "Attack", new Vector2(x + 5, y + 0), Color.Gray);
+                    spriteBatch.DrawString(courierNew, "Move", new Vector2(x + 5, y + 32), Color.Black);
+                    spriteBatch.DrawString(courierNew, "Interact", new Vector2(x + 5, y + 64), Color.Gray);
+                    spriteBatch.DrawString(courierNew, "Wait", new Vector2(x + 5, y + 96), Color.Black);
+                }
+
+                else if (unit.getHasMoved() && !unit.getHasActed())
+                {
+                    spriteBatch.Draw(background, new Rectangle(x, y, 124, 124), Color.White);
+                    spriteBatch.DrawString(courierNew, "Attack", new Vector2(x + 5, y + 0), Color.Black);
+                    spriteBatch.DrawString(courierNew, "Move", new Vector2(x + 5, y + 32), Color.Gray);
+                    spriteBatch.DrawString(courierNew, "Interact", new Vector2(x + 5, y + 64), Color.Black);
+                    spriteBatch.DrawString(courierNew, "Wait", new Vector2(x + 5, y + 96), Color.Black);
+                }
+
+                else
+                {
+                    spriteBatch.Draw(background, new Rectangle(x, y, 124, 124), Color.White);
+                    spriteBatch.DrawString(courierNew, "Attack", new Vector2(x + 5, y + 0), Color.Gray);
+                    spriteBatch.DrawString(courierNew, "Move", new Vector2(x + 5, y + 32), Color.Gray);
+                    spriteBatch.DrawString(courierNew, "Interact", new Vector2(x + 5, y + 64), Color.Gray);
+                    spriteBatch.DrawString(courierNew, "Wait", new Vector2(x + 5, y + 96), Color.Gray);
+                }
             }
         }
 
