@@ -79,6 +79,7 @@ namespace SwordAndScaleTake2
         GamePreferences gamePrefs;
         MoralePane blueMorale = new MoralePane(10, "blue");
         MoralePane redMorale = new MoralePane(10, "red");
+        TurnNotificationPane turnPane = new TurnNotificationPane();
 
         public Game1(GamePreferences gamePrefs)
         {
@@ -183,6 +184,8 @@ namespace SwordAndScaleTake2
             unitActionPane.LoadContent(content);
             blueMorale.LoadContent(content);
             redMorale.LoadContent(content);
+            turnPane.LoadContent(content);
+            turnPane.AddToQueue(14 * 64, 6 * 64, "Blue" + "        " + "Turn!", 300, Color.Blue, castle);
         }
 
         public void UnloadContent()
@@ -200,7 +203,7 @@ namespace SwordAndScaleTake2
             //blueInfoPane.Update();
             //redInfoPane.Update();
             //unitActionPane.Update();
-
+            turnPane.Update();
             pressedKey = Keyboard.GetState();
             //Move Cursor (returns true if a move occurred)
             if (MoveCursor())
@@ -392,6 +395,7 @@ namespace SwordAndScaleTake2
             unitActionPane.Draw(spriteBatch);
             blueMorale.Draw(spriteBatch);
             redMorale.Draw(spriteBatch);
+            turnPane.Draw(spriteBatch);
         }
 
         public void UnitClicked(Unit unit, int x, int y)
@@ -1359,6 +1363,14 @@ namespace SwordAndScaleTake2
             }
             //Other team's turn
             activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
+            if(activeTeam == Teams.Red)
+            {
+                turnPane.AddToQueue(1 * 64, 7 * 64, "Red" + "        " + "Turn!", 300, Color.Red, castle);
+            }
+            if (activeTeam == Teams.Blue)
+            {
+                turnPane.AddToQueue(14 * 64, 6 * 64, "Blue" + "        " + "Turn!", 300, Color.Blue, castle);
+            }
         }
     }
 }
