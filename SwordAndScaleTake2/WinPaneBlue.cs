@@ -14,7 +14,6 @@ namespace SwordAndScaleTake2
 
         SpriteFont courierTwo; //doesn't support unicode
         SpriteFont courierNew; //also doesn't support unicode
-        public int timer;
 
 
 
@@ -31,7 +30,7 @@ namespace SwordAndScaleTake2
 
         public void Update()
         {
-            
+
         }
 
         public void Draw(SpriteBatch spriteBatch)
