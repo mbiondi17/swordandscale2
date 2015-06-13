@@ -144,15 +144,14 @@
     </Content>
     <None Include="Content\Courier Two.spritefont">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
     <None Include="Content\fanfare.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Content\miss sound.wav">
+    <None Include="Content\hit sound.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Content\hit sound.wav">
+    <None Include="Content\miss sound.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Content\poison.png">
