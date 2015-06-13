@@ -390,12 +390,12 @@ namespace SwordAndScaleTake2
             // set the new state as the old state for next time 
             oldState = pressedKey;
 
-            if (redMorale.Morale <= 0)
+            if (redMorale.Morale <= 0 || redUnits.Count == 0)
             {
                 gameInf.hasBlueWon = true;
             }
 
-            if (blueMorale.Morale <= 0)
+            if (blueMorale.Morale <= 0 || blueUnits.Count == 0)
             {
                 gameInf.hasRedWon = true;
             }
@@ -1503,20 +1503,31 @@ namespace SwordAndScaleTake2
         private void EndTurn()
         {
             //Move cursor to other team's unit
-            cursorPosition = (activeTeam == Teams.Blue ? redUnits : blueUnits).First(x => !x.getDead()).getPosition();
-            DetectUnitHovered();
-            //Reset each unit in current team
-            foreach (Unit unit in (activeTeam == Teams.Blue ? blueUnits : redUnits))
+
+            //check if there are live units on the other team
+            bool gameOver = true;
+            foreach(Unit unit in (activeTeam == Teams.Blue ? redUnits : blueUnits))
             {
-                if (!unit.getDead())
-                {
-                    unit.setHasActed(false);
-                    unit.setHasMoved(false);
-                    unit.setUsable(true);
-                }
+                if (!unit.getDead()) gameOver = false;
             }
-            //Other team's turn
-            activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
+
+            if (!gameOver)
+            {
+                cursorPosition = (activeTeam == Teams.Blue ? redUnits : blueUnits).First(x => !x.getDead()).getPosition();
+                DetectUnitHovered();
+                //Reset each unit in current team
+                foreach (Unit unit in (activeTeam == Teams.Blue ? blueUnits : redUnits))
+                {
+                    if (!unit.getDead())
+                    {
+                        unit.setHasActed(false);
+                        unit.setHasMoved(false);
+                        unit.setUsable(true);
+                    }
+                }
+                //Other team's turn
+                activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
+            }
         }
     }
 }
