@@ -19,8 +19,9 @@
 /processorParam:TextureFormat=Compressed
 /build:Courier New.spritefont
 
-#begin Courier New2.spritefont
+#begin Courier Two.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:TextureFormat=Compressed
-/build:Courier New2.spritefont
+/build:Courier Two.spritefont
+
