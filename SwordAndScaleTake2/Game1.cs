@@ -125,22 +125,21 @@ namespace SwordAndScaleTake2
             redWarrior = new Unit("redWarrior", "warrior", 10, 9, 6, 3, 2, 4, Teams.Red, warriorRPosition);
             redArcher = new Unit("redArcher", "archer", 10, 6, 9, 2, 4, 6, Teams.Red, archerRPosition);
             redPike = new Unit("redPike", "pike", 10, 7, 7, 4, 1, 4, Teams.Red, pikeRPosition);
+            redGeneral = new Unit(gameInf.chosenGeneralRed);
 
             blueUnits.Add(blueMage);
             blueUnits.Add(blueSword);
             blueUnits.Add(blueWarrior);
             blueUnits.Add(blueArcher);
             blueUnits.Add(bluePike);
+            blueUnits.Add(blueGeneral);
 
             redUnits.Add(redMage);
             redUnits.Add(redSword);
             redUnits.Add(redWarrior);
             redUnits.Add(redArcher);
             redUnits.Add(redPike);
-
-            redGeneral = redGeneralChoice();
             redUnits.Add(redGeneral);
-            blueUnits.Add(blueGeneral);
 
             redMorale.setPixelPosition(0, 896);
             redInfoPane.setPixelPosition(192, 896);
@@ -201,7 +200,7 @@ namespace SwordAndScaleTake2
 
         public void UnloadContent()
         {
-            
+
         }
 
         public void Update()
@@ -259,65 +258,60 @@ namespace SwordAndScaleTake2
 
                 if (hoveredUnit != null)
                 {
-                    //If Spacebar is pressed AND Unit is on the activeTeam AND Unit isUsable
-                    if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
-                        hoveredUnit.getTeam() == activeTeam &&
-                        hoveredUnit.getUsable() && !hoveredUnit.getDead())
+                //If Spacebar is pressed AND Unit is on the activeTeam AND Unit isUsable
+                if (oldState.IsKeyUp(Keys.Space) && pressedKey.IsKeyDown(Keys.Space) &&
+                    hoveredUnit.getTeam() == activeTeam &&
+                    hoveredUnit.getUsable() && !hoveredUnit.getDead())
+                {
+                    //Select that unit
+                    activeUnit = hoveredUnit;
+                    //Show UnitActionPane
+                    unitActionPane.setPixelPosition(hoveredUnit, cursorPosition + new Vector2(64, 0));
+                    unitActionPane.Show();
+                }
+                //If a unit is active (runs every update)
+                if (activeUnit != null)
+                {
+                    //If A is pressed
+                    if (oldState.IsKeyUp(Keys.A) && pressedKey.IsKeyDown(Keys.A) && !activeUnit.getHasActed())
                     {
-                        //Select that unit
-                        activeUnit = hoveredUnit;
-                        //Show UnitActionPane
-                        unitActionPane.setPixelPosition(hoveredUnit, cursorPosition + new Vector2(64, 0));
-                        unitActionPane.Show();
-                        Console.WriteLine("Here!!");
+                        //Hide UnitActionPane
+                        unitActionPane.Hide();
+                        //Attack
+                        CreateAttackingArea();
+                        isUnitAttacking = true;
                     }
-
-
-
-
-                    //If a unit is active (runs every update)
-                    if (activeUnit != null)
+                    //If I is pressed
+                    else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
                     {
-                        //If A is pressed
-                        if (oldState.IsKeyUp(Keys.A) && pressedKey.IsKeyDown(Keys.A) && !activeUnit.getHasActed())
+                        if (map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].isInteractable)
                         {
                             //Hide UnitActionPane
                             unitActionPane.Hide();
-                            //Attack
-                            CreateAttackingArea();
-                            isUnitAttacking = true;
+                            //Interact
+                            isUnitInteracting = true;
                         }
-                        //If I is pressed
-                        else if (oldState.IsKeyUp(Keys.I) && pressedKey.IsKeyDown(Keys.I) && !activeUnit.getHasActed())
-                        {
-                            if (map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].isInteractable)
-                            {
-                                //Hide UnitActionPane
-                                unitActionPane.Hide();
-                                //Interact
-                                isUnitInteracting = true;
-                            }
-                        }
-                        //If M is pressed
-                        else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
-                        {
-                            //Hide UnitActionPane
-                            unitActionPane.Hide();
-                            //Move
-                            CreatePathingArea();
-                            isUnitMoving = true;
-                        }
-                        //If W is pressed
-                        else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
-                        {
-                            //Hide UnitActionPane
-                            unitActionPane.Hide();
-                            //Wait
-                            //When done
-                            DeactivateUnit();
-                        }
+                    }
+                    //If M is pressed
+                    else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
+                    {
+                        //Hide UnitActionPane
+                        unitActionPane.Hide();
+                        //Move
+                        CreatePathingArea();
+                        isUnitMoving = true;
+                    }
+                    //If W is pressed
+                    else if (oldState.IsKeyUp(Keys.W) && pressedKey.IsKeyDown(Keys.W))
+                    {
+                        //Hide UnitActionPane
+                        unitActionPane.Hide();
+                        //Wait
+                        //When done
+                        DeactivateUnit();
                     }
                 }
+            }
             }
             //If the player is moving a unit
             else if (isUnitMoving)
@@ -362,11 +356,11 @@ namespace SwordAndScaleTake2
             else if (isUnitInteracting)
             {
                 //TODO
-                interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
+                    interact(activeUnit, ref map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64]);
 
-                DetectUnitHovered();
-                activeUnit.setHasActed(true);
-                isUnitInteracting = false;
+                    DetectUnitHovered();
+                    activeUnit.setHasActed(true);
+                    isUnitInteracting = false;
             }
             //If B is pressed, cancel action (does not deactivate unit or reset unit)
             if (oldState.IsKeyUp(Keys.B) && pressedKey.IsKeyDown(Keys.B))
@@ -393,7 +387,7 @@ namespace SwordAndScaleTake2
             if (redMorale.Morale <= 0 || redUnits.Count == 0)
             {
                 gameInf.hasBlueWon = true;
-            }
+        }
 
             if (blueMorale.Morale <= 0 || blueUnits.Count == 0)
             {
@@ -462,7 +456,7 @@ namespace SwordAndScaleTake2
                 if(i == 0)
                 castle.Play();
                 i++;
-            }
+        }
             else if (gameInf.hasBlueWon)
             {
                 BlueWin.Draw(spriteBatch);
@@ -1037,76 +1031,139 @@ namespace SwordAndScaleTake2
             isUnitAttacking = false;
         }
 
-
         private void CreatePathingArea()
         {
             int currentMv = activeUnit.getMvmt();
+            bool right = true;
+            bool left = true;
+            bool up = true;
+            bool down = true;
+           
             for (int i = 1; i < activeUnit.getMvmt() + 1; i++)
             {
-                if (cursorPosition.X + (64 * i) < 24 * 64)
+                if (cursorPosition.X + (64 * i) < 24 * 64 && right)
                 {
                     Vector2 pathCor1 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y);
                     PathSprite path1 = new PathSprite(pathCor1, this);
+                   // if (!map[(int)pathCor1.X / 64, (int)pathCor1.Y / 64].getImpassible())
+                 //   {
                     path.Add(path1);
                     moveable.Add(pathCor1);
+                   // }
+                  //  else
+                   // {
+                        //right = false;
+                  //  }
                 }
-                if (cursorPosition.X - (64 * i) >= 0)
+                if (cursorPosition.X - (64 * i) >= 0 && left)
                 {
                     Vector2 pathCor2 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y);
                     PathSprite path2 = new PathSprite(pathCor2, this);
+                  //  if (!map[(int)pathCor2.X / 64, (int)pathCor2.Y / 64].getImpassible())
+                 //   {
                     path.Add(path2);
                     moveable.Add(pathCor2);
+                  //  }
+                 //   else
+                 //   {
+                        //left = false;
+                 //   }
                 }
-                if (cursorPosition.Y + (64 * i) < 14 * 64)
+                if (cursorPosition.Y + (64 * i) < 14 * 64 && down)
                 {
                     Vector2 pathCor3 = new Vector2(cursorPosition.X, cursorPosition.Y + (64 * i));
                     PathSprite path3 = new PathSprite(pathCor3, this);
+                  //  if(!map[(int)pathCor3.X/64, (int)pathCor3.Y/64].getImpassible()) 
+                //    {
                     path.Add(path3);
                     moveable.Add(pathCor3);
+                //    }
+                 //   else
+                 //   {
+                        //down = false;
+                  //  }
                 }
-                if (cursorPosition.Y - (64 * i) >= 0)
+                if (cursorPosition.Y - (64 * i) >= 0 && up)
                 {
                     Vector2 pathCor4 = new Vector2(cursorPosition.X, cursorPosition.Y - (64 * i));
                     PathSprite path4 = new PathSprite(pathCor4, this);
+                   // if (!map[(int)pathCor4.X / 64, (int)pathCor4.Y / 64].getImpassible())
+                   // {
                     path.Add(path4);
                     moveable.Add(pathCor4);
+                  //  }
+                   // else
+                   // {
+                       //up = false;
+                   // }
                 }
+                bool corner1 = true;
+                bool corner2 = true;
+                bool corner3 = true;
+                bool corner4 = true;
 
                 for (int j = 1; j < currentMv; j++)
                 {
-                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y + (64 * j) < 14 * 64)
+                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y + (64 * j) < 14 * 64 && corner1)
                     {
                         Vector2 pathCor11 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y + (64 * j));
                         PathSprite path11 = new PathSprite(pathCor11, this);
+                        //if (!map[(int)pathCor11.X / 64, (int)pathCor11.Y / 64].getImpassible())
+                       // {
                         path.Add(path11);
                         moveable.Add(pathCor11);
+                        //}
+                        //else
+                       // {
+                            //corner1 = false;
+                       // }
                     }
-                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y - (64 * j) >= 0)
+                    if (cursorPosition.X + (64 * i) < 24 * 64 && cursorPosition.Y - (64 * j) >= 0 && corner2)
                     {
                         Vector2 pathCor12 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y - (64 * j));
                         PathSprite path12 = new PathSprite(pathCor12, this);
+                       // if (!map[(int)pathCor12.X / 64, (int)pathCor12.Y / 64].getImpassible())
+                       // {
                         path.Add(path12);
                         moveable.Add(pathCor12);
+                      //  }
+                       // else
+                        //{
+                            //corner2 = false;
+                       // }
                     }
-                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y + (64 * j) < 14 * 64)
+                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y + (64 * j) < 14 * 64 && corner3)
                     {
                         Vector2 pathCor21 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y + (64 * j));
                         PathSprite path21 = new PathSprite(pathCor21, this);
+                        //if (!map[(int)pathCor21.X / 64, (int)pathCor21.Y / 64].getImpassible())
+                        //{
                         path.Add(path21);
                         moveable.Add(pathCor21);
+                       // }
+                        //else
+                       // {
+                            //corner3 = false;
+                       // }
                     }
-                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y - (64 * j) >= 0)
+                    if (cursorPosition.X - (64 * i) >= 0 && cursorPosition.Y - (64 * j) >= 0 && corner4)
                     {
                         Vector2 pathCor22 = new Vector2(cursorPosition.X - (64 * i), cursorPosition.Y - (64 * j));
                         PathSprite path22 = new PathSprite(pathCor22, this);
+                      //  if (!map[(int)pathCor22.X / 64, (int)pathCor22.Y / 64].getImpassible())
+                      //  {
                         path.Add(path22);
                         moveable.Add(pathCor22);
+                      //  }
+                     //   else
+                   //     {
+                            //corner4 = false;
+                      //  }
                     }
                 }
                 currentMv--;
             }
             List<Vector2> moveNew = highlighter(moveable, activeUnit.getPosition());
-            methodCalled = false;
             moveable = moveNew;
 
             for (int i = path.Count - 1; i >= 0; i--)
@@ -1472,34 +1529,6 @@ namespace SwordAndScaleTake2
             UpdateInfoPanes();
         }
 
-        private Unit redGeneralChoice()
-        {
-            Unit chosenGen = null;
-            Random genNum = new Random();
-            int compGen = genNum.Next(0, 5);
-            if (compGen == 0)
-            {
-                chosenGen = new Unit("redMageGen", "MageGen", 8, 15, 9, 2, 5, 3, Teams.Red, generalRPosition);
-            }
-            if (compGen == 1)
-            {
-                chosenGen = new Unit("redArcherGen", "ArcherGen", 15, 8, 9, 3, 4, 3, Teams.Red, generalRPosition); ;
-            }
-            if (compGen == 2)
-            {
-                chosenGen = new Unit("redPikeGen", "PikeGen", 15, 9, 7, 5, 2, 3, Teams.Red, generalRPosition);
-            }
-            if (compGen == 3)
-            {
-                chosenGen = new Unit("redSwordGen", "SwordGen", 15, 9, 9, 2, 4, 3, Teams.Red, generalRPosition);
-            }
-            if (compGen == 4)
-            {
-                chosenGen = new Unit("redWarriorGen", "WarriorGen", 15, 9, 8, 4, 2, 3, Teams.Red, generalRPosition);
-            }
-            return chosenGen;
-        }
-
         private void EndTurn()
         {
             //Move cursor to other team's unit
@@ -1513,21 +1542,21 @@ namespace SwordAndScaleTake2
 
             if (!gameOver)
             {
-                cursorPosition = (activeTeam == Teams.Blue ? redUnits : blueUnits).First(x => !x.getDead()).getPosition();
-                DetectUnitHovered();
-                //Reset each unit in current team
-                foreach (Unit unit in (activeTeam == Teams.Blue ? blueUnits : redUnits))
+            cursorPosition = (activeTeam == Teams.Blue ? redUnits : blueUnits).First(x => !x.getDead()).getPosition();
+            DetectUnitHovered();
+            //Reset each unit in current team
+            foreach (Unit unit in (activeTeam == Teams.Blue ? blueUnits : redUnits))
+            {
+                if (!unit.getDead())
                 {
-                    if (!unit.getDead())
-                    {
-                        unit.setHasActed(false);
-                        unit.setHasMoved(false);
-                        unit.setUsable(true);
-                    }
+                    unit.setHasActed(false);
+                    unit.setHasMoved(false);
+                    unit.setUsable(true);
                 }
-                //Other team's turn
-                activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
             }
+            //Other team's turn
+            activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
         }
     }
+}
 }

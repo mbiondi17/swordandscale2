@@ -32,6 +32,7 @@ namespace SwordAndScaleTake2
         public Unit(string general) : base(general)
         {
             Vector2 pos = new Vector2(22 * 64, 11 * 64);
+            Vector2 posRed = new Vector2(64 * 1, 64 * 2);
             switch (general)
             {
                 case "blueArcherGen":
@@ -104,6 +105,84 @@ namespace SwordAndScaleTake2
                     this.mDef = 2;
                     this.mvmt = 3;
                     this.team = Teams.Blue;
+                    this.dead = false;
+                    this.usable = true;
+                    this.hasMoved = false;
+                    this.hasActed = false;
+                    Console.WriteLine("Blue Pos Set");
+                    this.type = "WarriorGen";
+                    break;
+
+                case "redArcherGen":
+                    this.position = posRed;
+                    this.health = 15;
+                    this.str = 8;
+                    this.skill = 9;
+                    this.def = 3;
+                    this.mDef = 4;
+                    this.mvmt = 5;
+                    this.team = Teams.Red;
+                    this.dead = false;
+                    this.usable = true;
+                    this.hasMoved = false;
+                    this.hasActed = false;
+                    this.type = "ArcherGen";
+                    break;
+                case "redMageGen":
+                    this.position = posRed;
+                    this.health = 15;
+                    this.str = 8;
+                    this.skill = 9;
+                    this.def = 2;
+                    this.mDef = 5;
+                    this.mvmt = 4;
+                    this.team = Teams.Red;
+                    this.dead = false;
+                    this.usable = true;
+                    this.hasMoved = false;
+                    this.hasActed = false;
+                    this.type = "MageGen";
+                    break;
+                case "redPikeGen":
+                    this.position = posRed;
+                    this.health = 15;
+                    this.str = 9;
+                    this.skill = 7;
+                    this.def = 5;
+                    this.mDef = 2;
+                    this.mvmt = 3;
+                    this.team = Teams.Red;
+                    this.dead = false;
+                    this.usable = true;
+                    this.hasMoved = false;
+                    this.hasActed = false;
+                    this.type = "PikeGen";
+                    break;
+                case "redSwordGen":
+                    this.position = posRed;
+                    this.health = 15;
+                    this.str = 9;
+                    this.skill = 9;
+                    this.def = 2;
+                    this.mDef = 4;
+                    this.mvmt = 4;
+                    this.team = Teams.Red;
+                    this.dead = false;
+                    this.usable = true;
+                    this.hasMoved = false;
+                    this.hasActed = false;
+                    this.type = "SwordGen";
+                    break;
+                case "redWarriorGen":
+                    Console.WriteLine("PICKED BLUE WARRIOR");
+                    this.position = posRed;
+                    this.health = 15;
+                    this.str = 9;
+                    this.skill = 8;
+                    this.def = 4;
+                    this.mDef = 2;
+                    this.mvmt = 3;
+                    this.team = Teams.Red;
                     this.dead = false;
                     this.usable = true;
                     this.hasMoved = false;
