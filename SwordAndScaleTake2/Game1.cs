@@ -86,6 +86,7 @@ namespace SwordAndScaleTake2
         GameInfo gameInf;
         MoralePane blueMorale = new MoralePane(10, "blue");
         MoralePane redMorale = new MoralePane(10, "red");
+        int i = 0; //Literally just used to not infinitely play the end game sound.
 
         public Game1(GameInfo gameInf)
         {
@@ -458,12 +459,14 @@ namespace SwordAndScaleTake2
             if (gameInf.hasRedWon)
             {
                 RedWin.Draw(spriteBatch);
-                castle.Play();
+                if (i == 0) castle.Play();
+                i++;
             }
             else if (gameInf.hasBlueWon)
             {
                 BlueWin.Draw(spriteBatch);
-                castle.Play();
+                if (i == 0) castle.Play();
+                i++;
             }
         }
 
@@ -636,7 +639,12 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
-                        thing.isInteractable = false;
+                        map[3, 0].isInteractable = false;
+                        map[4, 0].isInteractable = false;
+                        map[5, 0].isInteractable = false;
+                        map[3, 2].isInteractable = false;
+                        map[4, 2].isInteractable = false;
+                        map[5, 2].isInteractable = false;
                         redMorale.Morale--;
                         river.Play();
                     }
@@ -730,7 +738,11 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
-                        thing.isInteractable = false;
+                        map[18, 9].isInteractable = false;
+                        map[19, 9].isInteractable = false;
+                        map[20, 9].isInteractable = false;
+                        map[18, 11].isInteractable = false;
+                        map[20, 11].isInteractable = false;
                         blueMorale.Morale--;
                         river.Play();
                     }
