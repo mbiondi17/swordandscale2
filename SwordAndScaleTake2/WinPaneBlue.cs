@@ -9,12 +9,11 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace SwordAndScaleTake2
 {
-    class WinPaneRed
+    class WinPaneBlue
     {
 
         SpriteFont courierTwo; //doesn't support unicode
-        SpriteFont courierNew; //also doesn't support unicode
-
+        SpriteFont courierNew; //also doesn't support unicodeeee
 
 
         public void LoadContent(ContentManager content)
@@ -30,13 +29,13 @@ namespace SwordAndScaleTake2
 
         public void Update()
         {
-
+            
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawString(courierTwo, "Red    Team    is    Victorious!", new Vector2(304, 320), Color.Red);
-            spriteBatch.DrawString(courierNew, "Press   Escape   to   Exit   Game", new Vector2(640, 448), Color.Red);
+            spriteBatch.DrawString(courierTwo, "The    Blue    Team    is    Victorious!", new Vector2(304, 320), Color.Blue);
+            spriteBatch.DrawString(courierNew, "Press  Escape  to  Exit  Game", new Vector2(640, 448), Color.Blue);
         }
     }
 }
