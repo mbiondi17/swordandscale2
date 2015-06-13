@@ -26,7 +26,7 @@ namespace SwordAndScaleTake2
 
         Game1 game;
 
-        GamePreferences gamePrefs = new GamePreferences();
+        GameInfo gamePrefs = new GameInfo();
         KeyboardState previousState;
         KeyboardState currentState; GameInfo gameInf = new GameInfo();
 
