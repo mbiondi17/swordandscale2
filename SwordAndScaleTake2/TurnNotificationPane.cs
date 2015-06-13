@@ -21,7 +21,7 @@ namespace SwordAndScaleTake2
         }
         Notification currentNotification; //needed because working with List of structs, 
         //you can't update timer in a struct without replacing it with a whole new struct
-        SpriteFont courierNew2; //doesn't support unicode
+        SpriteFont courierTwo; //doesn't support unicode
         List<Notification> notificationList = new List<Notification>();
 
         public void AddToQueue(float x, float y, string text, int framesToDisplay, Color color, SoundEffect toPlay = null)
@@ -51,7 +51,7 @@ namespace SwordAndScaleTake2
 
         public void LoadContent(ContentManager content)
         {
-            courierNew2 = content.Load<SpriteFont>("Courier New2");
+            courierTwo = content.Load<SpriteFont>("Courier Two");
         }
 
         public void UnloadContent()
@@ -77,7 +77,7 @@ namespace SwordAndScaleTake2
         {
             if (currentNotification.timer > 0)
             {
-                spriteBatch.DrawString(courierNew2, currentNotification.text, currentNotification.position + new Vector2(66, 2), currentNotification.color);
+                spriteBatch.DrawString(courierTwo, currentNotification.text, currentNotification.position + new Vector2(66, 2), currentNotification.color);
                 //spriteBatch.DrawString(courierNew, currentNotification.text, currentNotification.position + new Vector2(65, 1), Color.Black);
                 //spriteBatch.DrawString(courierNew, currentNotification.text, currentNotification.position + new Vector2(64, 0), Color.White);
             }
