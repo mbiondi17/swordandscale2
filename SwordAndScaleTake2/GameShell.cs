@@ -14,15 +14,16 @@ namespace SwordAndScaleTake2
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        enum GameState { mainMenu, generalChoice, inGame, pauseMenu, gameOver} GameState gameState; 
+        enum GameState { mainMenu, generalChoice, generalChoiceRed, inGame, pauseMenu, gameOver} GameState gameState; 
 
         //All the different GUIs that will be in the game
         List<GameElement> mainMenu = new List<GameElement>();
         List<GameElement> generalChoice = new List<GameElement>();
+        List<GameElement> generalChoiceRed = new List<GameElement>();
         GameElement pointer;
 
         Game1 game;
-        GamePreferences gamePrefs = new GamePreferences();
+        GameInfo gameInf = new GameInfo();
 
         public GameShell()
         {
@@ -53,6 +54,13 @@ namespace SwordAndScaleTake2
             generalChoice.Add(new GameElement("bluePikeGen"));
             generalChoice.Add(new GameElement("blueSwordGen"));
             generalChoice.Add(new GameElement("blueWarriorGen"));
+
+            generalChoiceRed.Add(new GameElement("genselect"));
+            generalChoiceRed.Add(new GameElement("redArcherGen"));
+            generalChoiceRed.Add(new GameElement("redMageGen"));
+            generalChoiceRed.Add(new GameElement("redPikeGen"));
+            generalChoiceRed.Add(new GameElement("redSwordGen"));
+            generalChoiceRed.Add(new GameElement("redWarriorGen"));
 
             //gameGUI.Add(new GUIElement("playerIcon"));
 
@@ -90,6 +98,19 @@ namespace SwordAndScaleTake2
             generalChoice.Find(x => x.AssetName == "bluePikeGen")   .setPixelPosition(700, 400);
             generalChoice.Find(x => x.AssetName == "blueSwordGen")  .setPixelPosition(800, 400);
             generalChoice.Find(x => x.AssetName == "blueWarriorGen").setPixelPosition(900, 400);
+
+            // ------------Choosing Red General------------
+            foreach (GameElement element in generalChoiceRed)
+            {
+                element.LoadContent(Content);
+                element.clickEvent += OnClick;
+            }
+            generalChoiceRed.Find(x => x.AssetName == "genselect").setPixelPosition(-50, 000);
+            generalChoiceRed.Find(x => x.AssetName == "redArcherGen").setPixelPosition(500, 300);
+            generalChoiceRed.Find(x => x.AssetName == "redMageGen").setPixelPosition(600, 300);
+            generalChoiceRed.Find(x => x.AssetName == "redPikeGen").setPixelPosition(700, 300);
+            generalChoiceRed.Find(x => x.AssetName == "redSwordGen").setPixelPosition(800, 300);
+            generalChoiceRed.Find(x => x.AssetName == "redWarriorGen").setPixelPosition(900, 300);
         }
         protected override void Update(GameTime gameTime)
         {
@@ -112,9 +133,18 @@ namespace SwordAndScaleTake2
                         element.Update();
                     }
                     break;
+                case GameState.generalChoiceRed:
+                    if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                        gameState = GameState.generalChoice;
+                    foreach (GameElement element in generalChoiceRed)
+                    {
+                        element.Update();
+                    }
+                    break;
                 case GameState.inGame:
                     if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                         gameState = GameState.mainMenu; //TODO: Make pauseMenu and link it here
+                    if (gameInf.hasRedWon || gameInf.hasBlueWon) break;
                     game.Update();
                     break;
                 default:
@@ -122,6 +152,8 @@ namespace SwordAndScaleTake2
             }
 
             base.Update(gameTime);
+
+            
         }
 
         protected override void Draw(GameTime gameTime)
@@ -144,6 +176,12 @@ namespace SwordAndScaleTake2
                         elem.Draw(spriteBatch);
                     }
                     break;
+                case GameState.generalChoiceRed:
+                    foreach (GameElement elem in generalChoiceRed)
+                    {
+                        elem.Draw(spriteBatch);
+                    }
+                    break;
                 case GameState.inGame:
                     break;
                 default:
@@ -151,7 +189,9 @@ namespace SwordAndScaleTake2
             }
 
             if (gameState == GameState.inGame)
+            {
                 game.Draw(spriteBatch);
+            }
 
             spriteBatch.End();
             base.Draw(gameTime);
@@ -174,9 +214,20 @@ namespace SwordAndScaleTake2
                 button == "blueSwordGen" || 
                 button == "blueWarriorGen")
             {
-                gamePrefs.chosenGeneral = button;
+                gameInf.chosenGeneral = button;
+                gameState = GameState.generalChoiceRed;
+                //game = new Game1(gamePrefs);
+                //game.LoadContent(Content);
+            }
+            if (button == "redArcherGen" ||
+                button == "redMageGen" ||
+                button == "redPikeGen" ||
+                button == "redSwordGen" ||
+                button == "redWarriorGen")
+            {
+                gameInf.chosenGeneralRed = button;
                 gameState = GameState.inGame;
-                game = new Game1(gamePrefs);
+                game = new Game1(gameInf);
                 game.LoadContent(Content);
             }
             if (button == "exit")
