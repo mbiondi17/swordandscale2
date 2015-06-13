@@ -636,7 +636,12 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
-                        thing.isInteractable = false;
+                        map[3, 0].isInteractable = false;
+                        map[4, 0].isInteractable = false;
+                        map[5, 0].isInteractable = false;
+                        map[3, 2].isInteractable = false;
+                        map[4, 2].isInteractable = false;
+                        map[5, 2].isInteractable = false;
                         redMorale.Morale--;
                         river.Play();
                     }
@@ -730,7 +735,11 @@ namespace SwordAndScaleTake2
                     if (thing.isInteractable)
                     {
                         //make it not interactable so draw() will draw its appropriate overlay.
-                        thing.isInteractable = false;
+                        map[18, 9].isInteractable = false;
+                        map[19, 9].isInteractable = false;
+                        map[20, 9].isInteractable = false;
+                        map[18, 11].isInteractable = false;
+                        map[20, 11].isInteractable = false;
                         blueMorale.Morale--;
                         river.Play();
                     }
