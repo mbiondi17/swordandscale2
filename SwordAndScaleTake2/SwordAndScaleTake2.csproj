@@ -155,7 +155,6 @@
     <None Include="Content\miss sound.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    </Content>
     <Content Include="Content\pointer.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
