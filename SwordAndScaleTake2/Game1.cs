@@ -835,8 +835,16 @@ namespace SwordAndScaleTake2
         public void attack(ref Unit enemy)
         {
             Random rand = new Random();
-            int unitHit = rand.Next(1, 11);
-            int enemyHit = rand.Next(1, 11);
+            int sum1 = 0;
+            int sum2 = 0;
+            for (int x = 0; x < 20; x++)
+            {
+                sum1 += rand.Next(1, 11);
+                sum2 += rand.Next(1, 11);
+            }
+            int unitHit = sum1 / 20;
+            int enemyHit = sum2 / 20;
+            int distance = (int)Math.Abs(activeUnit.getPosition().X / 64 - enemy.getPosition().X / 64) + (int)Math.Abs(activeUnit.getPosition().Y / 64 - enemy.getPosition().Y / 64);
 
             if (activeUnit.getType().Equals("mage") || activeUnit.getType().Contains("MageGen") || activeUnit.getType().Contains("genMage"))
             {
@@ -939,7 +947,7 @@ namespace SwordAndScaleTake2
                     }
 
                     //if enemy can counter
-                    if (enemy.getHealth() > 0)
+                    if (enemy.getHealth() > 0 && ((!activeUnit.getType().Contains("rch")) || (activeUnit.getType().Contains("rch") && distance < 2) || (enemy.getType().Contains("rch") && activeUnit.getType().Contains("rch"))))
                     {
                         //if counterattack hits
                         if (enemyHit <= enemy.getSkill())
@@ -977,7 +985,7 @@ namespace SwordAndScaleTake2
                     }
 
                     //if enemy can counter
-                    if (enemy.getHealth() > 0)
+                    if (enemy.getHealth() > 0  && (!activeUnit.getType().Contains("arch") || (activeUnit.getType().Contains("arch") && distance < 2)))
                     {
                         //if counterattack hits
                         if (enemyHit <= enemy.getSkill())
@@ -1050,7 +1058,7 @@ namespace SwordAndScaleTake2
                     Vector2 pathCor1 = new Vector2(cursorPosition.X + (64 * i), cursorPosition.Y);
                     PathSprite path1 = new PathSprite(pathCor1, this);
                    // if (!map[(int)pathCor1.X / 64, (int)pathCor1.Y / 64].getImpassible())
-                 //   {
+                 //  {
                     path.Add(path1);
                     moveable.Add(pathCor1);
                    // }
