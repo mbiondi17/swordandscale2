@@ -13,7 +13,9 @@ namespace SwordAndScaleTake2
     {
 
         SpriteFont courierTwo; //doesn't support unicode
-        SpriteFont courierNew; //also doesn't support unicodeeee
+        SpriteFont courierNew; //also doesn't support unicode
+        public int timer;
+
 
 
         public void LoadContent(ContentManager content)
