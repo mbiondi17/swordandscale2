@@ -196,7 +196,7 @@ namespace SwordAndScaleTake2
             redMorale.LoadContent(content);
             notification.LoadContent(content);
             turnPane.LoadContent(content);
-            turnPane.AddToQueue(14 * 64, 6 * 64, "Blue" + "        " + "Turn!", 300, Color.Blue, castle);
+            turnPane.AddToQueue(14 * 64, 6 * 64, "Blue" + "        " + "Turn!", 250, Color.Blue, castle);
             RedWin.LoadContent(content);
             BlueWin.LoadContent(content);
         }
@@ -1570,11 +1570,11 @@ namespace SwordAndScaleTake2
             activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
             if(activeTeam == Teams.Red)
             {
-                turnPane.AddToQueue(1 * 64, 7 * 64, "Red" + "        " + "Turn!", 300, Color.Red, castle);
+                turnPane.AddToQueue(1 * 64, 7 * 64, "Red" + "        " + "Turn!", 250, Color.Red, castle);
             }
             if (activeTeam == Teams.Blue)
             {
-                turnPane.AddToQueue(14 * 64, 6 * 64, "Blue" + "        " + "Turn!", 300, Color.Blue, castle);
+                turnPane.AddToQueue(14 * 64, 6 * 64, "Blue" + "        " + "Turn!", 250, Color.Blue, castle);
             }
         }
     }
