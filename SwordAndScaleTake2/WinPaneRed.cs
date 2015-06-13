@@ -35,7 +35,7 @@ namespace SwordAndScaleTake2
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawString(courierTwo, "The    Blue    Team    is    Victorious!", new Vector2(192, 320), Color.Red);
+            spriteBatch.DrawString(courierTwo, "The    Red    Team    is    Victorious!", new Vector2(192, 320), Color.Red);
             spriteBatch.DrawString(courierNew, "Press  Escape  to  Exit  Game", new Vector2(576, 448), Color.Red);
         }
     }
