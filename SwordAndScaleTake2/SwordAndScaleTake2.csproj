@@ -38,6 +38,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="TurnNotificationPane.cs" />
     <Compile Include="WinPaneRed.cs" />
     <Compile Include="WinPaneBlue.cs" />
     <Compile Include="PathSprite.cs" />

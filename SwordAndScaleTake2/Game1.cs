@@ -86,6 +86,7 @@ namespace SwordAndScaleTake2
         GameInfo gameInf;
         MoralePane blueMorale = new MoralePane(10, "blue");
         MoralePane redMorale = new MoralePane(10, "red");
+        TurnNotificationPane turnPane = new TurnNotificationPane();
         int i = 0; //only used for not infinitely playing the end game fanfare.
 
         public Game1(GameInfo gameInf)
@@ -194,6 +195,8 @@ namespace SwordAndScaleTake2
             blueMorale.LoadContent(content);
             redMorale.LoadContent(content);
             notification.LoadContent(content);
+            turnPane.LoadContent(content);
+            turnPane.AddToQueue(14 * 64, 6 * 64, "Blue" + "        " + "Turn!", 300, Color.Blue, castle);
             RedWin.LoadContent(content);
             BlueWin.LoadContent(content);
         }
@@ -214,7 +217,7 @@ namespace SwordAndScaleTake2
             //redInfoPane.Update();
             //unitActionPane.Update();
             notification.Update();
-
+            turnPane.Update();
             pressedKey = Keyboard.GetState();
             //Move Cursor (returns true if a move occurred)
             if (MoveCursor())
@@ -286,11 +289,11 @@ namespace SwordAndScaleTake2
                     {
                         if (map[(int)activeUnit.getPosition().X / 64, (int)activeUnit.getPosition().Y / 64].isInteractable)
                         {
-                            //Hide UnitActionPane
-                            unitActionPane.Hide();
-                            //Interact
-                            isUnitInteracting = true;
-                        }
+                        //Hide UnitActionPane
+                        unitActionPane.Hide();
+                        //Interact
+                        isUnitInteracting = true;
+                    }
                     }
                     //If M is pressed
                     else if (oldState.IsKeyUp(Keys.M) && pressedKey.IsKeyDown(Keys.M) && !activeUnit.getHasMoved())
@@ -361,7 +364,7 @@ namespace SwordAndScaleTake2
                     DetectUnitHovered();
                     activeUnit.setHasActed(true);
                     isUnitInteracting = false;
-            }
+                }
             //If B is pressed, cancel action (does not deactivate unit or reset unit)
             if (oldState.IsKeyUp(Keys.B) && pressedKey.IsKeyDown(Keys.B))
             {
@@ -449,6 +452,7 @@ namespace SwordAndScaleTake2
             blueMorale.Draw(spriteBatch);
             redMorale.Draw(spriteBatch);
             notification.Draw(spriteBatch);
+            turnPane.Draw(spriteBatch);
 
             if (gameInf.hasRedWon)
             {
@@ -847,7 +851,7 @@ namespace SwordAndScaleTake2
                         string toDisplay = "Attack Hits for " + (activeUnit.getStr() - enemy.getMDef()) + " Damage!";
                         notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, hit);
                     }
-                    
+
                     //if the attack misses
                     else 
                     {
@@ -926,7 +930,7 @@ namespace SwordAndScaleTake2
                         string toDisplay = "Attack Hits for" + (activeUnit.getStr() - enemy.getDef()) + "Damage!";
                         notification.AddToQueue(activeUnit.getPosition(), toDisplay, 100, hit);
                     }
-                        
+
                     //Attack Misses
                     else
                     {
@@ -1549,13 +1553,21 @@ namespace SwordAndScaleTake2
             {
                 if (!unit.getDead())
                 {
-                    unit.setHasActed(false);
-                    unit.setHasMoved(false);
-                    unit.setUsable(true);
-                }
+                unit.setHasActed(false);
+                unit.setHasMoved(false);
+                unit.setUsable(true);
+            }
             }
             //Other team's turn
             activeTeam = (activeTeam == Teams.Blue ? Teams.Red : Teams.Blue);
+            if(activeTeam == Teams.Red)
+            {
+                turnPane.AddToQueue(1 * 64, 7 * 64, "Red" + "        " + "Turn!", 300, Color.Red, castle);
+            }
+            if (activeTeam == Teams.Blue)
+            {
+                turnPane.AddToQueue(14 * 64, 6 * 64, "Blue" + "        " + "Turn!", 300, Color.Blue, castle);
+            }
         }
     }
 }
