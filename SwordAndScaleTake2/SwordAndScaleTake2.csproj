@@ -39,6 +39,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="TurnNotificationPane.cs" />
+    <Compile Include="WinPaneRed.cs" />
+    <Compile Include="WinPaneBlue.cs" />
     <Compile Include="PathSprite.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -46,7 +48,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Game1.cs" />
-    <Compile Include="GamePreferences.cs" />
+    <Compile Include="GameInfo.cs" />
     <Compile Include="GameShell.cs" />
     <Compile Include="GameElement.cs" />
     <Compile Include="Program.cs" />
@@ -70,6 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\Animals.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\baaaa.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Content\BetaMap.png">
@@ -138,16 +143,16 @@
     <Content Include="Content\blueWarriorGen.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Content\Courier New2.spritefont">
+    <None Include="Content\Courier Two.spritefont">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\fanfare.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Content\miss sound.wav">
+    <None Include="Content\hit sound.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Content\hit sound.wav">
+    <None Include="Content\miss sound.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Content\poison.png">
