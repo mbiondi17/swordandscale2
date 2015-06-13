@@ -10,6 +10,7 @@ namespace SwordAndScaleTake2
     public class GameInfo
     {
         public String chosenGeneral;
+        public String chosenGeneralRed;
         public bool hasRedWon;
         public bool hasBlueWon;
     }
