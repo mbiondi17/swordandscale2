@@ -52,9 +52,12 @@ namespace SwordAndScaleTake2
         {
             MouseState currentState = Mouse.GetState();
 
-            if (containsPixel(Mouse.GetState().X, Mouse.GetState().Y) && currentState.LeftButton == ButtonState.Pressed && previousState.LeftButton == ButtonState.Released)
+            if (currentState.LeftButton == ButtonState.Pressed && previousState.LeftButton != ButtonState.Pressed)
             {
-                clickEvent(assetName);
+                if (containsPixel(currentState.X, currentState.Y))
+                {
+                    clickEvent(assetName);
+                }
             }
             previousState = currentState;
         }

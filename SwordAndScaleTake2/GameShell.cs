@@ -14,15 +14,20 @@ namespace SwordAndScaleTake2
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        enum GameState { mainMenu, generalChoice, generalChoiceRed, inGame, pauseMenu, gameOver} GameState gameState; 
+        enum GameState { mainMenu, tutorial1, tutorial2, tutorial3, generalChoice, generalChoiceRed, inGame, pauseMenu, gameOver} GameState gameState; 
 
         //All the different GUIs that will be in the game
         List<GameElement> mainMenu = new List<GameElement>();
         List<GameElement> generalChoice = new List<GameElement>();
         List<GameElement> generalChoiceRed = new List<GameElement>();
+        List<GameElement> tutorial1 = new List<GameElement>();
+        List<GameElement> tutorial2 = new List<GameElement>();
+        List<GameElement> tutorial3 = new List<GameElement>();
 
         Game1 game;
         GamePreferences gamePrefs = new GamePreferences();
+        KeyboardState previousState;
+        KeyboardState currentState;
 
         public GameShell()
         {
@@ -59,6 +64,9 @@ namespace SwordAndScaleTake2
             generalChoiceRed.Add(new GameElement("redSwordGen"));
             generalChoiceRed.Add(new GameElement("redWarriorGen"));
 
+            tutorial1.Add(new GameElement("tutorial1"));
+            tutorial2.Add(new GameElement("tutorial2"));
+            tutorial3.Add(new GameElement("tutorial3"));
             //gameGUI.Add(new GUIElement("playerIcon"));
 
             base.Initialize();
@@ -105,22 +113,83 @@ namespace SwordAndScaleTake2
             generalChoiceRed.Find(x => x.AssetName == "redPikeGen").setPixelPosition(700, 300);
             generalChoiceRed.Find(x => x.AssetName == "redSwordGen").setPixelPosition(800, 300);
             generalChoiceRed.Find(x => x.AssetName == "redWarriorGen").setPixelPosition(900, 300);
+
+            // ------------Tutorial1------------
+            foreach (GameElement element in tutorial1)
+            {
+                element.LoadContent(Content);
+                element.clickEvent += OnClick;
+            }
+
+            //tutorial1.Find(x => x.AssetName == "tutorial1").setPixelPosition(-50, 000);
+
+            // ------------Tutorial2------------
+            foreach (GameElement element in tutorial2)
+            {
+                element.LoadContent(Content);
+                element.clickEvent += OnClick;
+            }
+
+            //tutorial2.Find(x => x.AssetName == "tutorial2").setPixelPosition(-50, 000);
+
+            // ------------Tutorial3------------
+            foreach (GameElement element in tutorial3)
+            {
+                element.LoadContent(Content);
+                element.clickEvent += OnClick;
+            }
+
+            //tutorial3.Find(x => x.AssetName == "tutorial3").setPixelPosition(-50, 000);
+            
         }
         protected override void Update(GameTime gameTime)
         {
+            currentState = Keyboard.GetState();
             switch (gameState)
             {
                 case GameState.mainMenu:
                     //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                    //    Exit(); //TODO: Replace IsKeyDown with a rising edge trigger (prevent multipressing)
+                        //Exit(); //TODO: Replace IsKeyDown with a rising edge trigger (prevent multipressing)
+                    if (currentState.IsKeyDown(Keys.Space) && previousState.IsKeyUp(Keys.Space))
+                        gameState = GameState.tutorial1;
                     foreach (GameElement element in mainMenu)
                     {
                         element.Update();
                     }
                     break;
-                case GameState.generalChoice:
+                case GameState.tutorial1:
                     if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                         gameState = GameState.mainMenu;
+                    if (currentState.IsKeyDown(Keys.Space) && previousState.IsKeyUp(Keys.Space))
+                        gameState = GameState.tutorial2;
+                    foreach (GameElement element in tutorial1)
+                    {
+                        //element.Update();
+                    }
+                    break;
+                case GameState.tutorial2:
+                    if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                        gameState = GameState.tutorial1;
+                    if (currentState.IsKeyDown(Keys.Space) && previousState.IsKeyUp(Keys.Space))
+                        gameState = GameState.tutorial3;
+                    foreach (GameElement element in tutorial2)
+                    {
+                       // element.Update();
+                    }
+                    break;
+                case GameState.tutorial3:
+                    if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                        gameState = GameState.tutorial2;
+                    if (currentState.IsKeyDown(Keys.Space) && previousState.IsKeyUp(Keys.Space))
+                        gameState = GameState.generalChoice;
+                    foreach (GameElement element in tutorial3)
+                    {
+                       // element.Update();
+                    }
+                    break;
+                case GameState.generalChoice:
+                    if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                        gameState = GameState.tutorial3;
                     foreach (GameElement element in generalChoice)
                     {
                         element.Update();
@@ -142,19 +211,37 @@ namespace SwordAndScaleTake2
                 default:
                     break;
             }
-
+            previousState = currentState;
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
 
             switch(gameState)
             {
                 case GameState.mainMenu:
                     foreach (GameElement elem in mainMenu)
+                    {
+                        elem.Draw(spriteBatch);
+                    }
+                    break;
+                case GameState.tutorial1:
+                    foreach (GameElement elem in tutorial1)
+                    {
+                        elem.Draw(spriteBatch);
+                    }
+                    break;
+                case GameState.tutorial2:
+                    foreach (GameElement elem in tutorial2)
+                    {
+                        elem.Draw(spriteBatch);
+                    }
+                    break;
+                case GameState.tutorial3:
+                    foreach (GameElement elem in tutorial3)
                     {
                         elem.Draw(spriteBatch);
                     }
@@ -192,6 +279,18 @@ namespace SwordAndScaleTake2
         public void OnClick(string button)
         {
             if (button == "start")
+            {
+                gameState = GameState.tutorial1;
+            }
+            if (button == "tutorial1")
+            {
+                gameState = GameState.tutorial2;
+            }
+            if (button == "tutorial2")
+            {
+                gameState = GameState.tutorial3;
+            }
+            if (button == "tutorial3")
             {
                 gameState = GameState.generalChoice;
             }
