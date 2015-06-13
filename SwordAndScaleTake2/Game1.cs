@@ -1339,9 +1339,9 @@ namespace SwordAndScaleTake2
 
             pathMoveable.RemoveAll(x => x == activeUnit.getPosition());
             pathMoveable.RemoveAll(x => x.X / 64 >= 24 || x.X / 64 < 0 || x.Y / 64 >= 14 || x.Y / 64 < 0);
-            pathMoveable.RemoveAll(x => map[(int)x.X / 64, (int)x.Y / 64].getImpassible());
-            pathMoveable.RemoveAll(x => map[(int)x.X / 64, (int)x.Y / 64].getRedOcc());
-            pathMoveable.RemoveAll(x => map[(int)x.X / 64, (int)x.Y / 64].getBlueOcc());
+            pathMoveable.RemoveAll(x => map[(int)x.X / 64, (int)x.Y / 64].getImpassible() || map[(int)x.X / 64, (int)x.Y / 64].getRedOcc() || map[(int)x.X / 64, (int)x.Y / 64].getBlueOcc());
+            //pathMoveable.RemoveAll(x => map[(int)x.X / 64, (int)x.Y / 64].getRedOcc());
+            //pathMoveable.RemoveAll(x => map[(int)x.X / 64, (int)x.Y / 64].getBlueOcc());
             ReachablePaths();
         }
 
@@ -1355,7 +1355,7 @@ namespace SwordAndScaleTake2
                 if (!tmp.Contains(pos))
                 {
                     openOptions = pathfinder(activeUnit.getPosition(), pos);
-                    if (openOptions.Count > 0 && openOptions.Count <= activeUnit.getMvmt() + 1 && (openOptions[0].x == pos.X / 64 && openOptions[0].y == pos.Y / 64))
+                    if ((openOptions[0].x == pos.X / 64 && openOptions[0].y == pos.Y / 64) && openOptions.Count > 0 && openOptions.Count <= activeUnit.getMvmt() + 1)
                     {
                         tmp.Add(pos);
                     }
@@ -1394,6 +1394,11 @@ namespace SwordAndScaleTake2
                 if (current.equals(end))
                 {
                     break;  //if you found the end, you're done
+                }
+
+                if (map[current.x, current.y].getImpassible())
+                {
+                    continue;
                 }
 
                 //consider hardcoding with -1 0, 1 0, 0 -1, 0 1
